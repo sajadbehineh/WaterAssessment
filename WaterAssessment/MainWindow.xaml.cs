@@ -7,6 +7,7 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         this.InitializeComponent();
+        this.SetWindowSize(1650, 800);
     }
 
     private void NavigationViewItem_OnTapped(object sender, TappedRoutedEventArgs e)

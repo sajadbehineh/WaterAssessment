@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WaterAssessment (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WaterAssessment (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

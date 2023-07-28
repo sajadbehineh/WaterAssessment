@@ -38,36 +38,4 @@ public sealed partial class MainWindow : Window
             }
         }
     }
-
-    //private void NavigationView_OnSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-    //{
-    //    if (args.IsSettingsSelected)
-    //    {
-    //        ShellPage.Instance.Navigate(typeof(SettingsPage));
-    //    }
-    //    else
-    //    {
-    //        var selectedItem = (Microsoft.UI.Xaml.Controls.NavigationViewItem)args.SelectedItem;
-    //        string selectedItemTag = ((string)selectedItem.Tag);
-
-    //        if (selectedItemTag is not null)
-    //        {
-    //            switch (selectedItemTag)
-    //            {
-    //                case "AssessmentForm":
-    //                    ShellPage.Instance.Navigate(typeof(AssessmentFormPage));
-    //                    break;
-
-    //                case "InsertEmployees":
-    //                    break;
-
-    //                case "Location":
-    //                    ShellPage.Instance.Navigate(typeof(LocationPage));
-    //                    break;
-    //                case "Propeller":
-    //                    break;
-    //            }
-    //        }
-    //    }
-    //}
 }

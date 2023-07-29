@@ -3,7 +3,7 @@
 public sealed partial class Propeller_CurrentMeterPage : Page
 {
     public ObservableCollection<Propeller> Propellers { get; set; } = new ObservableCollection<Propeller>();
-    private bool _isEdited = false;
+    private bool _propellerIsEdited = false;
 
     public Propeller_CurrentMeterPage()
     {
@@ -66,7 +66,7 @@ public sealed partial class Propeller_CurrentMeterPage : Page
                 return;
             }
 
-            if (_isEdited && btnAdd.DataContext is Propeller selectedPropeller)
+            if (_propellerIsEdited && btnAdd.DataContext is Propeller selectedPropeller)
             {
                 Propeller propeller = db.Propellers.Find(selectedPropeller.PropellerID);
                 if (propeller != null)
@@ -75,7 +75,7 @@ public sealed partial class Propeller_CurrentMeterPage : Page
                     propeller.AValue = newPropeller.AValue;
                     propeller.BValue = newPropeller.BValue;
                     db.SaveChanges();
-                    _isEdited = false;
+                    _propellerIsEdited = false;
                     GetPropellerFromDB();
                     propellerNumBox.Text = String.Empty;
                     aValueBox.Text = String.Empty;
@@ -83,6 +83,7 @@ public sealed partial class Propeller_CurrentMeterPage : Page
                     btnAdd.Content = "ذخیره";
                     InitInfoBar.ImplementInfoBar(numBoxInfoBar, InfoBarSeverity.Success,
                         true, "پروانه مورد نظر شما با موفقیت ویرایش شد.");
+                    propellerNumBox.Focus(FocusState.Pointer);
                 }
             }
             else
@@ -121,7 +122,7 @@ public sealed partial class Propeller_CurrentMeterPage : Page
         if (((propellerListView.Items).Where(p => (p is Propeller propeller) && propeller.PropellerID == propellerID)
                 .FirstOrDefault()) is Propeller selectedPropeller)
         {
-            _isEdited = true;
+            _propellerIsEdited = true;
             propellerNumBox.Text = selectedPropeller.DeviceNumber;
             aValueBox.Text = (selectedPropeller.AValue).ToString();
             bValueBox.Text = (selectedPropeller.BValue).ToString();
@@ -132,6 +133,10 @@ public sealed partial class Propeller_CurrentMeterPage : Page
 
     private void BtnClearTextBoxes_OnClick(object sender, RoutedEventArgs e)
     {
+        if (_propellerIsEdited)
+        {
+            _propellerIsEdited = false;
+        }
         propellerNumBox.Text = string.Empty;
         aValueBox.Text = string.Empty;
         bValueBox.Text = string.Empty;

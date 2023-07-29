@@ -98,14 +98,12 @@
                                                            Text="{x:Bind AreaName}" />
                                                 <AppBarButton x:Name="btnHoverDeleteLocation" Grid.Column="3" Width="60" Height="60"
                                                               HorizontalAlignment="Left" Click="BtnHoverDeleteLocation_OnClick"
-                                                              Icon="Delete" IsTabStop="False" Label="حذف"
-                                                              Tag="{x:Bind LocationID}"
-                                                              Visibility="Collapsed" />
+                                                              DataContext="{x:Bind LocationID}"
+                                                              Icon="Delete" IsTabStop="False" Label="حذف" Visibility="Collapsed" />
                                                 <AppBarButton x:Name="btnHoverEditLocation" Grid.Column="4" Width="60" Height="60"
-                                                              HorizontalAlignment="Left" Click="BtnHoverEditLocation_OnClick" Icon="Edit"
-                                                              IsTabStop="False" Label="ویرایش"
-                                                              Tag="{x:Bind LocationID}"
-                                                              Visibility="Collapsed" />
+                                                              HorizontalAlignment="Left" Click="BtnHoverEditLocation_OnClick"
+                                                              DataContext="{x:Bind LocationID}"
+                                                              Icon="Edit" IsTabStop="False" Label="ویرایش" Visibility="Collapsed" />
                                             </Grid>
                                         </SwipeControl>
 
@@ -218,15 +216,13 @@
                                                 <TextBlock Grid.Column="1" VerticalAlignment="Center"
                                                            Text="{x:Bind AreaName}" />
                                                 <AppBarButton x:Name="btnHoverDeleteArea" Grid.Column="2" Width="60" Height="60"
-                                                              HorizontalAlignment="Left" Click="BtnHoverDeleteArea_OnClick" Icon="Delete"
-                                                              IsTabStop="False" Label="حذف"
-                                                              Tag="{x:Bind AreaID}"
-                                                              Visibility="Collapsed" />
+                                                              HorizontalAlignment="Left" Click="BtnHoverDeleteArea_OnClick"
+                                                              DataContext="{x:Bind AreaID}"
+                                                              Icon="Delete" IsTabStop="False" Label="حذف" Visibility="Collapsed" />
                                                 <AppBarButton x:Name="btnHoverEditArea" Grid.Column="3" Width="60" Height="60"
-                                                              HorizontalAlignment="Left" Click="BtnHoverEditArea_OnClick" Icon="Edit"
-                                                              IsTabStop="False" Label="ویرایش"
-                                                              Tag="{x:Bind AreaID}"
-                                                              Visibility="Collapsed" />
+                                                              HorizontalAlignment="Left" Click="BtnHoverEditArea_OnClick"
+                                                              DataContext="{x:Bind AreaID}"
+                                                              Icon="Edit" IsTabStop="False" Label="ویرایش" Visibility="Collapsed" />
                                             </Grid>
                                         </SwipeControl>
 

@@ -6,6 +6,9 @@ public sealed partial class LocationPage : Page
     public List<Location> Locations { get; set; } = new List<Location>();
     public ObservableCollection<LocationItem> LocationsViewModel { get; set; } = new ObservableCollection<LocationItem>();
 
+    private bool _locationIsEdited = false;
+    private bool _areaIsEdited = false;
+
     public LocationPage()
     {
         this.InitializeComponent();
@@ -77,63 +80,58 @@ public sealed partial class LocationPage : Page
         InitInfoBar.ImplementInfoBar(locationInfoBar, InfoBarSeverity.Error,
                     string.IsNullOrEmpty(locationBox.Text), "لطفاً مکان اندازه گیری را وارد کنید.");
 
-        if (!string.IsNullOrEmpty(locationBox.Text) && cmbArea.SelectedIndex >= 0)
+        if (!string.IsNullOrWhiteSpace(locationBox.Text) && cmbArea.SelectedIndex >= 0)
         {
             Location newLocation = new Location
             {
                 Place = locationBox.Text,
                 AreaID = (cmbArea.SelectedItem as Area).AreaID,
             };
-            // مکان تکراری بر اساس حوزه اندازه گیری چک شود
+
             var duplicate = db.Locations.Where(l => l.Place == newLocation.Place && l.AreaID == newLocation.AreaID).FirstOrDefault();
 
             if (duplicate is not null)
             {
                 InitInfoBar.ImplementInfoBar(locationInfoBar, InfoBarSeverity.Error,
                     true, $"مکان اندازه گیری {duplicate.Place} قبلاً ثبت شده است.");
+                return;
+            }
+
+            if (_locationIsEdited && btnAdd.DataContext is LocationItem selectedLocation)
+            {
+                Location location = db.Locations.Find(selectedLocation.LocationID);
+                if (location is not null)
+                {
+                    location.Place = newLocation.Place;
+                    location.AreaID = newLocation.AreaID;
+                    db.SaveChanges();
+                    _locationIsEdited = false;
+                    GetLocationViewModel();
+                    locationBox.Text = String.Empty;
+                    cmbArea.SelectedIndex = -1;
+                    btnAddLocation.Content = "ذخیره";
+                    InitInfoBar.ImplementInfoBar(locationInfoBar, InfoBarSeverity.Success,
+                        true, "مکان مورد نظر شما با موفقیت ویرایش شد.");
+                    locationBox.Focus(FocusState.Pointer);
+                }
             }
             else
             {
-                if ((string)btnAdd.Content == "ویرایش" && btnAdd.DataContext is LocationItem selectedLocation)
-                {
-                    var place = locationBox.Text;
-                    var areaID = (cmbArea.SelectedItem as Area).AreaID;
-
-                    if (place != null && areaID >= 1)
-                    {
-                        Location location = db.Locations.Find(selectedLocation.LocationID);
-                        location.Place = place;
-                        location.AreaID = areaID;
-                        db.SaveChanges();
-                        GetLocationViewModel();
-                        locationBox.Text = String.Empty;
-                        cmbArea.SelectedIndex = -1;
-                        btnAddLocation.Content = "ذخیره";
-                        InitInfoBar.ImplementInfoBar(locationInfoBar, InfoBarSeverity.Success,
-                            true, "مکان مورد نظر شما با موفقیت ویرایش شد.");
-                        locationBox.Focus(FocusState.Pointer);
-                    }
-                }
-                else
-                {
-                    db.Locations.Add(newLocation);
-                    db.SaveChanges();
-                    GetLocationViewModel();
-                    locationBox.Text = string.Empty;
-                    cmbArea.SelectedIndex = -1;
-                    InitInfoBar.ImplementInfoBar(locationInfoBar, InfoBarSeverity.Success,
-                        true, "مکان مورد نظر شما با موفقیت ثبت شد.");
-                    locationBox.Focus(FocusState.Pointer);
-                    locationsListView.ScrollIntoView(newLocation.LocationID);
-                }
+                db.Locations.Add(newLocation);
+                db.SaveChanges();
+                GetLocationViewModel();
+                locationBox.Text = string.Empty;
+                cmbArea.SelectedIndex = -1;
+                InitInfoBar.ImplementInfoBar(locationInfoBar, InfoBarSeverity.Success,
+                    true, "مکان مورد نظر شما با موفقیت ثبت شد.");
+                locationBox.Focus(FocusState.Pointer);
             }
         }
-
     }
 
     private void BtnHoverDeleteLocation_OnClick(object sender, RoutedEventArgs e)
     {
-        var locationID = (sender as AppBarButton).Tag;
+        var locationID = (sender as AppBarButton).DataContext;
         using var db = new WaterAssessmentContext();
         var location = db.Locations.Find(locationID);
         if (location is not null)
@@ -149,6 +147,10 @@ public sealed partial class LocationPage : Page
 
     private void BtnClearLocationBox_OnClick(object sender, RoutedEventArgs e)
     {
+        if (_locationIsEdited)
+        {
+            _locationIsEdited = false;
+        }
         cmbArea.SelectedIndex = -1;
         locationBox.Text = string.Empty;
         locationInfoBar.IsOpen = false;
@@ -159,10 +161,11 @@ public sealed partial class LocationPage : Page
 
     private void BtnHoverEditLocation_OnClick(object sender, RoutedEventArgs e)
     {
-        var locationID = Convert.ToInt32((sender as AppBarButton).Tag);
+        var locationID = Convert.ToInt32((sender as AppBarButton).DataContext);
         if (((locationsListView.Items).Where(l => (l is LocationItem location) && location.LocationID == locationID)
                 .FirstOrDefault()) is LocationItem selectedLocation)
         {
+            _locationIsEdited = true;
             locationBox.Text = selectedLocation.LocationName;
             cmbArea.SelectedItem = (cmbArea.Items).Where(l => (l is Area area) && area.AreaID == selectedLocation.AreaID).FirstOrDefault();
             btnAddLocation.Content = "ویرایش";
@@ -207,11 +210,10 @@ public sealed partial class LocationPage : Page
     {
         var btnAdd = (sender as Button);
         using var db = new WaterAssessmentContext();
-        if (string.IsNullOrEmpty(areaBox.Text))
-        {
-            InitInfoBar.ImplementInfoBar(areaInfoBar, InfoBarSeverity.Error, true, "لطفاً نام حوزه را وارد کنید.");
-        }
-        else
+        InitInfoBar.ImplementInfoBar(areaInfoBar, InfoBarSeverity.Error,
+            string.IsNullOrWhiteSpace(areaBox.Text), "لطفاً نام حوزه را وارد کنید.");
+
+        if (!string.IsNullOrWhiteSpace(areaBox.Text))
         {
             Area newArea = new Area { AreaName = areaBox.Text };
             var duplicate = db.Areas.Where(a => a.AreaName == newArea.AreaName).FirstOrDefault();
@@ -220,42 +222,41 @@ public sealed partial class LocationPage : Page
             {
                 InitInfoBar.ImplementInfoBar(areaInfoBar, InfoBarSeverity.Error, true,
                     $"حوزه {duplicate.AreaName} قبلاً ثبت شده است.");
+                return;
+            }
+
+            if (_areaIsEdited && btnAdd.DataContext is Area selectedArea)
+            {
+                Area area = db.Areas.Find(selectedArea.AreaID);
+                if (area != null)
+                {
+                    area.AreaName = newArea.AreaName;
+                    db.SaveChanges();
+                    _areaIsEdited = false;
+                    GetAreasFromDB();
+                    areaBox.Text = string.Empty;
+                    btnAddArea.Content = "ذخیره";
+                    InitInfoBar.ImplementInfoBar(areaInfoBar, InfoBarSeverity.Success, true,
+                        "حوزه مورد نظر شما با موفقیت ویرایش شد.");
+                    areaBox.Focus(FocusState.Pointer);
+                }
             }
             else
             {
-                if ((string)btnAdd.Content == "ویرایش" && btnAdd.DataContext is Area selectedArea)
-                {
-                    var areaName = areaBox.Text;
-
-                    if (areaName != null)
-                    {
-                        Area area = db.Areas.Find(selectedArea.AreaID);
-                        area.AreaName = areaName;
-                        db.SaveChanges();
-                        GetAreasFromDB();
-                        areaBox.Text = string.Empty;
-                        btnAddArea.Content = "ذخیره";
-                        InitInfoBar.ImplementInfoBar(areaInfoBar, InfoBarSeverity.Success, true,
-                            "حوزه مورد نظر شما با موفقیت ویرایش شد.");
-                        areaBox.Focus(FocusState.Pointer);
-                    }
-                }
-                else
-                {
-                    db.Areas.Add(newArea);
-                    db.SaveChanges();
-                    GetAreasFromDB();
-                    areaBox.Text = string.Empty;
-                    areaBox.Focus(FocusState.Pointer);
-                    InitInfoBar.ImplementInfoBar(areaInfoBar, InfoBarSeverity.Success, true, "حوزه مورد نظر شما با موفقیت ثبت شد.");
-                }
+                db.Areas.Add(newArea);
+                db.SaveChanges();
+                GetAreasFromDB();
+                areaBox.Text = string.Empty;
+                InitInfoBar.ImplementInfoBar(areaInfoBar, InfoBarSeverity.Success,
+                    true, "حوزه مورد نظر شما با موفقیت ثبت شد.");
+                areaBox.Focus(FocusState.Pointer);
             }
         }
     }
 
     private async void BtnHoverDeleteArea_OnClick(object sender, RoutedEventArgs e)
     {
-        var areaID = (sender as AppBarButton).Tag;
+        var areaID = (sender as AppBarButton).DataContext;
         await using var db = new WaterAssessmentContext();
         var area = db.Areas.Find(areaID);
 
@@ -272,6 +273,10 @@ public sealed partial class LocationPage : Page
 
     private void BtnClearAreaBox_OnClick(object sender, RoutedEventArgs e)
     {
+        if (_areaIsEdited)
+        {
+            _areaIsEdited = false;
+        }
         areaBox.Text = string.Empty;
         areaInfoBar.IsOpen = false;
         btnAddArea.Content = "ذخیره";
@@ -302,9 +307,10 @@ public sealed partial class LocationPage : Page
 
     private void BtnHoverEditArea_OnClick(object sender, RoutedEventArgs e)
     {
-        var areaID = Convert.ToInt32((sender as AppBarButton).Tag);
+        var areaID = Convert.ToInt32((sender as AppBarButton).DataContext);
         if (((areasListView.Items).Where(a => (a is Area area) && area.AreaID == areaID).FirstOrDefault()) is Area selectedArea)
         {
+            _areaIsEdited = true;
             areaBox.Text = selectedArea.AreaName;
             btnAddArea.Content = "ویرایش";
             btnAddArea.DataContext = selectedArea;

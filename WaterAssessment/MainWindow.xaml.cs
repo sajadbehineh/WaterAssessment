@@ -29,7 +29,8 @@ public sealed partial class MainWindow : Window
                     ShellPage.Instance.Navigate(typeof(LocationPage));
                     break;
 
-                case "Propeller":
+                case "Propeller_CurrentMeter":
+                    ShellPage.Instance.Navigate(typeof(Propeller_CurrentMeterPage));
                     break;
 
                 case "Settings":

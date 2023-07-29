@@ -84,7 +84,7 @@
                                     <FontIcon Glyph="&#xE707;" />
                                 </NavigationViewItem.Icon>
                             </NavigationViewItem>
-                            <NavigationViewItem Content="افزودن پروانه و مولینه" Tag="Propeller"
+                            <NavigationViewItem Content="افزودن پروانه و مولینه" Tag="Propeller_CurrentMeter"
                                                 Tapped="NavigationViewItem_OnTapped">
                                 <NavigationViewItem.Icon>
                                     <FontIcon Glyph="&#xE707;" />

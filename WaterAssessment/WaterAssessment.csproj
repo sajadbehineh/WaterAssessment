@@ -24,6 +24,7 @@
 	  <None Remove="Assets\dez.png" />
 	  <None Remove="Views\AssessmentFormPage.xaml" />
 	  <None Remove="Views\LocationPage.xaml" />
+	  <None Remove="Views\Propeller_CurrentMeterPage.xaml" />
 	  <None Remove="Views\SettingsPage.xaml" />
 	  <None Remove="Views\ShellPage.xaml" />
 	</ItemGroup>
@@ -65,6 +66,11 @@
   -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\Propeller_CurrentMeterPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\AssessmentFormPage.xaml">

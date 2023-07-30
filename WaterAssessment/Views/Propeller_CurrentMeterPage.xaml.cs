@@ -3,7 +3,10 @@
 public sealed partial class Propeller_CurrentMeterPage : Page
 {
     public ObservableCollection<Propeller> Propellers { get; set; } = new ObservableCollection<Propeller>();
+    public ObservableCollection<CurrentMeter> CurrentMeters { get; set; } = new ObservableCollection<CurrentMeter>();
+
     private bool _propellerIsEdited = false;
+    private bool _currentMeterIsEdited = false;
 
     public Propeller_CurrentMeterPage()
     {
@@ -17,6 +20,7 @@ public sealed partial class Propeller_CurrentMeterPage : Page
         await Task.Run(() =>
         {
             GetPropellerFromDB();
+            GetCurrentMeterFromDB();
         });
     }
 
@@ -164,6 +168,135 @@ public sealed partial class Propeller_CurrentMeterPage : Page
     }
 
     private void propellerSwipeContainer_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        VisualStateManager.GoToState(
+            sender as Control, "HoverButtonsHidden", true);
+    }
+
+    #endregion
+
+    #region CurrentMeter
+
+    private void GetCurrentMeterFromDB()
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            CurrentMeters?.Clear();
+            using var db = new WaterAssessmentContext();
+            var data = db.CurrentMeters.ToList();
+            CurrentMeters = new ObservableCollection<CurrentMeter>(data);
+            currentMeterListView.ItemsSource = CurrentMeters;
+        });
+    }
+
+    private void BtnAddCurrentMeter_OnClick(object sender, RoutedEventArgs e)
+    {
+        var btnAdd = sender as Button;
+        using var db = new WaterAssessmentContext();
+
+        InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Error,
+            string.IsNullOrWhiteSpace(currentMeterBox.Text), "لطفاً شماره مولینه را وارد کنید");
+
+        if (!string.IsNullOrWhiteSpace(currentMeterBox.Text))
+        {
+            CurrentMeter newCurrentMeter = new CurrentMeter { CurrentMeterName = currentMeterBox.Text };
+            var duplicate = db.CurrentMeters.Where(c => c.CurrentMeterName == newCurrentMeter.CurrentMeterName)
+                .FirstOrDefault();
+
+            if (duplicate != null)
+            {
+                InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Error, true, $"مولینه {duplicate.CurrentMeterName} قبلاً ثبت شده است.");
+                return;
+            }
+
+            if (_currentMeterIsEdited && btnAdd.DataContext is CurrentMeter selectedCurrentMeter)
+            {
+                CurrentMeter currentMeter = db.CurrentMeters.Find(selectedCurrentMeter.CurrentMeterID);
+                if (currentMeter != null)
+                {
+                    currentMeter.CurrentMeterName = newCurrentMeter.CurrentMeterName;
+                    db.SaveChanges();
+                    _currentMeterIsEdited = false;
+                    GetCurrentMeterFromDB();
+                    currentMeterBox.Text = string.Empty;
+                    btnAdd.Content = "ذخیره";
+                    InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Success,
+                        true, "مولینه مورد نظر شما با موفقیت ویرایش شد.");
+                    currentMeterBox.Focus(FocusState.Pointer);
+                }
+            }
+            else
+            {
+                db.CurrentMeters.Add(newCurrentMeter);
+                db.SaveChanges();
+                GetCurrentMeterFromDB();
+                currentMeterBox.Text = string.Empty;
+                InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Success,
+                    true, "مولینه مورد نظر شما با موفقیت ثبت شد.");
+                currentMeterBox.Focus(FocusState.Pointer);
+            }
+        }
+    }
+
+    private void BtnHoverDeleteCurrentMeter_OnClick(object sender, RoutedEventArgs e)
+    {
+        var currentMeterID = (sender as AppBarButton).DataContext;
+        using var db = new WaterAssessmentContext();
+        var currentMeter = db.CurrentMeters.Find(currentMeterID);
+
+        if (currentMeter != null)
+        {
+            db.CurrentMeters.Remove(currentMeter);
+            db.SaveChanges();
+            GetCurrentMeterFromDB();
+            InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Warning,
+                true, "مولینه مورد نظر شما با موفقیت حذف شد.");
+        }
+    }
+
+    private void BtnHoverEditCurrentMeter_OnClick(object sender, RoutedEventArgs e)
+    {
+        var currentMeterID = Convert.ToInt32((sender as AppBarButton).DataContext);
+        if (((currentMeterListView.Items)
+                .Where(c => (c is CurrentMeter currentMeter) && currentMeter.CurrentMeterID == currentMeterID)
+                .FirstOrDefault()) is CurrentMeter selectedCurrentMeter)
+        {
+            _currentMeterIsEdited = true;
+            currentMeterBox.Text = selectedCurrentMeter.CurrentMeterName;
+            btnAddCurrentMeter.Content = "ویرایش";
+            btnAddCurrentMeter.DataContext = selectedCurrentMeter;
+        }
+    }
+
+    private void BtnClearCurrentMeterBox_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (_currentMeterIsEdited)
+        {
+            _currentMeterIsEdited = false;
+        }
+        currentMeterBox.Text = string.Empty;
+        currentMeterInfoBar.IsOpen = false;
+        btnAddCurrentMeter.Content = "ذخیره";
+        currentMeterBox.Focus(FocusState.Pointer);
+    }
+
+    private void CurrentMeterBox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var txtCurrentMeterBox = (sender as TextBox).Text;
+        btnClearCurrentMeterBox.IsEnabled = !string.IsNullOrWhiteSpace(txtCurrentMeterBox);
+    }
+
+    private void CurrentMeterSwipeContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse ||
+            e.Pointer.PointerDeviceType == PointerDeviceType.Pen)
+        {
+            VisualStateManager.GoToState(
+                sender as Control, "HoverButtonsShown", true);
+        }
+    }
+
+    private void CurrentMeterSwipeContainer_PointerExited(object sender, PointerRoutedEventArgs e)
     {
         VisualStateManager.GoToState(
             sender as Control, "HoverButtonsHidden", true);

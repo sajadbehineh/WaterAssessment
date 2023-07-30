@@ -87,7 +87,7 @@
                             <NavigationViewItem Content="افزودن پروانه و مولینه" Tag="Propeller_CurrentMeter"
                                                 Tapped="NavigationViewItem_OnTapped">
                                 <NavigationViewItem.Icon>
-                                    <FontIcon Glyph="&#xE707;" />
+                                    <ImageIcon Width="16" Source="Assets/Icons/propeller-svgrepo-com.svg" />
                                 </NavigationViewItem.Icon>
                             </NavigationViewItem>
                         </NavigationViewItem.MenuItems>

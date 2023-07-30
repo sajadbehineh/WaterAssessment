@@ -22,6 +22,12 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Assets\dez.png" />
+	  <None Remove="Assets\icons8-propeller-100.png" />
+	  <None Remove="Assets\icons8-propeller-64.png" />
+	  <None Remove="Assets\Icons\propeller-1-svgrepo-com.svg" />
+	  <None Remove="Assets\Icons\propeller-svgrepo-com.svg" />
+	  <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
+	  <None Remove="Assets\propeller.png" />
 	  <None Remove="Views\AssessmentFormPage.xaml" />
 	  <None Remove="Views\LocationPage.xaml" />
 	  <None Remove="Views\Propeller_CurrentMeterPage.xaml" />

@@ -19,6 +19,16 @@
             <FontFamily x:Key="VazirmatnMedium">Assets/Fonts/Vazirmatn-Medium.ttf#Vazirmatn Medium</FontFamily>
             <FontFamily x:Key="VazirmatnRegular">Assets/Fonts/Vazirmatn-Regular.ttf#Vazirmatn</FontFamily>-->
 
+            <Style x:Key="HorizontalSwipe"
+                   BasedOn="{StaticResource ListViewItemRevealStyle}"
+                   TargetType="ListViewItem">
+                <Setter Property="Height" Value="60" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>
+
             <Style TargetType="MenuFlyoutItem">
                 <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
             </Style>

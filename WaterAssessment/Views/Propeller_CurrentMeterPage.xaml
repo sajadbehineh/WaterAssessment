@@ -7,17 +7,6 @@
       xmlns:models="using:WaterAssessment.Models" FlowDirection="RightToLeft"
       FontFamily="{StaticResource ContentControlThemeFontFamily}"
       mc:Ignorable="d">
-    <Page.Resources>
-        <Style x:Key="HorizontalSwipe"
-               BasedOn="{StaticResource ListViewItemRevealStyle}"
-               TargetType="ListViewItem">
-            <Setter Property="Height" Value="60" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            <Setter Property="BorderThickness" Value="0" />
-        </Style>
-    </Page.Resources>
 
     <TabView IsAddTabButtonVisible="False" SelectedIndex="0">
         <TabViewItem x:Name="propellerTab" Header="ثبت اطلاعات پروانه ها" IsClosable="False">

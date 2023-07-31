@@ -293,11 +293,14 @@
                     <StackPanel Orientation="Horizontal" Spacing="20">
                         <DatePicker Name="datePicker" Height="59" Margin="0,3,0,0" Header="تاریخ"
                                     Loaded="DatePicker_OnLoaded" />
-                        <ComboBox Width="295" Header="محل اندازه گیری" />
+                        <ComboBox Name="cmbLocation" Width="295" DisplayMemberPath="Place"
+                                  Header="محل اندازه گیری"
+                                  PlaceholderText="لطفاً مکان اندازه گیری را انتخاب کنید" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="20">
                         <ComboBox Width="295" Header="مولینه" />
-                        <ComboBox Width="295" Header="اندازه گیر" />
+                        <ComboBox Name="cmbEmployees" Width="295" DisplayMemberPath="LastName"
+                                  Header="اندازه گیر" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Spacing="20">
                         <NumberBox Width="295" Header="اشل" />

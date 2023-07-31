@@ -1,10 +1,16 @@
 ﻿using Windows.Globalization;
 using WaterAssessment.Converters;
+using Microsoft.EntityFrameworkCore;
 
 namespace WaterAssessment.Views;
 
 public sealed partial class AssessmentFormPage : Page
 {
+    public ObservableCollection<Employee> Employees { get; set; } = new ObservableCollection<Employee>();
+    public ObservableCollection<Location> Locations { get; set; } = new ObservableCollection<Location>();
+    public ObservableCollection<Area> Areas { get; set; } = new ObservableCollection<Area>();
+    public ObservableCollection<LocationItem> LocationsViewModel { get; set; }
+
     private const string DecimalFormat = "0.00#";
     private int time;
 
@@ -13,6 +19,40 @@ public sealed partial class AssessmentFormPage : Page
         this.InitializeComponent();
         CreateRows();
         BindTextProperty();
+        Loaded += AssessmentFormPage_Loaded;
+    }
+
+    private async void AssessmentFormPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        await Task.Run(() =>
+        {
+            GetLocationFromDB();
+            GetEmployeesFromDB();
+        });
+    }
+
+    private void GetLocationFromDB()
+    {
+        DispatcherQueue.TryEnqueue(async () =>
+        {
+            Locations?.Clear();
+            await using var db = new WaterAssessmentContext();
+            var data = await db.Locations.ToListAsync();
+            Locations = new ObservableCollection<Location>(data);
+            cmbLocation.ItemsSource = Locations;
+        });
+    }
+
+    private void GetEmployeesFromDB()
+    {
+        DispatcherQueue.TryEnqueue(async () =>
+        {
+            Employees?.Clear();
+            await using var db = new WaterAssessmentContext();
+            var data = await db.Employees.ToListAsync();
+            Employees = new ObservableCollection<Employee>(data);
+            cmbEmployees.ItemsSource = Employees;
+        });
     }
 
     Propeller propeller4 = new()

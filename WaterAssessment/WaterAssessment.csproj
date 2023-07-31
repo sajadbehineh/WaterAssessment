@@ -29,6 +29,7 @@
 	  <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
 	  <None Remove="Assets\propeller.png" />
 	  <None Remove="Views\AssessmentFormPage.xaml" />
+	  <None Remove="Views\EmployeePage.xaml" />
 	  <None Remove="Views\LocationPage.xaml" />
 	  <None Remove="Views\Propeller_CurrentMeterPage.xaml" />
 	  <None Remove="Views\SettingsPage.xaml" />
@@ -72,6 +73,11 @@
   -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\EmployeePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\Propeller_CurrentMeterPage.xaml">

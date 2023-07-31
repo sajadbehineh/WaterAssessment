@@ -23,6 +23,7 @@ public sealed partial class MainWindow : Window
                     break;
 
                 case "InsertEmployees":
+                    ShellPage.Instance.Navigate(typeof(EmployeePage));
                     break;
 
                 case "Location":

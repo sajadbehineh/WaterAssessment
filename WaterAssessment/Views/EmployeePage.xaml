@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page x:Class="WaterAssessment.Views.EmployeePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:models="using:WaterAssessment.Models"
+      FontFamily="{StaticResource ContentControlThemeFontFamily}"
+      mc:Ignorable="d">
+
+    <TabView IsAddTabButtonVisible="False" SelectedIndex="0">
+        <TabViewItem x:Name="employeeTab" Header="ثبت اطلاعات همکاران" IsClosable="False">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.5*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="20,10" HorizontalAlignment="Stretch"
+                                Orientation="Vertical" Spacing="25">
+                        <TextBox Name="firstNameBox" HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Center" Header="نام" IsSpellCheckEnabled="False"
+                                 PlaceholderText="لطفاً نام همکار مورد نظر را وارد کنید"
+                                 TextChanged="employeeTextBoxes_OnTextChanged" />
+                        <TextBox Name="lastNameBox" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                                 Header="نام خانوادگی" IsSpellCheckEnabled="False"
+                                 PlaceholderText="لطفاً نام خانوادگی همکار مورد نظر را وارد کنید"
+                                 TextChanged="employeeTextBoxes_OnTextChanged" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="20,10" HorizontalAlignment="Left"
+                                Orientation="Horizontal" Spacing="10">
+                        <Button Name="btnAddEmployee" HorizontalAlignment="Left"
+                                Click="BtnAddEmployee_OnClick" Content="ذخیره" IsEnabled="True"
+                                Style="{ThemeResource AccentButtonStyle}" />
+                        <Button Name="btnClearEmployeeBox" HorizontalAlignment="Left"
+                                Click="BtnClearEmployeeBox_OnClick" Content="پاک کردن" IsEnabled="False"
+                                Style="{ThemeResource AccentButtonStyle}" />
+                    </StackPanel>
+
+                    <StackPanel x:Name="employeeInfoPanel" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                                Padding="5,15,5,0" Spacing="10">
+                        <InfoBar x:Name="firstNameBoxInfoBar" VerticalAlignment="Top" IsClosable="False"
+                                 IsOpen="False" />
+                        <InfoBar x:Name="lastNameBoxInfoBar" VerticalAlignment="Top" IsClosable="False"
+                                 IsOpen="False" />
+                    </StackPanel>
+
+                </Grid>
+                <Grid Grid.Column="1" Width="500" Margin="20,10" Padding="0,0,0,15"
+                      HorizontalAlignment="Left"
+                      Style="{ThemeResource GridPanel}"
+                      Translation="0 0 48">
+                    <ListView Name="employeeListView" Height="600" BorderThickness="0"
+                              ItemContainerStyle="{StaticResource HorizontalSwipe}"
+                              SelectionMode="Single">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Employee">
+                                <UserControl FontFamily="{StaticResource SamimFD}"
+                                             PointerEntered="employeeSwipeContainer_PointerEntered"
+                                             PointerExited="employeeSwipeContainer_PointerExited">
+                                    <Grid>
+                                        <SwipeControl>
+                                            <Grid VerticalAlignment="Center">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="32" />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="68" />
+                                                    <ColumnDefinition Width="68" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                                           Text="{x:Bind FirstName}" />
+                                                <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                                                           Text="{x:Bind LastName}" />
+                                                <AppBarButton x:Name="btnHoverDeleteEmployee" Grid.Column="3" Width="60" Height="60"
+                                                              HorizontalAlignment="Left" Click="BtnHoverDeleteEmployee_OnClick"
+                                                              DataContext="{x:Bind EmployeeID}"
+                                                              Icon="Delete" IsTabStop="False" Label="حذف" Visibility="Collapsed" />
+                                                <AppBarButton x:Name="btnHoverEditEmployee" Grid.Column="4" Width="60" Height="60"
+                                                              HorizontalAlignment="Left" Click="BtnHoverEditEmployee_OnClick"
+                                                              DataContext="{x:Bind EmployeeID}"
+                                                              Icon="Edit" IsTabStop="False" Label="ویرایش" Visibility="Collapsed" />
+                                            </Grid>
+                                        </SwipeControl>
+
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="HoveringStates">
+                                                <VisualState x:Name="HoverButtonsHidden" />
+                                                <VisualState x:Name="HoverButtonsShown">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="btnHoverDeleteEmployee.Visibility" Value="Visible" />
+                                                        <Setter Target="btnHoverEditEmployee.Visibility" Value="Visible" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+                                </UserControl>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid Padding="0,12,0,12"
+                                      Background="{ThemeResource SystemAccentColor}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="32" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="68" />
+                                        <ColumnDefinition Width="68" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="1" HorizontalAlignment="Left"
+                                               Foreground="{ThemeResource SystemAltHighColor}"
+                                               Text="نام" />
+                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left"
+                                               Foreground="{ThemeResource SystemAltHighColor}"
+                                               Text="نام خانوادگی" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.HeaderTemplate>
+                    </ListView>
+                </Grid>
+            </Grid>
+        </TabViewItem>
+    </TabView>
+</Page>

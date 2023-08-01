@@ -7,8 +7,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
     <Grid>
-        <Border Style="{ThemeResource BorderPanel}">
-            <Frame Name="shellFrame" />
-        </Border>
+        <Frame Name="shellFrame" />
     </Grid>
 </Page>

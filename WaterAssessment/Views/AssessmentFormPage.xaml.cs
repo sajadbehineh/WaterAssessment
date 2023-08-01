@@ -8,7 +8,8 @@ public sealed partial class AssessmentFormPage : Page
 {
     public ObservableCollection<Employee> Employees { get; set; } = new ObservableCollection<Employee>();
     public ObservableCollection<Location> Locations { get; set; } = new ObservableCollection<Location>();
-    public ObservableCollection<Area> Areas { get; set; } = new ObservableCollection<Area>();
+    public ObservableCollection<CurrentMeter> CurrentMeters { get; set; } = new ObservableCollection<CurrentMeter>();
+    public ObservableCollection<Propeller> Propellers { get; set; } = new ObservableCollection<Propeller>();
     public ObservableCollection<LocationItem> LocationsViewModel { get; set; }
 
     private const string DecimalFormat = "0.00#";
@@ -19,6 +20,7 @@ public sealed partial class AssessmentFormPage : Page
         this.InitializeComponent();
         CreateRows();
         BindTextProperty();
+        DataContext = this;
         Loaded += AssessmentFormPage_Loaded;
     }
 
@@ -28,6 +30,8 @@ public sealed partial class AssessmentFormPage : Page
         {
             GetLocationFromDB();
             GetEmployeesFromDB();
+            GetCurrentMeterFromDB();
+            GetPropellerFromDB();
         });
     }
 
@@ -43,6 +47,30 @@ public sealed partial class AssessmentFormPage : Page
         });
     }
 
+    private void GetCurrentMeterFromDB()
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            CurrentMeters?.Clear();
+            using var db = new WaterAssessmentContext();
+            var data = db.CurrentMeters.ToList();
+            CurrentMeters = new ObservableCollection<CurrentMeter>(data);
+            cmbCurrentMeter.ItemsSource = CurrentMeters;
+        });
+    }
+
+    private void GetPropellerFromDB()
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            Propellers?.Clear();
+            using var db = new WaterAssessmentContext();
+            var data = db.Propellers.ToList();
+            Propellers = new(data);
+            cmbPropeller.ItemsSource = Propellers;
+        });
+    }
+
     private void GetEmployeesFromDB()
     {
         DispatcherQueue.TryEnqueue(async () =>
@@ -51,7 +79,7 @@ public sealed partial class AssessmentFormPage : Page
             await using var db = new WaterAssessmentContext();
             var data = await db.Employees.ToListAsync();
             Employees = new ObservableCollection<Employee>(data);
-            cmbEmployees.ItemsSource = Employees;
+            cmbEmployee.ItemsSource = Employees;
         });
     }
 
@@ -289,10 +317,12 @@ public sealed partial class AssessmentFormPage : Page
 
     private List<TextBox> GetPanelTextBoxes(StackPanel panel)
     {
+
         return panel.Children
             .OfType<Border>()
             .Select(border => border.Child)
             .OfType<TextBox>().ToList();
+
     }
 
     private void BindTextProperty()

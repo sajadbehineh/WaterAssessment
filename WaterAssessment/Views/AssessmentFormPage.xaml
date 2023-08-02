@@ -316,8 +316,17 @@
                                 <StackPanel Orientation="Horizontal" Spacing="50">
                                     <NumberBox Width="200" VerticalAlignment="Top" Header="اشل" />
                                     <TextBox Width="200" Header="گشودگی" />
-                                    <ComboBox Name="cmbEmployee" DisplayMemberPath="LastName" Header="انتخاب اندازه گیر"
-                                              PlaceholderText="همکار مورد نظر را انتخاب کنید" />
+                                    <!--<ComboBox Name="cmbEmployee" DisplayMemberPath="LastName" Header="انتخاب اندازه گیر"
+                                              PlaceholderText="همکار مورد نظر را انتخاب کنید" />-->
+                                    <ComboBox Name="cmbEmployee" Header="انتخاب اندازه گیر"
+                                              PlaceholderText="همکار مورد نظر را انتخاب کنید">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate x:DataType="models:Employee">
+                                                <CheckBox Content="{Binding LastName}"
+                                                          IsChecked="False" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Spacing="50">
                                     <StackPanel>

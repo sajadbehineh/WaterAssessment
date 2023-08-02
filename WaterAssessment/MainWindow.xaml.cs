@@ -1,9 +1,11 @@
 using WaterAssessment.Views;
+using WinRT;
 
 namespace WaterAssessment;
 
 public sealed partial class MainWindow : Window
 {
+    private AssessmentInputsWindow _inputsWindow;
     public MainWindow()
     {
         this.InitializeComponent();
@@ -19,7 +21,8 @@ public sealed partial class MainWindow : Window
             switch (menuItem.Tag)
             {
                 case "AssessmentForm":
-                    ShellPage.Instance.Navigate(typeof(AssessmentFormPage));
+                    _inputsWindow = new AssessmentInputsWindow();
+                    _inputsWindow.Activate();
                     break;
 
                 case "InsertEmployees":

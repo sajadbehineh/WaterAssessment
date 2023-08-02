@@ -417,7 +417,6 @@ public sealed partial class AssessmentFormPage : Page
         if (nonNullTextBoxes.Any())
         {
             var sum = nonNullTextBoxes.Sum(textBox => double.Parse(textBox.Text));
-            //var average = sum / nonNullTextBoxes.Count();
             flowAvg.Text = sum.ToString(DecimalFormat);
         }
     }

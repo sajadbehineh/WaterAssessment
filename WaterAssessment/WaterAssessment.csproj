@@ -21,6 +21,7 @@
 	  <Content Remove="Assets\Fonts\Vazirmatn-Regular.ttf" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="AssessmentInputsWindow.xaml" />
 	  <None Remove="Assets\dez.png" />
 	  <None Remove="Assets\icons8-propeller-100.png" />
 	  <None Remove="Assets\icons8-propeller-64.png" />
@@ -73,6 +74,11 @@
   -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="AssessmentInputsWindow.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\EmployeePage.xaml">

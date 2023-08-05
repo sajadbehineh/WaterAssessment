@@ -3,8 +3,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:helpers="using:WaterAssessment.Helpers"
         xmlns:local="using:WaterAssessment"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="using:WaterAssessment.Models"
+        xmlns:viewModel="using:WaterAssessment.Models.ViewModel"
         xmlns:views="using:WaterAssessment.Views" mc:Ignorable="d">
     <Grid FlowDirection="RightToLeft">
         <Grid.RowDefinitions>
@@ -100,15 +103,58 @@
         </Grid>
 
 
-        <!--<ContentDialog x:Name="aboutContentDialog" Title="درباره ما" CloseButtonText="بستن">
-            <StackPanel Margin="10" Spacing="10">
-                <TextBlock Name="txtVersion"
-                           Style="{ThemeResource TitleTextBlockStyle}" />
-                <TextBlock HorizontalAlignment="Center"
-                           Style="{ThemeResource SubtitleTextBlockStyle}"
-                           Text="این برنامه قرآنی به صورت کاملاً رایگان و متن باز ارائه شده است"
-                           TextAlignment="Left" TextWrapping="Wrap" />
+        <ContentDialog x:Name="inputPanelContentDialog" Title="فرم ورود اطلاعات اندازه گیری"
+                       CloseButtonText="بستن" Loaded="InputPanelContentDialog_OnLoaded"
+                       PrimaryButtonClick="InputPanelContentDialog_OnPrimaryButtonClick"
+                       PrimaryButtonText="ثبت">
+            <StackPanel Width="730" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Orientation="Vertical" Spacing="15">
+
+                <StackPanel HorizontalAlignment="Stretch" BorderBrush="Black" BorderThickness="0"
+                            Orientation="Horizontal" Spacing="50">
+                    <ComboBox Name="cmbLocation" Width="295" Header="محل اندازه گیری"
+                              PlaceholderText="لطفاً مکان اندازه گیری را انتخاب کنید">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="viewModel:LocationItem">
+                                <TextBlock Text="{x:Bind LocationArea}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <DatePicker Name="datePicker" Height="59" Margin="0,3,0,0" Header="تاریخ"
+                                Loaded="DatePicker_OnLoaded" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="50">
+                    <TextBox x:Name="echelonBox" Width="200" VerticalAlignment="Top" Header="اشل" />
+                    <TextBox x:Name="opennessBox" Width="200" Header="گشودگی" />
+                    <Expander MaxHeight="200" Header="انتخاب اندازه گیر">
+                        <ListView x:Name="employeeList" SelectionMode="Multiple">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Employee">
+                                    <TextBlock Text="{x:Bind ToString()}" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Expander>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="50">
+                    <StackPanel>
+                        <ComboBox Name="cmbPropeller" DisplayMemberPath="DeviceNumber" Header="انتخاب پروانه"
+                                  PlaceholderText="پروانه مورد نظر را انتخاب کنید" />
+                    </StackPanel>
+                    <StackPanel>
+                        <ComboBox Name="cmbCurrentMeter" DisplayMemberPath="CurrentMeterName"
+                                  Header="انتخاب مولینه" PlaceholderText="مولینه مورد نظر را انتخاب کنید" />
+                    </StackPanel>
+                    <StackPanel>
+                        <ComboBox Name="cmbTimer" Width="150" Header="زمان تایمر"
+                                  ItemsSource="{Binding Source={helpers:EnumBindingSource EnumType=models:Timer}}"
+                                  SelectedIndex="1" SelectionChanged="CmbTimer_OnSelectionChanged" />
+                        <NumberBox Name="rowsCountNumberBox" Width="60" VerticalAlignment="Top"
+                                   Header="تعداد ردیف ها" />
+                    </StackPanel>
+                </StackPanel>
+
             </StackPanel>
-        </ContentDialog>-->
+        </ContentDialog>
     </Grid>
 </Window>

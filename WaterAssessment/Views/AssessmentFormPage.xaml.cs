@@ -1,6 +1,4 @@
-﻿using Windows.Globalization;
-using WaterAssessment.Converters;
-using Microsoft.EntityFrameworkCore;
+﻿using WaterAssessment.Converters;
 
 namespace WaterAssessment.Views;
 
@@ -15,72 +13,34 @@ public sealed partial class AssessmentFormPage : Page
     private const string DecimalFormat = "0.00#";
     private int time;
 
+    internal static AssessmentFormPage Instance { get; private set; }
+
+    //***********************************Assessment Dependency Property***************************//
+
+    public static readonly DependencyProperty AssessmentProperty = DependencyProperty.Register(nameof(Assessment),
+        typeof(AssessmentItem), typeof(AssessmentFormPage), new PropertyMetadata(null));
+
+    public AssessmentItem Assessment
+    {
+        get => (AssessmentItem)GetValue(AssessmentProperty);
+        set => SetValue(AssessmentProperty, value);
+    }
+
+    //*****************************************************************************************//
+
     public AssessmentFormPage()
     {
         this.InitializeComponent();
-        CreateRows();
-        BindTextProperty();
+        Instance = this;
         DataContext = this;
+        inputsPanel.DataContext = LocationsViewModel;
         Loaded += AssessmentFormPage_Loaded;
     }
 
-    private async void AssessmentFormPage_Loaded(object sender, RoutedEventArgs e)
+    private void AssessmentFormPage_Loaded(object sender, RoutedEventArgs e)
     {
-        await Task.Run(() =>
-        {
-            GetLocationFromDB();
-            GetEmployeesFromDB();
-            GetCurrentMeterFromDB();
-            GetPropellerFromDB();
-        });
-    }
-
-    private void GetLocationFromDB()
-    {
-        DispatcherQueue.TryEnqueue(async () =>
-        {
-            Locations?.Clear();
-            await using var db = new WaterAssessmentContext();
-            var data = await db.Locations.ToListAsync();
-            Locations = new ObservableCollection<Location>(data);
-            cmbLocation.ItemsSource = Locations;
-        });
-    }
-
-    private void GetCurrentMeterFromDB()
-    {
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            CurrentMeters?.Clear();
-            using var db = new WaterAssessmentContext();
-            var data = db.CurrentMeters.ToList();
-            CurrentMeters = new ObservableCollection<CurrentMeter>(data);
-            cmbCurrentMeter.ItemsSource = CurrentMeters;
-        });
-    }
-
-    private void GetPropellerFromDB()
-    {
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            Propellers?.Clear();
-            using var db = new WaterAssessmentContext();
-            var data = db.Propellers.ToList();
-            Propellers = new(data);
-            cmbPropeller.ItemsSource = Propellers;
-        });
-    }
-
-    private void GetEmployeesFromDB()
-    {
-        DispatcherQueue.TryEnqueue(async () =>
-        {
-            Employees?.Clear();
-            await using var db = new WaterAssessmentContext();
-            var data = await db.Employees.ToListAsync();
-            Employees = new ObservableCollection<Employee>(data);
-            cmbEmployee.ItemsSource = Employees;
-        });
+        CreateRows(Assessment.RowsCount);
+        BindTextProperty();
     }
 
     Propeller propeller4 = new()
@@ -417,7 +377,7 @@ public sealed partial class AssessmentFormPage : Page
         if (nonNullTextBoxes.Any())
         {
             var sum = nonNullTextBoxes.Sum(textBox => double.Parse(textBox.Text));
-            flowAvg.Text = sum.ToString(DecimalFormat);
+            //flowAvg.Text = sum.ToString(DecimalFormat);
         }
     }
 
@@ -693,8 +653,8 @@ public sealed partial class AssessmentFormPage : Page
 
     private void DatePicker_OnLoaded(object sender, RoutedEventArgs e)
     {
-        datePicker.CalendarIdentifier = CalendarIdentifiers.Persian;
-        datePicker.SelectedDate = System.DateTime.Today;
+        //datePicker.CalendarIdentifier = CalendarIdentifiers.Persian;
+        //datePicker.SelectedDate = System.DateTime.Today;
     }
 
     private void CmbTimer_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -730,3 +690,36 @@ public sealed partial class AssessmentFormPage : Page
         }
     }
 }
+
+//private void InitializeTimeCalculate()
+//{
+//    var fiftyPanelTextBoxes = GetPanelTextBoxes(fiftyPanel);
+//    var oneSecPanelTextBoxes = GetPanelTextBoxes(oneSecPanel);
+//    var pointPanelTextBoxes = GetPanelTextBoxes(pointPanel);
+//    var cmb = sender as ComboBox;
+//    time = (int)cmb.SelectedValue;
+//    for (int i = 0; i < fiftyPanelTextBoxes.Count; i++)
+//    {
+//        Binding bindingFifty = new Binding()
+//        {
+//            Source = fiftyPanelTextBoxes[i],
+//            Converter = new ToOneSecConverter(),
+//            ConverterParameter = time,
+//            Path = new PropertyPath("Text"),
+//            //TargetNullValue = null,
+//            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+//        };
+//        oneSecPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingFifty);
+
+//        Binding bindingOneSec = new Binding()
+//        {
+//            Source = oneSecPanelTextBoxes[i],
+//            Converter = new RadianToVelocityConverter(),
+//            ConverterParameter = propeller4,
+//            Path = new PropertyPath("Text"),
+//            //TargetNullValue = null,
+//            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+//        };
+//        pointPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingOneSec);
+//    }
+//}

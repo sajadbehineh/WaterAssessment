@@ -12,5 +12,6 @@ namespace WaterAssessment.Models.ViewModel
         public string LocationName { get; set; }
         public int AreaID { get; set; }
         public string AreaName { get; set; }
+        public string LocationArea => $"{LocationName} ({AreaName})";
     }
 }

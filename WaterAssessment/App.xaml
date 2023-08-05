@@ -9,6 +9,8 @@
                 <ResourceDictionary Source="ms-appx:///WinUICommunity.Components/Themes/Generic.xaml" />
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
+            <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
+            <x:Double x:Key="ContentDialogMaxHeight">756</x:Double>
             <FontFamily x:Key="ContentControlThemeFontFamily"><![CDATA[Assets/Fonts/Samim.ttf#Samim]]></FontFamily>
             <FontFamily x:Key="SamimBold"><![CDATA[Assets/Fonts/Samim-Bold.ttf#Samim]]></FontFamily>
             <FontFamily x:Key="SamimMedium"><![CDATA[Assets/Fonts/Samim-Medium.ttf#Samim Medium]]></FontFamily>

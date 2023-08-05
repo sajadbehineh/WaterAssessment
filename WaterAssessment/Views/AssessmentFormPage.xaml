@@ -293,76 +293,26 @@
                 </Grid>
 
             </Grid>
-            <ScrollViewer Grid.Row="0" Grid.Column="0">
-                <wuc:SettingsExpander x:Name="settingsCard" Header="پنل ورود اطلاعات فرم" IsEnabled="True"
-                                      IsExpanded="True">
-                    <!--  TODO: This should be TwoWay bound but throws compile error in Uno.  -->
-                    <wuc:SettingsExpander.HeaderIcon>
-                        <FontIcon Glyph="&#xE91B;" />
-                    </wuc:SettingsExpander.HeaderIcon>
 
-                    <wuc:SettingsExpander.Items>
-                        <wuc:SettingsCard ContentAlignment="Left">
-                            <StackPanel Orientation="Vertical" Spacing="15">
-
-                                <StackPanel BorderBrush="Black" BorderThickness="0" Orientation="Horizontal"
-                                            Spacing="50">
-                                    <ComboBox Name="cmbLocation" Width="295" DisplayMemberPath="Place"
-                                              Header="محل اندازه گیری"
-                                              PlaceholderText="لطفاً مکان اندازه گیری را انتخاب کنید" />
-                                    <DatePicker Name="datePicker" Height="59" Margin="0,3,0,0" Header="تاریخ"
-                                                Loaded="DatePicker_OnLoaded" />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="50">
-                                    <NumberBox Width="200" VerticalAlignment="Top" Header="اشل" />
-                                    <TextBox Width="200" Header="گشودگی" />
-                                    <!--<ComboBox Name="cmbEmployee" DisplayMemberPath="LastName" Header="انتخاب اندازه گیر"
-                                              PlaceholderText="همکار مورد نظر را انتخاب کنید" />-->
-                                    <ComboBox Name="cmbEmployee" Header="انتخاب اندازه گیر"
-                                              PlaceholderText="همکار مورد نظر را انتخاب کنید">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate x:DataType="models:Employee">
-                                                <CheckBox Content="{Binding LastName}"
-                                                          IsChecked="False" />
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="50">
-                                    <StackPanel>
-                                        <ComboBox Name="cmbPropeller" DisplayMemberPath="DeviceNumber" Header="انتخاب پروانه"
-                                                  PlaceholderText="پروانه مورد نظر را انتخاب کنید" />
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <ComboBox Name="cmbCurrentMeter" DisplayMemberPath="CurrentMeterName"
-                                                  Header="انتخاب مولینه" PlaceholderText="مولینه مورد نظر را انتخاب کنید" />
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <ComboBox Name="cmbTimer" Header="زمان تایمر"
-                                                  ItemsSource="{Binding Source={helpers:EnumBindingSource EnumType=models:Timer}}"
-                                                  SelectedIndex="1" SelectionChanged="CmbTimer_OnSelectionChanged" />
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Spacing="50">
-                                    <TextBox Name="flowAvg" Width="120" VerticalAlignment="Center" Header="دبی کل"
-                                             HorizontalTextAlignment="Center" IsReadOnly="True" />
-                                </StackPanel>
-
-                            </StackPanel>
-                        </wuc:SettingsCard>
-                        <wuc:SettingsCard ContentAlignment="Left">
-                            <StackPanel Margin="0,10" Orientation="Horizontal" Spacing="10">
-                                <Button Name="btnAddLocation" HorizontalAlignment="Left" Content="ذخیره"
-                                        IsEnabled="True"
-                                        Style="{ThemeResource AccentButtonStyle}" />
-                                <Button Name="btnClearLocationBox" HorizontalAlignment="Left" Content="پاک کردن"
-                                        IsEnabled="False"
-                                        Style="{ThemeResource AccentButtonStyle}" />
-                            </StackPanel>
-                        </wuc:SettingsCard>
-                    </wuc:SettingsExpander.Items>
-                </wuc:SettingsExpander>
-            </ScrollViewer>
+            <Border x:Name="inputsPanel" Grid.Row="0" Grid.Column="0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind Assessment.Location}" />
+                        <TextBlock Text="{x:Bind Assessment.Date}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind Assessment.Employee_1}" />
+                        <TextBlock Text="{x:Bind Assessment.Employee_2}" />
+                        <TextBlock Text="{x:Bind Assessment.Employee_3}" />
+                        <TextBlock Text="{x:Bind Assessment.Echelon}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind Assessment.Openness}" />
+                        <TextBlock Text="{x:Bind Assessment.ToString()}" />
+                        <TextBlock Text="{x:Bind Assessment.Timer}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </Grid>
     </ScrollViewer>
 </Page>

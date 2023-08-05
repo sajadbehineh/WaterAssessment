@@ -17,6 +17,7 @@
             ThemeService.Initialize(m_window);
             ThemeService.ConfigBackdrop(BackdropType.DesktopAcrylic);
             ThemeService.ConfigElementTheme(ElementTheme.Default);
+            ThemeService.ConfigBackdropFallBackColorForWindow10(Current.Resources["ApplicationPageBackgroundThemeBrush"] as Brush);
 
             m_window.Activate();
         }

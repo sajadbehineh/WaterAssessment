@@ -11,11 +11,12 @@
                   FontFamily="{StaticResource ContentControlThemeFontFamily}">
         <Grid ColumnSpacing="20" FlowDirection="RightToLeft" RowSpacing="20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2.3*" />
+                <ColumnDefinition Width="3.33*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid Name="tableGrid" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left"
@@ -120,7 +121,7 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <StackPanel Name="fiftyPanel" Grid.Column="0" HorizontalAlignment="Left">
+                        <StackPanel Name="radianPanel" Grid.Column="0" HorizontalAlignment="Left">
 
                         </StackPanel>
                         <StackPanel Name="oneSecPanel" Grid.Column="1" HorizontalAlignment="Center">
@@ -294,6 +295,23 @@
 
             </Grid>
 
+            <StackPanel Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"
+                        Orientation="Horizontal">
+                <StackPanel Width="790" Margin="0,30" HorizontalAlignment="Left"
+                            VerticalAlignment="Top" Orientation="Horizontal" Spacing="10">
+                    <Button Name="btnAddAssessment" HorizontalAlignment="Left"
+                            Click="btnAddAssessment_OnClick" Content="ذخیره" IsEnabled="True"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                    <Button Name="btnClearFormCells" HorizontalAlignment="Left"
+                            Click="BtnClearFormCells_OnClick" Content="پاک کردن" IsEnabled="True"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+                <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
+                    <TextBox x:Name="totalFlowBox" Width="100" HorizontalAlignment="Right"
+                             Header="دبی کل" IsReadOnly="True" />
+                </Grid>
+            </StackPanel>
+
             <Border x:Name="inputsPanel" Grid.Row="0" Grid.Column="0">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -313,6 +331,9 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
+            <!--<InfoBarPanel Grid.Row="0" Grid.Column="1">
+                <InfoBar x:Name="assessmentInfoBar" IsClosable="False" IsOpen="False" />
+            </InfoBarPanel>-->
         </Grid>
     </ScrollViewer>
 </Page>

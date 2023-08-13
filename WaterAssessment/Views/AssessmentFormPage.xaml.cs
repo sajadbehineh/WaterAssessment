@@ -11,7 +11,6 @@ public sealed partial class AssessmentFormPage : Page
     public ObservableCollection<LocationItem> LocationsViewModel { get; set; }
 
     private const string DecimalFormat = "0.00#";
-    private int time;
 
     internal static AssessmentFormPage Instance { get; private set; }
 
@@ -42,20 +41,6 @@ public sealed partial class AssessmentFormPage : Page
         CreateRows(Assessment.RowsCount);
         BindTextProperty();
     }
-
-    Propeller propeller4 = new()
-    {
-        AValue = 0.1391,
-        BValue = 0.0351,
-        DeviceNumber = "123456"
-    };
-
-    Propeller propeller3 = new()
-    {
-        AValue = 0.1323,
-        BValue = 0.0407,
-        DeviceNumber = "123456"
-    };
 
     private void CreateRows(int rows = 4)
     {
@@ -128,7 +113,7 @@ public sealed partial class AssessmentFormPage : Page
 
         for (int j = 0; j < (rows * 3); j++)
         {
-            fiftyPanel.Children.Add(new Border()
+            radianPanel.Children.Add(new Border()
             {
                 Width = 65,
                 Height = 15,
@@ -277,18 +262,16 @@ public sealed partial class AssessmentFormPage : Page
 
     private List<TextBox> GetPanelTextBoxes(StackPanel panel)
     {
-
         return panel.Children
             .OfType<Border>()
             .Select(border => border.Child)
             .OfType<TextBox>().ToList();
-
     }
 
     private void BindTextProperty()
     {
-        //var fiftyPanelTextBoxes = GetPanelTextBoxes(fiftyPanel);
-        //var oneSecPanelTextBoxes = GetPanelTextBoxes(oneSecPanel);
+        var radianPanelTextBoxes = GetPanelTextBoxes(radianPanel);
+        var oneSecPanelTextBoxes = GetPanelTextBoxes(oneSecPanel);
         var pointPanelTextBoxes = GetPanelTextBoxes(pointPanel);
         var verticalPanelTextBoxes = GetPanelTextBoxes(verticalPanel);
         var depthsPanelTextBoxes = GetPanelTextBoxes(depthsPanel);
@@ -344,30 +327,30 @@ public sealed partial class AssessmentFormPage : Page
             crossFlowTextBox.TextChanged += CrossFlowTextBox_TextChanged;
         }
 
-        //for (int i = 0; i < fiftyPanelTextBoxes.Count; i++)
-        //{
-        //    Binding bindingFifty = new Binding()
-        //    {
-        //        Source = fiftyPanelTextBoxes[i],
-        //        Converter = new ToOneSecConverter(),
-        //        ConverterParameter = t,
-        //        Path = new PropertyPath("Text"),
-        //        //TargetNullValue = null,
-        //        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-        //    };
-        //    oneSecPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingFifty);
+        for (int i = 0; i < radianPanelTextBoxes.Count; i++)
+        {
+            Binding bindingFifty = new Binding()
+            {
+                Source = radianPanelTextBoxes[i],
+                Converter = new ToOneSecConverter(),
+                ConverterParameter = Assessment.Timer,
+                Path = new PropertyPath("Text"),
+                //TargetNullValue = null,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            oneSecPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingFifty);
 
-        //    Binding bindingOneSec = new Binding()
-        //    {
-        //        Source = oneSecPanelTextBoxes[i],
-        //        Converter = new RadianToVelocityConverter(),
-        //        ConverterParameter = propeller,
-        //        Path = new PropertyPath("Text"),
-        //        //TargetNullValue = null,
-        //        UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-        //    };
-        //    pointPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingOneSec);
-        //}
+            Binding bindingOneSec = new Binding()
+            {
+                Source = oneSecPanelTextBoxes[i],
+                Converter = new RadianToVelocityConverter(),
+                ConverterParameter = Assessment.Propeller,
+                Path = new PropertyPath("Text"),
+                //TargetNullValue = null,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+            };
+            pointPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingOneSec);
+        }
     }
 
     private void CrossFlowTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -377,7 +360,7 @@ public sealed partial class AssessmentFormPage : Page
         if (nonNullTextBoxes.Any())
         {
             var sum = nonNullTextBoxes.Sum(textBox => double.Parse(textBox.Text));
-            //flowAvg.Text = sum.ToString(DecimalFormat);
+            totalFlowBox.Text = sum.ToString(DecimalFormat);
         }
     }
 
@@ -651,75 +634,102 @@ public sealed partial class AssessmentFormPage : Page
         }
     }
 
-    private void DatePicker_OnLoaded(object sender, RoutedEventArgs e)
+    private void BtnClearFormCells_OnClick(object sender, RoutedEventArgs e)
     {
-        //datePicker.CalendarIdentifier = CalendarIdentifiers.Persian;
-        //datePicker.SelectedDate = System.DateTime.Today;
+        //Models.Assessment assessment = new Assessment
+        //{
+        //    Timer = Assessment.Timer,
+        //    Date = Assessment.Date,
+        //    //Inserted = DateTime.Today, //.ValueGeneratedOnAdd()
+        //    Echelon = Assessment.Echelon,
+        //    Openness = Assessment.Openness,
+        //    IsCanal = Assessment.IsCanal,
+        //    PropellerID = Assessment.Propeller.PropellerID,
+        //    CurrentMeterID = Assessment.CurrentMeterID,
+        //    LocationID = Assessment.LocationID,
+        //    //TotalFlow = Convert.ToDouble(totalFlowBox.Text),
+        //};
+        //using var db = new WaterAssessmentContext();
+        //db.Assessments.Add(assessment);
+        //db.SaveChanges();
+        //var btnClear = sender as Button;
+        //btnClear.Content = "Sobhanallah";
+        //ContentDialog contentDialog = new ContentDialog();
+        //contentDialog.Title = "Title";
+        //contentDialog.PrimaryButtonText = "Accept";
+        //contentDialog.XamlRoot = this.Content.XamlRoot;
+        //contentDialog.ShowAsync();
     }
 
-    private void CmbTimer_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void btnAddAssessment_OnClick(object sender, RoutedEventArgs e)
     {
-        var fiftyPanelTextBoxes = GetPanelTextBoxes(fiftyPanel);
-        var oneSecPanelTextBoxes = GetPanelTextBoxes(oneSecPanel);
-        var pointPanelTextBoxes = GetPanelTextBoxes(pointPanel);
-        var cmb = sender as ComboBox;
-        time = (int)cmb.SelectedValue;
-        for (int i = 0; i < fiftyPanelTextBoxes.Count; i++)
-        {
-            Binding bindingFifty = new Binding()
-            {
-                Source = fiftyPanelTextBoxes[i],
-                Converter = new ToOneSecConverter(),
-                ConverterParameter = time,
-                Path = new PropertyPath("Text"),
-                //TargetNullValue = null,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-            oneSecPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingFifty);
+        List<Assessment_Employee> employees = new List<Assessment_Employee>();
+        List<FormValue> formValues = new List<FormValue>();
 
-            Binding bindingOneSec = new Binding()
+        Models.Assessment assessment = new Assessment
+        {
+            Timer = Assessment.Timer,
+            Date = Assessment.Date,
+            Echelon = Assessment.Echelon,
+            Openness = Assessment.Openness,
+            IsCanal = Assessment.IsCanal,
+            PropellerID = Assessment.Propeller.PropellerID,
+            CurrentMeterID = Assessment.CurrentMeterID,
+            LocationID = Assessment.LocationID,
+            TotalFlow = Convert.ToDouble(totalFlowBox.Text),
+        };
+        await using var db = new WaterAssessmentContext();
+        await db.Assessments.AddAsync(assessment);
+        await db.SaveChangesAsync();
+
+        if (Assessment.EmployeeID is not null)
+        {
+            for (int i = 0; i < Assessment.EmployeeID.Length; i++)
             {
-                Source = oneSecPanelTextBoxes[i],
-                Converter = new RadianToVelocityConverter(),
-                ConverterParameter = propeller4,
-                Path = new PropertyPath("Text"),
-                //TargetNullValue = null,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-            };
-            pointPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingOneSec);
+                Assessment_Employee employee = new Assessment_Employee
+                {
+                    AssessmentID = assessment.AssessmentID,
+                    EmployeeID = Assessment.EmployeeID[i],
+                };
+
+                employees.Add(employee);
+            }
+
+            await db.AssessmentEmployees.AddRangeAsync(employees);
         }
+
+        var textBoxesInDistancePanel = GetPanelTextBoxes(distancesPanel);
+        var textBoxesInDepthPanel = GetPanelTextBoxes(depthsPanel);
+        var radianPanelTextBoxes = GetPanelTextBoxes(radianPanel);
+
+        for (int i = 0; i < textBoxesInDistancePanel.Count; i++)
+        {
+            string[] radians = new string[3];
+
+            FormValue formValue = new()
+            {
+                AssessmentID = assessment.AssessmentID,
+                Distance = Convert.ToDouble(textBoxesInDistancePanel[i].Text),
+                Depth = Convert.ToDouble(textBoxesInDepthPanel[i].Text)
+            };
+
+            for (int k = 0; k < 3; k++)
+            {
+                var index = (i * 3) + k;
+                radians.SetValue(radianPanelTextBoxes[index].Text, k);
+            }
+
+            formValue.RadianPerTime_1 = radians[0];
+            formValue.RadianPerTime_2 = radians[1];
+            formValue.RadianPerTime_3 = radians[2];
+            Array.Clear(radians);
+            formValues.Add(formValue);
+        }
+
+        await db.FormValues.AddRangeAsync(formValues);
+
+        await db.SaveChangesAsync();
+        //InitInfoBar.ImplementInfoBar(assessmentInfoBar, InfoBarSeverity.Success,
+        //    true, "اطلاعات اندازه گیری مورد نظر شما با موفقیت ثبت شد.");
     }
 }
-
-//private void InitializeTimeCalculate()
-//{
-//    var fiftyPanelTextBoxes = GetPanelTextBoxes(fiftyPanel);
-//    var oneSecPanelTextBoxes = GetPanelTextBoxes(oneSecPanel);
-//    var pointPanelTextBoxes = GetPanelTextBoxes(pointPanel);
-//    var cmb = sender as ComboBox;
-//    time = (int)cmb.SelectedValue;
-//    for (int i = 0; i < fiftyPanelTextBoxes.Count; i++)
-//    {
-//        Binding bindingFifty = new Binding()
-//        {
-//            Source = fiftyPanelTextBoxes[i],
-//            Converter = new ToOneSecConverter(),
-//            ConverterParameter = time,
-//            Path = new PropertyPath("Text"),
-//            //TargetNullValue = null,
-//            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-//        };
-//        oneSecPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingFifty);
-
-//        Binding bindingOneSec = new Binding()
-//        {
-//            Source = oneSecPanelTextBoxes[i],
-//            Converter = new RadianToVelocityConverter(),
-//            ConverterParameter = propeller4,
-//            Path = new PropertyPath("Text"),
-//            //TargetNullValue = null,
-//            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-//        };
-//        pointPanelTextBoxes[i].SetBinding(TextBox.TextProperty, bindingOneSec);
-//    }
-//}

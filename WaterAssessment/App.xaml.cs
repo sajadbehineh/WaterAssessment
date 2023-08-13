@@ -2,7 +2,7 @@
 {
     public partial class App : Application
     {
-        public IThemeService ThemeService { get; set; }
+        public IThemeService themeService { get; set; }
         public new static App Current => (App)Application.Current;
 
         public App()
@@ -13,11 +13,11 @@
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             m_window = new MainWindow();
-            ThemeService = new ThemeService();
-            ThemeService.Initialize(m_window);
-            ThemeService.ConfigBackdrop(BackdropType.DesktopAcrylic);
-            ThemeService.ConfigElementTheme(ElementTheme.Default);
-            ThemeService.ConfigBackdropFallBackColorForWindow10(Current.Resources["ApplicationPageBackgroundThemeBrush"] as Brush);
+            themeService = new ThemeService();
+            themeService.Initialize(m_window);
+            themeService.ConfigBackdrop(BackdropType.DesktopAcrylic);
+            themeService.ConfigElementTheme(ElementTheme.Default);
+            themeService.ConfigBackdropFallBackColorForWindow10(Current.Resources["ApplicationPageBackgroundThemeBrush"] as Brush);
 
             m_window.Activate();
         }

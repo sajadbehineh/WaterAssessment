@@ -20,6 +20,9 @@ public class WaterAssessmentContext : DbContext
             .HasKey(a => a.AreaID);
 
         modelBuilder.Entity<FormValue>()
+            .HasKey(f => f.FormValueID);
+
+        modelBuilder.Entity<FormValue>()
             .HasOne(p => p.Assessment)
             .WithMany(t => t.FormValues)
             .HasForeignKey(f => f.AssessmentID);
@@ -29,9 +32,6 @@ public class WaterAssessmentContext : DbContext
 
         modelBuilder.Entity<CurrentMeter>()
             .HasKey(c => c.CurrentMeterID);
-
-        modelBuilder.Entity<FormValue>()
-            .HasKey(f => f.FormValueID);
 
         modelBuilder.Entity<Propeller>()
             .HasKey(p => p.PropellerID);

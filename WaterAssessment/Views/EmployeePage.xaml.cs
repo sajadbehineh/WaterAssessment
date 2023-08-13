@@ -138,7 +138,7 @@ public sealed partial class EmployeePage : Page
             db.Employees.Remove(employee);
             db.SaveChanges();
             GetEmployeesFromDB();
-            InitInfoBar.ImplementInfoBar(firstNameBoxInfoBar, InfoBarSeverity.Success,
+            InitInfoBar.ImplementInfoBar(firstNameBoxInfoBar, InfoBarSeverity.Warning,
                 true, "همکار مورد نظر شما با موفقیت حذف شد.");
             firstNameBox.Focus(FocusState.Pointer);
         }

@@ -23,7 +23,8 @@ namespace WaterAssessment.Mapping
             builder
                 .Property(p => p.IsCanal).IsRequired();
             builder
-                .Property(b => b.Inserted).ValueGeneratedOnAdd();
+                .Property(b => b.Inserted)
+                .HasDefaultValueSql("getdate()");
             builder
                 .HasOne(p => p.Location)
                 .WithMany(t => t.Assessments)

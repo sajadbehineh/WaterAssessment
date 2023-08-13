@@ -1,11 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using WaterAssessment.Converters;
-using WaterAssessment.Models;
 using WaterAssessment.Views;
 using Windows.Globalization;
-using DevExpress.WinUI.Editors.Internal;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using WinRT;
 
 namespace WaterAssessment;
 
@@ -123,6 +118,7 @@ public sealed partial class MainWindow : Window
             switch (menuItem.Tag)
             {
                 case "AssessmentForm":
+                    InputPanelContentDialog_OnLoaded(null, null);
                     await inputPanelContentDialog.ShowAsyncQueue();
                     break;
 
@@ -218,7 +214,7 @@ public sealed partial class MainWindow : Window
             assessmentItem.Location = LocationsViewModel.Where(l => l.LocationID == locationID)
                 .FirstOrDefault().LocationArea;
 
-            var date = (datePicker.SelectedDate.Value.Date);
+            var date = (DateTime)(datePicker.SelectedDate.Value.DateTime);
             assessmentItem.Date = date;
 
             var echelon = echelonBox.Text;
@@ -227,9 +223,10 @@ public sealed partial class MainWindow : Window
             var openness = opennessBox.Text;
             assessmentItem.Openness = openness;
 
-            var propellerID = ((cmbPropeller.SelectedItem) as Propeller).PropellerID;
-            assessmentItem.PropellerID = propellerID;
-            assessmentItem.PropellerName = ((cmbPropeller.SelectedItem) as Propeller).DeviceNumber;
+            //var propellerID = ((cmbPropeller.SelectedItem) as Propeller).PropellerID;
+            //assessmentItem.PropellerID = propellerID;
+            //assessmentItem.PropellerName = ((cmbPropeller.SelectedItem) as Propeller).DeviceNumber;
+            assessmentItem.Propeller = ((cmbPropeller.SelectedItem) as Propeller);
 
             var currentMeterID = ((cmbCurrentMeter.SelectedItem) as CurrentMeter).CurrentMeterID;
             assessmentItem.CurrentMeterID = currentMeterID;

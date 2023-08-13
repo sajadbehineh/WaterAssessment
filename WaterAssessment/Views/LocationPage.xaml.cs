@@ -139,8 +139,8 @@ public sealed partial class LocationPage : Page
             db.Locations.Remove(location);
             db.SaveChanges();
             GetLocationViewModel();
-            InitInfoBar.ImplementInfoBar(locationInfoBar, InfoBarSeverity.Warning, true,
-                "مکان مورد نظر شما با موفقیت حذف شد.");
+            InitInfoBar.ImplementInfoBar(locationInfoBar, InfoBarSeverity.Warning,
+                true, "مکان مورد نظر شما با موفقیت حذف شد.");
         }
 
     }
@@ -254,16 +254,16 @@ public sealed partial class LocationPage : Page
         }
     }
 
-    private async void BtnHoverDeleteArea_OnClick(object sender, RoutedEventArgs e)
+    private void BtnHoverDeleteArea_OnClick(object sender, RoutedEventArgs e)
     {
         var areaID = (sender as AppBarButton).DataContext;
-        await using var db = new WaterAssessmentContext();
+        using var db = new WaterAssessmentContext();
         var area = db.Areas.Find(areaID);
 
         if (area is not null)
         {
             db.Areas.Remove(area);
-            await db.SaveChangesAsync();
+            db.SaveChanges();
             GetAreasFromDB();
             GetLocationViewModel();
             InitInfoBar.ImplementInfoBar(areaInfoBar, InfoBarSeverity.Warning, true,

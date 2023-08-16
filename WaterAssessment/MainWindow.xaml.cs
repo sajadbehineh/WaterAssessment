@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WaterAssessment.Views;
 using Windows.Globalization;
+using CommunityToolkit.WinUI.Controls;
 
 namespace WaterAssessment;
 
@@ -9,9 +10,10 @@ public sealed partial class MainWindow : Window
     public ObservableCollection<Area> Areas { get; set; } = new ObservableCollection<Area>();
     public List<Location> Locations { get; set; } = new List<Location>();
     public ObservableCollection<LocationItem> LocationsViewModel { get; set; } = new ObservableCollection<LocationItem>();
-    public ObservableCollection<Employee> Employees { get; set; } = new ObservableCollection<Employee>();
+    public readonly List<Employee> Employees = new List<Employee>();
     public ObservableCollection<Propeller> Propellers { get; set; } = new ObservableCollection<Propeller>();
     public ObservableCollection<CurrentMeter> CurrentMeters { get; set; } = new ObservableCollection<CurrentMeter>();
+    public ObservableCollection<Employee> SelectedEmployees { get; set; } = new();
 
     internal static MainWindow Instance { get; private set; }
     public MainWindow()
@@ -23,6 +25,7 @@ public sealed partial class MainWindow : Window
 
     private async void InputPanelContentDialog_OnLoaded(object sender, RoutedEventArgs e)
     {
+        SelectedEmployees = new ObservableCollection<Employee>();
         await Task.Run(() =>
         {
             GetEmployeesFromDB();
@@ -104,8 +107,10 @@ public sealed partial class MainWindow : Window
             Employees?.Clear();
             await using var db = new WaterAssessmentContext();
             var data = await db.Employees.ToListAsync();
-            Employees = new ObservableCollection<Employee>(data);
-            employeeList.ItemsSource = Employees;
+            foreach (var employee in data)
+            {
+                Employees.Add(employee);
+            }
         });
     }
 
@@ -181,34 +186,32 @@ public sealed partial class MainWindow : Window
 
     private void InputPanelContentDialog_OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        //if (AssessmentFormPage.Instance is not null)
-        //{
-        //    AssessmentFormPage.Instance = null;
-        //}
         ShellPage.Instance.Navigate(typeof(AssessmentFormPage));
 
         AssessmentItem assessmentItem = new AssessmentItem();
 
+
         if (AssessmentFormPage.Instance != null)
         {
-
-            var selectedEmployees = employeeList.SelectedItems;
-            if (selectedEmployees.Count > 0)
+            if (SelectedEmployees.Count > 0)
             {
-                assessmentItem.EmployeeID = new int[selectedEmployees.Count];
-
-                for (int i = 0; i < (selectedEmployees.Count); i++)
+                assessmentItem.EmployeeID = new int[SelectedEmployees.Count];
+                for (int i = 0; i < SelectedEmployees.Count; i++)
                 {
-                    assessmentItem.EmployeeID[i] = ((selectedEmployees[i]) as Employee).EmployeeID;
+                    assessmentItem.EmployeeID[i] = ((SelectedEmployees[i] as Employee).EmployeeID);
                 }
 
-                assessmentItem.Employee_1 = Employees.Where(e => e.EmployeeID == assessmentItem.EmployeeID[0])
+                assessmentItem.Employee_1 = SelectedEmployees
+                    .Where(e => e.EmployeeID == assessmentItem.EmployeeID[0])
                     .FirstOrDefault().ToString();
-                assessmentItem.Employee_2 = Employees.Where(e => e.EmployeeID == assessmentItem.EmployeeID[1])
+                assessmentItem.Employee_2 = SelectedEmployees
+                    .Where(e => e.EmployeeID == assessmentItem.EmployeeID[1])
                     .FirstOrDefault().ToString();
-                assessmentItem.Employee_3 = Employees.Where(emp => emp.EmployeeID == assessmentItem.EmployeeID[2])
+                assessmentItem.Employee_3 = SelectedEmployees
+                    .Where(e => e.EmployeeID == assessmentItem.EmployeeID[2])
                     .FirstOrDefault().ToString();
             }
+
             var locationID = ((cmbLocation.SelectedItem) as LocationItem).LocationID;
             assessmentItem.LocationID = locationID;
             assessmentItem.Location = LocationsViewModel.Where(l => l.LocationID == locationID)
@@ -243,5 +246,22 @@ public sealed partial class MainWindow : Window
             //var rows = (int)rowsCountNumberBox.Value > 0 ? (int)rowsCountNumberBox.Value : 4;
         }
         AssessmentFormPage.Instance.Assessment = assessmentItem;
+    }
+
+    private void TokenBox_OnTokenItemAdded(TokenizingTextBox sender, object args)
+    {
+        if (args is Employee employee)
+        {
+            SelectedEmployees.Add(employee);
+        }
+    }
+
+    private void TokenBox_OnTokenItemRemoved(TokenizingTextBox sender,
+        TokenItemRemovingEventArgs args)
+    {
+        if (args.Item is Employee employee)
+        {
+            SelectedEmployees.Remove(employee);
+        }
     }
 }

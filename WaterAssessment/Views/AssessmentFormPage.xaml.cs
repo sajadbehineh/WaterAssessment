@@ -706,12 +706,10 @@ public sealed partial class AssessmentFormPage : Page
         {
             string[] radians = new string[3];
 
-            FormValue formValue = new()
-            {
-                AssessmentID = assessment.AssessmentID,
-                Distance = Convert.ToDouble(textBoxesInDistancePanel[i].Text),
-                Depth = Convert.ToDouble(textBoxesInDepthPanel[i].Text)
-            };
+            FormValue formValue = new FormValue();
+            formValue.AssessmentID = assessment.AssessmentID;
+            formValue.Distance = Convert.ToDouble(textBoxesInDistancePanel[i].Text);
+            formValue.Depth = Convert.ToDouble(textBoxesInDepthPanel[i].Text);
 
             for (int k = 0; k < 3; k++)
             {
@@ -722,6 +720,7 @@ public sealed partial class AssessmentFormPage : Page
             formValue.RadianPerTime_1 = radians[0];
             formValue.RadianPerTime_2 = radians[1];
             formValue.RadianPerTime_3 = radians[2];
+
             Array.Clear(radians);
             formValues.Add(formValue);
         }

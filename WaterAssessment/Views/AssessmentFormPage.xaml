@@ -6,313 +6,28 @@
       xmlns:helpers="using:WaterAssessment.Helpers"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:models="using:WaterAssessment.Models"
-      xmlns:wuc="using:WinUICommunity" mc:Ignorable="d">
+      xmlns:wct="using:CommunityToolkit.WinUI.UI.Controls"
+      xmlns:wuc="using:WinUICommunity"
+      mc:Ignorable="d">
     <ScrollViewer Padding="20"
                   FontFamily="{StaticResource ContentControlThemeFontFamily}">
-        <Grid ColumnSpacing="20" FlowDirection="RightToLeft" RowSpacing="20">
+        <Grid ColumnSpacing="20"
+              FlowDirection="RightToLeft"
+              RowSpacing="20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3.33*" />
+                <ColumnDefinition Width="3.5*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid Name="tableGrid" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left"
-                  VerticalAlignment="Top" BorderBrush="Gray" BorderThickness="1,1,1,1"
-                  FlowDirection="RightToLeft">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0" HorizontalAlignment="Left">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="45" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <StackPanel Name="row_distance_deep_Header" Grid.Row="0" Grid.Column="0"
-                                HorizontalAlignment="Left"
-                                Background="{StaticResource SystemAccentColor}"
-                                Orientation="Horizontal">
-                        <Border Width="70" Padding="5" BorderBrush="Black" BorderThickness="0,0,1,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="ردیف" />
-                        </Border>
-
-                        <Border Width="70" Padding="5" BorderBrush="Black" BorderThickness="0,0,1,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="فاصله" />
-                        </Border>
-                        <Border Width="70" Padding="5" BorderBrush="Black" BorderThickness="0,0,2,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="عمق" />
-                        </Border>
-                    </StackPanel>
-                    <Grid Grid.Row="1" Grid.Column="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Name="rowNumbersPanel" Grid.Column="0" HorizontalAlignment="Left"
-                                    Orientation="Vertical">
-
-                        </StackPanel>
-                        <StackPanel Name="distancesPanel" Grid.Column="1" HorizontalAlignment="Left"
-                                    Orientation="Vertical">
-
-                        </StackPanel>
-                        <StackPanel Name="depthsPanel" Grid.Column="2" HorizontalAlignment="Left"
-                                    Orientation="Vertical">
-
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-
-                <Grid Grid.Column="1" HorizontalAlignment="Left">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="45" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" HorizontalAlignment="Left"
-                          Background="{StaticResource SystemAccentColor}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Width="130" Padding="0" BorderBrush="Black"
-                                BorderThickness="0,0,2,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       FontSize="14"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="تعداد دور /  ثانیه" />
-                        </Border>
-                        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Stretch"
-                                    Orientation="Horizontal">
-                            <Border Width="65" BorderBrush="Black" BorderThickness="0,0,1,1">
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                           FontSize="14"
-                                           Foreground="{StaticResource SystemAltHighColor}"
-                                           Text="پنجاه" />
-                            </Border>
-                            <Border Width="65" BorderBrush="Black" BorderThickness="0,0,2,1">
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                           FontSize="14"
-                                           Foreground="{StaticResource SystemAltHighColor}"
-                                           Text="یک" />
-                            </Border>
-                        </StackPanel>
-                    </Grid>
-                    <Grid Name="rpsPanel" Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Name="radianPanel" Grid.Column="0" HorizontalAlignment="Left">
-
-                        </StackPanel>
-                        <StackPanel Name="oneSecPanel" Grid.Column="1" HorizontalAlignment="Center">
-
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-
-                <Grid Grid.Column="2" HorizontalAlignment="Left">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="45" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" HorizontalAlignment="Left"
-                          Background="{StaticResource SystemAccentColor}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Width="264" Padding="0" BorderBrush="Black"
-                                BorderThickness="0,0,2,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       FontSize="14"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="سرعت متوسط در" />
-                        </Border>
-                        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Stretch"
-                                    Orientation="Horizontal">
-                            <Border Width="88" BorderBrush="Black" BorderThickness="0,0,1,1">
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                           FontSize="14"
-                                           Foreground="{StaticResource SystemAltHighColor}"
-                                           Text="نقطه" />
-                            </Border>
-                            <Border Width="88" BorderBrush="Black" BorderThickness="0,0,1,1">
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                           FontSize="14"
-                                           Foreground="{StaticResource SystemAltHighColor}"
-                                           Text="قائم" />
-                            </Border>
-                            <Border Width="88" BorderBrush="Black" BorderThickness="0,0,2,1">
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                           FontSize="14"
-                                           Foreground="{StaticResource SystemAltHighColor}"
-                                           Text="مقطع" />
-                            </Border>
-                        </StackPanel>
-                    </Grid>
-                    <Grid Name="averageVelocityPanel" Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Name="pointPanel" Grid.Column="0" HorizontalAlignment="Left">
-
-                        </StackPanel>
-                        <StackPanel Name="verticalPanel" Grid.Column="1" HorizontalAlignment="Center">
-
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                            <Border Width="88" Height="22.5"
-                                    Background="{StaticResource SystemAccentColorLight3}"
-                                    BorderBrush="Black" BorderThickness="0,0,0,1" />
-                            <StackPanel Name="crossPanel">
-
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-
-                <Grid Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="45" />
-                        <RowDefinition Height="22.5" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left"
-                          Background="{StaticResource SystemAccentColor}">
-                        <Border Width="70" Padding="0" BorderBrush="Black" BorderThickness="0,0,1,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       FontSize="14"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="عمق مقطع" />
-                        </Border>
-                    </Grid>
-                    <Grid Grid.Row="1" Grid.Column="0">
-                        <Border Width="70"
-                                Background="{StaticResource SystemAccentColorLight3}"
-                                BorderBrush="Black" BorderThickness="0,0,0,1" />
-                    </Grid>
-                    <Grid Grid.Row="2" Grid.Column="0">
-                        <StackPanel Name="crossDepthPanel" Grid.Column="0" HorizontalAlignment="Left">
-
-                        </StackPanel>
-                    </Grid>
-                    <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left"
-                          Background="{StaticResource SystemAccentColor}">
-                        <Border Width="70" Padding="0" BorderBrush="Black" BorderThickness="0,0,1,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       FontSize="14"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="عرض مقطع" />
-                        </Border>
-                    </Grid>
-                    <Grid Grid.Row="1" Grid.Column="1">
-                        <Border Width="70"
-                                Background="{StaticResource SystemAccentColorLight3}"
-                                BorderBrush="Black" BorderThickness="0,0,0,1" />
-                    </Grid>
-                    <Grid Grid.Row="2" Grid.Column="1">
-                        <StackPanel Name="sectionalWidthPanel" Grid.Column="0" HorizontalAlignment="Left">
-
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left"
-                          Background="{StaticResource SystemAccentColor}">
-                        <Border Width="70" Padding="0" BorderBrush="Black" BorderThickness="0,0,1,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       FontSize="14"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="سطح مقطع" />
-                        </Border>
-                    </Grid>
-                    <Grid Grid.Row="1" Grid.Column="2">
-                        <Border Width="70"
-                                Background="{StaticResource SystemAccentColorLight3}"
-                                BorderBrush="Black" BorderThickness="0,0,0,1" />
-                    </Grid>
-                    <Grid Grid.Row="2" Grid.Column="2">
-                        <StackPanel Name="areaPanel" Grid.Column="0" HorizontalAlignment="Left">
-
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left"
-                          Background="{StaticResource SystemAccentColor}">
-                        <Border Width="70" Padding="0" BorderBrush="Black" BorderThickness="0,0,0,1">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                       FontSize="14"
-                                       Foreground="{StaticResource SystemAltHighColor}"
-                                       Text="دبی مقطع" />
-                        </Border>
-                    </Grid>
-                    <Grid Grid.Row="1" Grid.Column="3">
-                        <Border Width="70"
-                                Background="{StaticResource SystemAccentColorLight3}"
-                                BorderBrush="Black" BorderThickness="0,0,0,1" />
-                    </Grid>
-                    <Grid Grid.Row="2" Grid.Column="3">
-                        <StackPanel Name="crossFlowPanel" Grid.Column="0" HorizontalAlignment="Left">
-
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-
-            </Grid>
-
-            <StackPanel Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"
-                        Orientation="Horizontal">
-                <StackPanel Width="790" Margin="0,30" HorizontalAlignment="Left"
-                            VerticalAlignment="Top" Orientation="Horizontal" Spacing="10">
-                    <Button Name="btnAddAssessment" HorizontalAlignment="Left"
-                            Click="btnAddAssessment_OnClick" Content="ذخیره" IsEnabled="True"
-                            Style="{ThemeResource AccentButtonStyle}" />
-                    <Button Name="btnClearFormCells" HorizontalAlignment="Left"
-                            Click="BtnClearFormCells_OnClick" Content="پاک کردن" IsEnabled="True"
-                            Style="{ThemeResource AccentButtonStyle}" />
-                </StackPanel>
-                <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                    <TextBox x:Name="totalFlowBox" Width="100" HorizontalAlignment="Right"
-                             Header="دبی کل" IsReadOnly="True" />
-                </Grid>
-            </StackPanel>
-
-            <Border x:Name="inputsPanel" Grid.Row="0" Grid.Column="0">
+            <Border x:Name="inputsPanel"
+                    Grid.Row="0"
+                    Grid.Column="0">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Assessment.Location}" />
@@ -331,6 +46,440 @@
                     </StackPanel>
                 </StackPanel>
             </Border>
+
+            <Grid Name="tableGrid"
+                  Grid.Row="1"
+                  Grid.Column="0"
+                  Margin="0,0,0,0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  BorderBrush="Gray"
+                  BorderThickness="1,1,1,1"
+                  FlowDirection="RightToLeft">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0"
+                      HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <StackPanel Name="row_distance_deep_Header"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Background="{StaticResource SystemAccentColor}"
+                                Orientation="Horizontal">
+                        <Border Width="70"
+                                Padding="5"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,1,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="ردیف" />
+                        </Border>
+
+                        <Border Width="70"
+                                Padding="5"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,1,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="فاصله" />
+                        </Border>
+                        <Border Width="70"
+                                Padding="5"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,2,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="عمق" />
+                        </Border>
+                    </StackPanel>
+                    <Grid Grid.Row="1"
+                          Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Name="rowNumbersPanel"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left"
+                                    Orientation="Vertical" />
+                        <StackPanel Name="distancesPanel"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    Orientation="Vertical" />
+                        <StackPanel Name="depthsPanel"
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Left"
+                                    Orientation="Vertical" />
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Column="1"
+                      HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0"
+                          HorizontalAlignment="Left"
+                          Background="{StaticResource SystemAccentColor}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0"
+                                Width="130"
+                                Padding="0"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,2,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="تعداد دور /  ثانیه" />
+                        </Border>
+                        <StackPanel Grid.Row="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"
+                                    Orientation="Horizontal">
+                            <Border Width="65"
+                                    BorderBrush="Black"
+                                    BorderThickness="0,0,1,1">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                           FontSize="14"
+                                           Foreground="{StaticResource SystemAltHighColor}"
+                                           Text="پنجاه" />
+                            </Border>
+                            <Border Width="65"
+                                    BorderBrush="Black"
+                                    BorderThickness="0,0,2,1">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                           FontSize="14"
+                                           Foreground="{StaticResource SystemAltHighColor}"
+                                           Text="یک" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Name="rpsPanel"
+                          Grid.Row="1"
+                          VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Name="radianPanel"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top" />
+                        <StackPanel Name="oneSecPanel"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top" />
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Column="2"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource SystemAccentColor}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0"
+                                Width="264"
+                                Padding="0"
+                                VerticalAlignment="Top"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,2,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Top"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="سرعت متوسط در" />
+                        </Border>
+                        <StackPanel Grid.Row="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"
+                                    Orientation="Horizontal">
+                            <Border Width="88"
+                                    BorderBrush="Black"
+                                    BorderThickness="0,0,1,1">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Top"
+                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                           FontSize="14"
+                                           Foreground="{StaticResource SystemAltHighColor}"
+                                           Text="نقطه" />
+                            </Border>
+                            <Border Width="88"
+                                    VerticalAlignment="Top"
+                                    BorderBrush="Black"
+                                    BorderThickness="0,0,1,1">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                           FontSize="14"
+                                           Foreground="{StaticResource SystemAltHighColor}"
+                                           Text="قائم" />
+                            </Border>
+                            <Border Width="88"
+                                    BorderBrush="Black"
+                                    BorderThickness="0,0,2,1">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                           FontSize="14"
+                                           Foreground="{StaticResource SystemAltHighColor}"
+                                           Text="مقطع" />
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Name="averageVelocityPanel"
+                          Grid.Row="1"
+                          VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Name="pointPanel"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top" />
+                        <StackPanel Name="verticalPanel"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top" />
+                        <StackPanel Grid.Column="2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top">
+                            <Border Width="88"
+                                    Height="22.5"
+                                    Background="{StaticResource SystemAccentColorLight3}"
+                                    BorderBrush="Black"
+                                    BorderThickness="0,0,0,1" />
+                            <StackPanel Name="crossPanel"
+                                        VerticalAlignment="Top" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Column="3"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Top">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45" />
+                        <RowDefinition Height="22.5" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="0"
+                          Grid.Column="0"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource SystemAccentColor}">
+                        <Border Width="70"
+                                Padding="0"
+                                VerticalAlignment="Top"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,1,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="عمق مقطع" />
+                        </Border>
+                    </Grid>
+                    <Grid Grid.Row="0"
+                          Grid.Column="1"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource SystemAccentColor}">
+                        <Border Width="70"
+                                Padding="0"
+                                VerticalAlignment="Top"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,1,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="عرض مقطع" />
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="0"
+                          Grid.Column="2"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource SystemAccentColor}">
+                        <Border Width="70"
+                                Padding="0"
+                                VerticalAlignment="Top"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,1,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="سطح مقطع" />
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="0"
+                          Grid.Column="3"
+                          HorizontalAlignment="Left"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource SystemAccentColor}">
+                        <Border Width="70"
+                                Padding="0"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,0,1">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                       FontSize="14"
+                                       Foreground="{StaticResource SystemAltHighColor}"
+                                       Text="دبی مقطع" />
+                        </Border>
+                    </Grid>
+                    <Grid Grid.Row="1"
+                          Grid.Column="0"
+                          VerticalAlignment="Top">
+                        <Border Width="70"
+                                Background="{StaticResource SystemAccentColorLight3}"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,0,1" />
+                    </Grid>
+                    <Grid Grid.Row="1"
+                          Grid.Column="1"
+                          VerticalAlignment="Top">
+                        <Border Width="70"
+                                VerticalAlignment="Top"
+                                Background="{StaticResource SystemAccentColorLight3}"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,0,1" />
+                    </Grid>
+                    <Grid Grid.Row="1"
+                          Grid.Column="2"
+                          VerticalAlignment="Top">
+                        <Border Width="70"
+                                VerticalAlignment="Top"
+                                Background="{StaticResource SystemAccentColorLight3}"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,0,1" />
+                    </Grid>
+                    <Grid Grid.Row="1"
+                          Grid.Column="3"
+                          VerticalAlignment="Top">
+                        <Border Width="70"
+                                Background="{StaticResource SystemAccentColorLight3}"
+                                BorderBrush="Black"
+                                BorderThickness="0,0,0,1" />
+                    </Grid>
+                    <Grid Grid.Row="2"
+                          Grid.Column="0"
+                          VerticalAlignment="Top">
+                        <StackPanel Name="crossDepthPanel"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left" />
+                    </Grid>
+                    <Grid Grid.Row="2"
+                          Grid.Column="1">
+                        <StackPanel Name="sectionalWidthPanel"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left" />
+                    </Grid>
+                    <Grid Grid.Row="2"
+                          Grid.Column="2">
+                        <StackPanel Name="areaPanel"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left" />
+                    </Grid>
+                    <Grid Grid.Row="2"
+                          Grid.Column="3">
+                        <StackPanel Name="crossFlowPanel"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left" />
+                    </Grid>
+                </Grid>
+
+            </Grid>
+
+            <StackPanel Grid.Row="2"
+                        Grid.Column="0"
+                        Margin="0,0,0,0"
+                        VerticalAlignment="Top"
+                        BorderBrush="Blue"
+                        BorderThickness="2"
+                        Orientation="Horizontal">
+                <StackPanel Width="790"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="10">
+                    <Button Name="btnAddAssessment"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Click="btnAddAssessment_OnClick"
+                            Content="ذخیره"
+                            IsEnabled="True"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                    <Button Name="btnClearFormCells"
+                            HorizontalAlignment="Left"
+                            Click="BtnClearFormCells_OnClick"
+                            Content="پاک کردن"
+                            IsEnabled="True"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                </StackPanel>
+                <Grid HorizontalAlignment="Right"
+                      VerticalAlignment="Top">
+                    <TextBox x:Name="totalFlowBox"
+                             Width="100"
+                             HorizontalAlignment="Right"
+                             Header="دبی کل"
+                             IsReadOnly="True" />
+                </Grid>
+            </StackPanel>
+
             <!--<InfoBarPanel Grid.Row="0" Grid.Column="1">
                 <InfoBar x:Name="assessmentInfoBar" IsClosable="False" IsOpen="False" />
             </InfoBarPanel>-->

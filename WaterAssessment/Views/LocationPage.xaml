@@ -10,8 +10,10 @@
       FontFamily="{StaticResource ContentControlThemeFontFamily}"
       mc:Ignorable="d">
 
-    <TabView IsAddTabButtonVisible="False" SelectedIndex="0">
-        <TabViewItem Header="ثبت اطلاعات محل های اندازه گیری" IsClosable="False">
+    <TabView IsAddTabButtonVisible="False"
+             SelectedIndex="0">
+        <TabViewItem Header="ثبت اطلاعات محل های اندازه گیری"
+                     IsClosable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2.5*" />
@@ -27,13 +29,22 @@
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="20,10" HorizontalAlignment="Stretch"
-                                Orientation="Vertical" Spacing="25">
-                        <TextBox Name="locationBox" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                                 Header="مکان اندازه گیری" IsSpellCheckEnabled="False"
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="20,10"
+                                HorizontalAlignment="Stretch"
+                                Orientation="Vertical"
+                                Spacing="25">
+                        <TextBox Name="locationBox"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Center"
+                                 Header="مکان اندازه گیری"
+                                 IsSpellCheckEnabled="False"
                                  PlaceholderText="لطفاً نام مکان اندازه گیری را وارد کنید"
                                  TextChanged="LocationBox_OnTextChanged" />
-                        <ComboBox Name="cmbArea" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                        <ComboBox Name="cmbArea"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Center"
                                   DisplayMemberPath="AreaName"
                                   FontFamily="{StaticResource SamimFD}"
                                   Header="حوزه اندازه گیری"
@@ -41,28 +52,51 @@
                                   SelectionChanged="CmbArea_OnSelectionChanged" />
                     </StackPanel>
 
-                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="20,10" HorizontalAlignment="Left"
-                                Orientation="Horizontal" Spacing="10">
-                        <Button Name="btnAddLocation" HorizontalAlignment="Left"
-                                Click="BtnAddLocation_OnClick" Content="ذخیره" IsEnabled="True"
-                                Style="{ThemeResource AccentButtonStyle}" />
-                        <Button Name="btnClearLocationBox" HorizontalAlignment="Left"
-                                Click="BtnClearLocationBox_OnClick" Content="پاک کردن" IsEnabled="False"
-                                Style="{ThemeResource AccentButtonStyle}" />
+                    <StackPanel x:Name="locationInfoPanel"
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="1"
+                                Padding="5,15,5,0"
+                                Spacing="10">
+                        <InfoBar x:Name="locationInfoBar"
+                                 IsClosable="False"
+                                 IsOpen="False" />
+                        <InfoBar x:Name="cmbAreaInfoBar"
+                                 IsClosable="False"
+                                 IsOpen="False" />
                     </StackPanel>
 
-                    <StackPanel x:Name="locationInfoPanel" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
-                                Padding="5,15,5,0" Spacing="10">
-                        <InfoBar x:Name="locationInfoBar" IsClosable="False" IsOpen="False" />
-                        <InfoBar x:Name="cmbAreaInfoBar" IsClosable="False" IsOpen="False" />
+                    <StackPanel Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="20,10"
+                                HorizontalAlignment="Left"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                        <Button Name="btnAddLocation"
+                                HorizontalAlignment="Left"
+                                Click="BtnAddLocation_OnClick"
+                                Content="ذخیره"
+                                IsEnabled="True"
+                                Style="{ThemeResource AccentButtonStyle}" />
+                        <Button Name="btnClearLocationBox"
+                                HorizontalAlignment="Left"
+                                Click="BtnClearLocationBox_OnClick"
+                                Content="پاک کردن"
+                                IsEnabled="False"
+                                Style="{ThemeResource AccentButtonStyle}" />
                     </StackPanel>
 
                 </Grid>
-                <Grid Grid.Column="1" Width="500" Margin="20,10" Padding="0,0,0,15"
+                <Grid Grid.Column="1"
+                      Width="500"
+                      Margin="20,10"
+                      Padding="0,0,0,15"
                       HorizontalAlignment="Left"
                       Style="{ThemeResource GridPanel}"
                       Translation="0 0 48">
-                    <ListView Name="locationsListView" Height="600" BorderThickness="0"
+                    <ListView Name="locationsListView"
+                              Height="600"
+                              BorderThickness="0"
                               ItemContainerStyle="{StaticResource HorizontalSwipe}"
                               SelectionMode="Single">
                         <ListView.ItemTemplate>
@@ -80,18 +114,34 @@
                                                     <ColumnDefinition Width="68" />
                                                     <ColumnDefinition Width="68" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                                <TextBlock Grid.Column="1"
+                                                           VerticalAlignment="Center"
                                                            Text="{x:Bind LocationName}" />
-                                                <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                                                <TextBlock Grid.Column="2"
+                                                           VerticalAlignment="Center"
                                                            Text="{x:Bind AreaName}" />
-                                                <AppBarButton x:Name="btnHoverDeleteLocation" Grid.Column="3" Width="60" Height="60"
-                                                              HorizontalAlignment="Left" Click="BtnHoverDeleteLocation_OnClick"
+                                                <AppBarButton x:Name="btnHoverDeleteLocation"
+                                                              Grid.Column="3"
+                                                              Width="60"
+                                                              Height="60"
+                                                              HorizontalAlignment="Left"
+                                                              Click="BtnHoverDeleteLocation_OnClick"
                                                               DataContext="{x:Bind LocationID}"
-                                                              Icon="Delete" IsTabStop="False" Label="حذف" Visibility="Collapsed" />
-                                                <AppBarButton x:Name="btnHoverEditLocation" Grid.Column="4" Width="60" Height="60"
-                                                              HorizontalAlignment="Left" Click="BtnHoverEditLocation_OnClick"
+                                                              Icon="Delete"
+                                                              IsTabStop="False"
+                                                              Label="حذف"
+                                                              Visibility="Collapsed" />
+                                                <AppBarButton x:Name="btnHoverEditLocation"
+                                                              Grid.Column="4"
+                                                              Width="60"
+                                                              Height="60"
+                                                              HorizontalAlignment="Left"
+                                                              Click="BtnHoverEditLocation_OnClick"
                                                               DataContext="{x:Bind LocationID}"
-                                                              Icon="Edit" IsTabStop="False" Label="ویرایش" Visibility="Collapsed" />
+                                                              Icon="Edit"
+                                                              IsTabStop="False"
+                                                              Label="ویرایش"
+                                                              Visibility="Collapsed" />
                                             </Grid>
                                         </SwipeControl>
 
@@ -121,10 +171,12 @@
                                         <ColumnDefinition Width="68" />
                                         <ColumnDefinition Width="68" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="1" HorizontalAlignment="Left"
+                                    <TextBlock Grid.Column="1"
+                                               HorizontalAlignment="Left"
                                                Foreground="{ThemeResource SystemAltHighColor}"
                                                Text="مکان اندازه گیری" />
-                                    <TextBlock Grid.Column="2" HorizontalAlignment="Left"
+                                    <TextBlock Grid.Column="2"
+                                               HorizontalAlignment="Left"
                                                Foreground="{ThemeResource SystemAltHighColor}"
                                                Text="حوزه اندازه گیری" />
                                 </Grid>
@@ -135,7 +187,8 @@
             </Grid>
         </TabViewItem>
 
-        <TabViewItem Header="ثبت حوزه های اندازه گیری" IsClosable="False">
+        <TabViewItem Header="ثبت حوزه های اندازه گیری"
+                     IsClosable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2.5*" />
@@ -151,39 +204,66 @@
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="20,10" HorizontalAlignment="Stretch"
-                                Orientation="Vertical" Spacing="25">
-                        <TextBox Name="areaBox" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                    <StackPanel Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="20,10"
+                                HorizontalAlignment="Stretch"
+                                Orientation="Vertical"
+                                Spacing="25">
+                        <TextBox Name="areaBox"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Center"
                                  FlowDirection="RightToLeft"
                                  FontFamily="{StaticResource SamimFD}"
-                                 Header="حوزه اندازه گیری" IsSpellCheckEnabled="False"
+                                 Header="حوزه اندازه گیری"
+                                 IsSpellCheckEnabled="False"
                                  PlaceholderText="لطفاً نام حوزه اندازه گیری را وارد کنید"
                                  TextChanged="AreaBox_OnTextChanged" />
                     </StackPanel>
 
-                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="20,10" HorizontalAlignment="Left"
-                                Orientation="Horizontal" Spacing="10">
-                        <Button Name="btnAddArea" HorizontalAlignment="Left" Click="BtnAddArea_OnClick"
-                                Content="ذخیره" IsEnabled="True"
-                                Style="{ThemeResource AccentButtonStyle}" />
-                        <Button Name="btnClearAreaBox" HorizontalAlignment="Left"
-                                Click="BtnClearAreaBox_OnClick" Content="پاک کردن" IsEnabled="False"
-                                Style="{ThemeResource AccentButtonStyle}" />
-                    </StackPanel>
-
-                    <StackPanel x:Name="infoPanel" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
-                                Padding="5,15,5,0" Spacing="10">
-                        <InfoBar x:Name="areaInfoBar" VerticalAlignment="Top" IsClosable="False"
+                    <StackPanel x:Name="infoPanel"
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="1"
+                                Padding="5,15,5,0"
+                                Spacing="10">
+                        <InfoBar x:Name="areaInfoBar"
+                                 VerticalAlignment="Top"
+                                 IsClosable="False"
                                  IsOpen="False" />
 
                     </StackPanel>
 
+                    <StackPanel Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="20,10"
+                                HorizontalAlignment="Left"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                        <Button Name="btnAddArea"
+                                HorizontalAlignment="Left"
+                                Click="BtnAddArea_OnClick"
+                                Content="ذخیره"
+                                IsEnabled="True"
+                                Style="{ThemeResource AccentButtonStyle}" />
+                        <Button Name="btnClearAreaBox"
+                                HorizontalAlignment="Left"
+                                Click="BtnClearAreaBox_OnClick"
+                                Content="پاک کردن"
+                                IsEnabled="False"
+                                Style="{ThemeResource AccentButtonStyle}" />
+                    </StackPanel>
+
                 </Grid>
-                <Grid Grid.Column="1" Width="500" Margin="20,10" Padding="0,0,0,15"
+                <Grid Grid.Column="1"
+                      Width="500"
+                      Margin="20,10"
+                      Padding="0,0,0,15"
                       HorizontalAlignment="Left"
                       Style="{ThemeResource GridPanel}"
                       Translation="0 0 48">
-                    <ListView Name="areasListView" BorderThickness="0"
+                    <ListView Name="areasListView"
+                              BorderThickness="0"
                               ItemContainerStyle="{StaticResource HorizontalSwipe}"
                               SelectionMode="Single">
                         <ListView.ItemTemplate>
@@ -201,16 +281,31 @@
                                                     <ColumnDefinition Width="68" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                                <TextBlock Grid.Column="1"
+                                                           VerticalAlignment="Center"
                                                            Text="{x:Bind AreaName}" />
-                                                <AppBarButton x:Name="btnHoverDeleteArea" Grid.Column="2" Width="60" Height="60"
-                                                              HorizontalAlignment="Left" Click="BtnHoverDeleteArea_OnClick"
+                                                <AppBarButton x:Name="btnHoverDeleteArea"
+                                                              Grid.Column="2"
+                                                              Width="60"
+                                                              Height="60"
+                                                              HorizontalAlignment="Left"
+                                                              Click="BtnHoverDeleteArea_OnClick"
                                                               DataContext="{x:Bind AreaID}"
-                                                              Icon="Delete" IsTabStop="False" Label="حذف" Visibility="Collapsed" />
-                                                <AppBarButton x:Name="btnHoverEditArea" Grid.Column="3" Width="60" Height="60"
-                                                              HorizontalAlignment="Left" Click="BtnHoverEditArea_OnClick"
+                                                              Icon="Delete"
+                                                              IsTabStop="False"
+                                                              Label="حذف"
+                                                              Visibility="Collapsed" />
+                                                <AppBarButton x:Name="btnHoverEditArea"
+                                                              Grid.Column="3"
+                                                              Width="60"
+                                                              Height="60"
+                                                              HorizontalAlignment="Left"
+                                                              Click="BtnHoverEditArea_OnClick"
                                                               DataContext="{x:Bind AreaID}"
-                                                              Icon="Edit" IsTabStop="False" Label="ویرایش" Visibility="Collapsed" />
+                                                              Icon="Edit"
+                                                              IsTabStop="False"
+                                                              Label="ویرایش"
+                                                              Visibility="Collapsed" />
                                             </Grid>
                                         </SwipeControl>
 
@@ -237,7 +332,9 @@
                                         <ColumnDefinition Width="32" />
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    <TextBlock Grid.Column="1"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
                                                Foreground="{ThemeResource SystemAltHighColor}"
                                                Text="حوزه" />
                                 </Grid>

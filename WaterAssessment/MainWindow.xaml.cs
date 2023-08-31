@@ -214,11 +214,12 @@ public sealed partial class MainWindow : Window
 
             var locationID = ((cmbLocation.SelectedItem) as LocationItem).LocationID;
             assessmentItem.LocationID = locationID;
-            assessmentItem.Location = LocationsViewModel.Where(l => l.LocationID == locationID)
-                .FirstOrDefault().LocationArea;
+            assessmentItem.Location = LocationsViewModel
+                    .Where(l => l.LocationID == locationID)
+                    .FirstOrDefault().LocationArea;
 
             var date = (DateTime)(datePicker.SelectedDate.Value.DateTime);
-            assessmentItem.Date = date;
+            assessmentItem.Date = date.ToShortDateString();
 
             var echelon = echelonBox.Text;
             assessmentItem.Echelon = echelon;
@@ -226,10 +227,10 @@ public sealed partial class MainWindow : Window
             var openness = opennessBox.Text;
             assessmentItem.Openness = openness;
 
-            //var propellerID = ((cmbPropeller.SelectedItem) as Propeller).PropellerID;
-            //assessmentItem.PropellerID = propellerID;
-            //assessmentItem.PropellerName = ((cmbPropeller.SelectedItem) as Propeller).DeviceNumber;
-            assessmentItem.Propeller = ((cmbPropeller.SelectedItem) as Propeller);
+            var propeller = ((cmbPropeller.SelectedItem) as Propeller);
+            assessmentItem.Propeller = propeller;
+            assessmentItem.PropellerID = propeller.PropellerID;
+            assessmentItem.PropellerName = propeller.DeviceNumber;
 
             var currentMeterID = ((cmbCurrentMeter.SelectedItem) as CurrentMeter).CurrentMeterID;
             assessmentItem.CurrentMeterID = currentMeterID;

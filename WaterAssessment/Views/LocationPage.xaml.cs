@@ -21,7 +21,6 @@ public sealed partial class LocationPage : Page
         await Task.Run(() =>
         {
             GetAreasFromDB();
-            //GetLocationFromDB();
             GetLocationViewModel();
         });
     }

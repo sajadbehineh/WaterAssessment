@@ -11,23 +11,185 @@
       mc:Ignorable="d">
     <ScrollViewer Padding="20"
                   FontFamily="{StaticResource ContentControlThemeFontFamily}">
-        <Grid ColumnSpacing="20"
-              FlowDirection="RightToLeft"
-              RowSpacing="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3.5*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <Grid HorizontalAlignment="Center"
+              ColumnSpacing="20"
+              RowSpacing="10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Border x:Name="inputsPanel"
+            <Grid x:Name="inputsPanel"
+                  Grid.Row="0"
+                  Width="887"
+                  HorizontalAlignment="Center"
+                  BorderBrush="Black"
+                  BorderThickness="1.5"
+                  CornerRadius="4"
+                  Style="{ThemeResource GridPanel}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--  Row 1  -->
+                <Border Grid.Row="0"
+                        Grid.Column="0"
+                        BorderBrush="Black"
+                        BorderThickness="0">
+                    <TextBlock Padding="5"
+                               FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Text="محل اندازه گیری" />
+                </Border>
+                <Border Grid.Row="0"
+                        Grid.Column="1"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,0,0,0">
+                    <TextBlock Padding="5"
+                               HorizontalAlignment="Center"
+                               Text="{x:Bind Assessment.Location}" />
+                </Border>
+                <Border Grid.Row="0"
+                        Grid.Column="2"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,0,0,0">
+                    <TextBlock Padding="5"
+                               FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Text="مولینه" />
+                </Border>
+                <Border Grid.Row="0"
+                        Grid.Column="3"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,0,0,0">
+                    <TextBlock Padding="5"
+                               HorizontalAlignment="Center"
+                               Text="{x:Bind Assessment.CurrentMeter_Propeller}" />
+                </Border>
+                <Border Grid.Row="0"
+                        Grid.Column="4"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,0,0,0">
+                    <TextBlock Padding="5"
+                               FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Text="اشل" />
+                </Border>
+                <Border Grid.Row="0"
+                        Grid.Column="5"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,0,0,0">
+                    <TextBlock Padding="5"
+                               HorizontalAlignment="Center"
+                               Text="{x:Bind Assessment.Echelon}" />
+                </Border>
+                <Border Grid.Row="0"
+                        Grid.Column="6"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,0,0,0">
+                    <TextBlock Padding="5"
+                               FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Text="اندازه گیرها" />
+                </Border>
+                <Border Grid.Row="0"
+                        Grid.Column="7"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,0,0,0">
+                    <TextBlock Padding="5"
+                               HorizontalAlignment="Center"
+                               Text="{x:Bind Assessment.EmployeeNames}" />
+                </Border>
+
+                <!--  Row 2  -->
+                <Border Grid.Row="1"
+                        Grid.Column="0"
+                        BorderBrush="Black"
+                        BorderThickness="0,1.5,0,0">
+                    <TextBlock Padding="5"
+                               FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Text="تاریخ اندازه گیری" />
+                </Border>
+                <Border Grid.Row="1"
+                        Grid.Column="1"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,1.5,0,0">
+                    <TextBlock Padding="5"
+                               HorizontalAlignment="Center"
+                               Text="{x:Bind Assessment.Date}" />
+                </Border>
+                <Border Grid.Row="1"
+                        Grid.Column="2"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,1.5,0,0">
+                    <TextBlock Padding="5"
+                               FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Text="تایمر" />
+                </Border>
+                <Border Grid.Row="1"
+                        Grid.Column="3"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,1.5,0,0">
+                    <TextBlock Padding="5"
+                               HorizontalAlignment="Center"
+                               Text="{x:Bind Assessment.Timer}" />
+                </Border>
+                <Border Grid.Row="1"
+                        Grid.Column="4"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,1.5,0,0">
+                    <TextBlock Padding="5"
+                               FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Text="گشودگی" />
+                </Border>
+                <Border Grid.Row="1"
+                        Grid.Column="5"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,1.5,0,0">
+                    <TextBlock Padding="5"
+                               HorizontalAlignment="Center"
+                               Text="{x:Bind Assessment.Openness}" />
+                </Border>
+                <Border Grid.Row="1"
+                        Grid.Column="6"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,1.5,0,0">
+                    <TextBlock Padding="5"
+                               FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Text="دبی کل" />
+                </Border>
+                <Border Grid.Row="1"
+                        Grid.Column="7"
+                        Background="Gold"
+                        BorderBrush="Black"
+                        BorderThickness="1.5,1.5,0,0">
+                    <TextBlock x:Name="totalFlowBox"
+                               Padding="5"
+                               HorizontalAlignment="Center" />
+                </Border>
+            </Grid>
+
+            <!--<Border x:Name="inputsPanel"
                     Grid.Row="0"
-                    Grid.Column="0">
+                    BorderBrush="Black"
+                    BorderThickness="2">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Assessment.Location}" />
@@ -41,21 +203,18 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Assessment.Openness}" />
-                        <TextBlock Text="{x:Bind Assessment.ToString()}" />
+                        <TextBlock Text="{x:Bind Assessment.CurrentMeter_Propeller}" />
                         <TextBlock Text="{x:Bind Assessment.Timer}" />
                     </StackPanel>
                 </StackPanel>
-            </Border>
+            </Border>-->
 
             <Grid Name="tableGrid"
                   Grid.Row="1"
-                  Grid.Column="0"
-                  Margin="0,0,0,0"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Top"
                   BorderBrush="Gray"
-                  BorderThickness="1,1,1,1"
-                  FlowDirection="RightToLeft">
+                  BorderThickness="1,1,1,1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -73,8 +232,7 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Background="{StaticResource SystemAccentColor}"
+                                Background="{StaticResource SystemControlBackgroundAccentBrush}"
                                 Orientation="Horizontal">
                         <Border Width="70"
                                 Padding="5"
@@ -157,7 +315,7 @@
                         </Border>
                         <StackPanel Grid.Row="1"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Top"
+                                    VerticalAlignment="Stretch"
                                     Orientation="Horizontal">
                             <Border Width="65"
                                     BorderBrush="Black"
@@ -182,33 +340,28 @@
                         </StackPanel>
                     </Grid>
                     <Grid Name="rpsPanel"
-                          Grid.Row="1"
-                          VerticalAlignment="Top">
+                          Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <StackPanel Name="radianPanel"
                                     Grid.Column="0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top" />
+                                    HorizontalAlignment="Left" />
                         <StackPanel Name="oneSecPanel"
                                     Grid.Column="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Top" />
+                                    HorizontalAlignment="Center" />
                     </Grid>
                 </Grid>
 
                 <Grid Grid.Column="2"
-                      HorizontalAlignment="Left"
-                      VerticalAlignment="Top">
+                      HorizontalAlignment="Left">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="45" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0"
                           HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
                           Background="{StaticResource SystemAccentColor}">
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -217,11 +370,10 @@
                         <Border Grid.Row="0"
                                 Width="264"
                                 Padding="0"
-                                VerticalAlignment="Top"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,2,1">
                             <TextBlock HorizontalAlignment="Center"
-                                       VerticalAlignment="Top"
+                                       VerticalAlignment="Center"
                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                        FontSize="14"
                                        Foreground="{StaticResource SystemAltHighColor}"
@@ -229,20 +381,19 @@
                         </Border>
                         <StackPanel Grid.Row="1"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Top"
+                                    VerticalAlignment="Stretch"
                                     Orientation="Horizontal">
                             <Border Width="88"
                                     BorderBrush="Black"
                                     BorderThickness="0,0,1,1">
                                 <TextBlock HorizontalAlignment="Center"
-                                           VerticalAlignment="Top"
+                                           VerticalAlignment="Center"
                                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                            FontSize="14"
                                            Foreground="{StaticResource SystemAltHighColor}"
                                            Text="نقطه" />
                             </Border>
                             <Border Width="88"
-                                    VerticalAlignment="Top"
                                     BorderBrush="Black"
                                     BorderThickness="0,0,1,1">
                                 <TextBlock HorizontalAlignment="Center"
@@ -265,8 +416,7 @@
                         </StackPanel>
                     </Grid>
                     <Grid Name="averageVelocityPanel"
-                          Grid.Row="1"
-                          VerticalAlignment="Top">
+                          Grid.Row="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -274,22 +424,18 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Name="pointPanel"
                                     Grid.Column="0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top" />
+                                    HorizontalAlignment="Left" />
                         <StackPanel Name="verticalPanel"
                                     Grid.Column="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Top" />
+                                    HorizontalAlignment="Center" />
                         <StackPanel Grid.Column="2"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Top">
+                                    HorizontalAlignment="Center">
                             <Border Width="88"
                                     Height="22.5"
                                     Background="{StaticResource SystemAccentColorLight3}"
                                     BorderBrush="Black"
                                     BorderThickness="0,0,0,1" />
-                            <StackPanel Name="crossPanel"
-                                        VerticalAlignment="Top" />
+                            <StackPanel Name="crossPanel" />
                         </StackPanel>
                     </Grid>
                 </Grid>
@@ -311,11 +457,9 @@
                     <Grid Grid.Row="0"
                           Grid.Column="0"
                           HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
                           Background="{StaticResource SystemAccentColor}">
                         <Border Width="70"
                                 Padding="0"
-                                VerticalAlignment="Top"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                             <TextBlock HorizontalAlignment="Center"
@@ -329,11 +473,9 @@
                     <Grid Grid.Row="0"
                           Grid.Column="1"
                           HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
                           Background="{StaticResource SystemAccentColor}">
                         <Border Width="70"
                                 Padding="0"
-                                VerticalAlignment="Top"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                             <TextBlock HorizontalAlignment="Center"
@@ -348,11 +490,9 @@
                     <Grid Grid.Row="0"
                           Grid.Column="2"
                           HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
                           Background="{StaticResource SystemAccentColor}">
                         <Border Width="70"
                                 Padding="0"
-                                VerticalAlignment="Top"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,1,1">
                             <TextBlock HorizontalAlignment="Center"
@@ -367,7 +507,6 @@
                     <Grid Grid.Row="0"
                           Grid.Column="3"
                           HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
                           Background="{StaticResource SystemAccentColor}">
                         <Border Width="70"
                                 Padding="0"
@@ -382,42 +521,35 @@
                         </Border>
                     </Grid>
                     <Grid Grid.Row="1"
-                          Grid.Column="0"
-                          VerticalAlignment="Top">
+                          Grid.Column="0">
                         <Border Width="70"
                                 Background="{StaticResource SystemAccentColorLight3}"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,0,1" />
                     </Grid>
                     <Grid Grid.Row="1"
-                          Grid.Column="1"
-                          VerticalAlignment="Top">
+                          Grid.Column="1">
                         <Border Width="70"
-                                VerticalAlignment="Top"
                                 Background="{StaticResource SystemAccentColorLight3}"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,0,1" />
                     </Grid>
                     <Grid Grid.Row="1"
-                          Grid.Column="2"
-                          VerticalAlignment="Top">
+                          Grid.Column="2">
                         <Border Width="70"
-                                VerticalAlignment="Top"
                                 Background="{StaticResource SystemAccentColorLight3}"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,0,1" />
                     </Grid>
                     <Grid Grid.Row="1"
-                          Grid.Column="3"
-                          VerticalAlignment="Top">
+                          Grid.Column="3">
                         <Border Width="70"
                                 Background="{StaticResource SystemAccentColorLight3}"
                                 BorderBrush="Black"
                                 BorderThickness="0,0,0,1" />
                     </Grid>
                     <Grid Grid.Row="2"
-                          Grid.Column="0"
-                          VerticalAlignment="Top">
+                          Grid.Column="0">
                         <StackPanel Name="crossDepthPanel"
                                     Grid.Column="0"
                                     HorizontalAlignment="Left" />
@@ -444,12 +576,11 @@
 
             </Grid>
 
-            <StackPanel Grid.Row="2"
+            <StackPanel x:Name="buttonPanel"
+                        Grid.Row="2"
                         Grid.Column="0"
                         Margin="0,0,0,0"
                         VerticalAlignment="Top"
-                        BorderBrush="Blue"
-                        BorderThickness="2"
                         Orientation="Horizontal">
                 <StackPanel Width="790"
                             HorizontalAlignment="Left"
@@ -470,19 +601,67 @@
                             IsEnabled="True"
                             Style="{ThemeResource AccentButtonStyle}" />
                 </StackPanel>
-                <Grid HorizontalAlignment="Right"
+                <!--<Grid HorizontalAlignment="Right"
                       VerticalAlignment="Top">
                     <TextBox x:Name="totalFlowBox"
                              Width="100"
                              HorizontalAlignment="Right"
                              Header="دبی کل"
                              IsReadOnly="True" />
-                </Grid>
+                </Grid>-->
             </StackPanel>
 
             <!--<InfoBarPanel Grid.Row="0" Grid.Column="1">
                 <InfoBar x:Name="assessmentInfoBar" IsClosable="False" IsOpen="False" />
             </InfoBarPanel>-->
+
+            <Grid Grid.Row="3">
+                <wct:DataGrid x:Name="dataGrid"
+                              AutoGenerateColumns="False"
+                              BorderBrush="DimGray"
+                              BorderThickness="1.5"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="False"
+                              FrozenColumnCount="0"
+                              GridLinesVisibility="All"
+                              HeadersVisibility="Column"
+                              IsReadOnly="True"
+                              Loaded="DataGrid_OnLoaded"
+                              MaxColumnWidth="400"
+                              SelectionMode="Extended"
+                              VerticalScrollBarVisibility="Visible">
+                    <wct:DataGrid.Columns>
+                        <wct:DataGridTextColumn Binding="{Binding AssessmentID}"
+                                                FontSize="14"
+                                                Header="ID" />
+                        <wct:DataGridTextColumn Binding="{Binding LocationName}"
+                                                FontSize="14"
+                                                Header="محل اندازه گیری" />
+                        <wct:DataGridTextColumn Binding="{Binding Date}"
+                                                FontSize="14"
+                                                Header="تاریخ اندازه گیری" />
+                        <wct:DataGridTextColumn Binding="{Binding CurrentMeter_Propeller}"
+                                                FontSize="14"
+                                                Header="پروانه - مولینه" />
+                        <wct:DataGridTextColumn Binding="{Binding Employee_2}"
+                                                FontSize="14"
+                                                Header="اندازه گیرها" />
+                        <wct:DataGridTextColumn Binding="{Binding Echelon}"
+                                                FontSize="14"
+                                                Header="اشل" />
+                        <wct:DataGridTextColumn Binding="{Binding Openness}"
+                                                FontSize="14"
+                                                Header="گشودگی ها" />
+                        <wct:DataGridTextColumn Binding="{Binding TotalFlow}"
+                                                FontSize="14"
+                                                Foreground="Green"
+                                                Header="دبی کل" />
+
+                    </wct:DataGrid.Columns>
+
+                </wct:DataGrid>
+            </Grid>
         </Grid>
     </ScrollViewer>
 </Page>

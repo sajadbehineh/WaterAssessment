@@ -1,14 +1,21 @@
-﻿using WaterAssessment.Converters;
+﻿using System.Globalization;
+using Microsoft.EntityFrameworkCore;
+using WaterAssessment.Converters;
 
 namespace WaterAssessment.Views;
 
 public sealed partial class AssessmentFormPage : Page
 {
-    public ObservableCollection<Employee> Employees { get; set; } = new ObservableCollection<Employee>();
-    public ObservableCollection<Location> Locations { get; set; } = new ObservableCollection<Location>();
-    public ObservableCollection<CurrentMeter> CurrentMeters { get; set; } = new ObservableCollection<CurrentMeter>();
-    public ObservableCollection<Propeller> Propellers { get; set; } = new ObservableCollection<Propeller>();
-    public ObservableCollection<LocationItem> LocationsViewModel { get; set; }
+    public List<Employee> Employees { get; set; } = new List<Employee>();
+    public List<Assessment_Employee> AssessmentEmployees { get; set; } = new();
+    public List<Location> Locations { get; set; } = new List<Location>();
+    public List<CurrentMeter> CurrentMeters { get; set; } = new();
+    public List<Propeller> Propellers { get; set; } = new();
+    public List<LocationItem> LocationsViewModel { get; set; } = new List<LocationItem>();
+    public List<Area> Areas { get; set; } = new List<Area>();
+    public ObservableCollection<WaterAssessment.Models.Assessment> Assessments { get; set; } = new ObservableCollection<WaterAssessment.Models.Assessment>();
+    public List<AssessmentItem> AssessmentsViewModel { get; set; } = new List<AssessmentItem>();
+
 
     private const string DecimalFormat = "0.00#";
 
@@ -32,14 +39,54 @@ public sealed partial class AssessmentFormPage : Page
         this.InitializeComponent();
         Instance = this;
         DataContext = this;
-        inputsPanel.DataContext = LocationsViewModel;
         Loaded += AssessmentFormPage_Loaded;
     }
 
-    private void AssessmentFormPage_Loaded(object sender, RoutedEventArgs e)
+    private async void AssessmentFormPage_Loaded(object sender, RoutedEventArgs e)
     {
         CreateRows(Assessment.RowsCount);
         BindTextProperty();
+    }
+
+    private void DataGrid_OnLoaded(object sender, RoutedEventArgs e)
+    {
+        InitAssessmentItemList();
+    }
+
+    private void InitAssessmentItemList()
+    {
+        PersianCalendar pc = new PersianCalendar();
+        AssessmentsViewModel?.Clear();
+        using var db = new WaterAssessmentContext();
+
+        var assessmentViewModels = db.Assessments
+            .Include(a => a.Location)
+            .Include(a => a.CurrentMeter)
+            .Include(a => a.Propeller)
+            .Include(a => a.FormValues)
+            .Include(a => a.AssessmentEmployees)
+            .ThenInclude(ae => ae.Employee)
+            .Select(a => new AssessmentItem()
+            {
+                AssessmentID = a.AssessmentID,
+                Timer = a.Timer,
+                Date = $"{pc.GetYear(a.Date)}/{pc.GetMonth(a.Date)}/{pc.GetDayOfMonth(a.Date)}",
+                Inserted = a.Inserted,
+                Echelon = a.Echelon,
+                Openness = a.Openness,
+                TotalFlow = a.TotalFlow,
+                IsCanal = a.IsCanal,
+                LocationName = a.Location.Place,
+                CurrentMeterName = a.CurrentMeter.CurrentMeterName,
+                PropellerName = a.Propeller.DeviceNumber,
+                FormValues = a.FormValues.ToList(),
+                EmployeeNames = string.Join(", ", a.AssessmentEmployees
+                    .Select(ae => ae.Employee.ToString()).ToList()),
+            })
+            .ToList();
+
+        AssessmentsViewModel = new(assessmentViewModels);
+        dataGrid.ItemsSource = AssessmentsViewModel;
     }
 
     private void CreateRows(int rows = 4)
@@ -636,29 +683,7 @@ public sealed partial class AssessmentFormPage : Page
 
     private void BtnClearFormCells_OnClick(object sender, RoutedEventArgs e)
     {
-        //Models.Assessment assessment = new Assessment
-        //{
-        //    Timer = Assessment.Timer,
-        //    Date = Assessment.Date,
-        //    //Inserted = DateTime.Today, //.ValueGeneratedOnAdd()
-        //    Echelon = Assessment.Echelon,
-        //    Openness = Assessment.Openness,
-        //    IsCanal = Assessment.IsCanal,
-        //    PropellerID = Assessment.Propeller.PropellerID,
-        //    CurrentMeterID = Assessment.CurrentMeterID,
-        //    LocationID = Assessment.LocationID,
-        //    //TotalFlow = Convert.ToDouble(totalFlowBox.Text),
-        //};
-        //using var db = new WaterAssessmentContext();
-        //db.Assessments.Add(assessment);
-        //db.SaveChanges();
-        //var btnClear = sender as Button;
-        //btnClear.Content = "Sobhanallah";
-        //ContentDialog contentDialog = new ContentDialog();
-        //contentDialog.Title = "Title";
-        //contentDialog.PrimaryButtonText = "Accept";
-        //contentDialog.XamlRoot = this.Content.XamlRoot;
-        //contentDialog.ShowAsync();
+        
     }
 
     private async void btnAddAssessment_OnClick(object sender, RoutedEventArgs e)
@@ -669,7 +694,7 @@ public sealed partial class AssessmentFormPage : Page
         Models.Assessment assessment = new Assessment
         {
             Timer = Assessment.Timer,
-            Date = Assessment.Date,
+            Date = Convert.ToDateTime(Assessment.Date),
             Echelon = Assessment.Echelon,
             Openness = Assessment.Openness,
             IsCanal = Assessment.IsCanal,

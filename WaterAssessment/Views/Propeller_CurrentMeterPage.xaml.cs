@@ -1,163 +1,150 @@
-﻿namespace WaterAssessment.Views;
+﻿using System.Collections.Specialized;
+using WaterAssessment.ViewModels;
+
+namespace WaterAssessment.Views;
 
 public sealed partial class Propeller_CurrentMeterPage : Page
 {
-    public ObservableCollection<Propeller> Propellers { get; set; } = new ObservableCollection<Propeller>();
-    public ObservableCollection<CurrentMeter> CurrentMeters { get; set; } = new ObservableCollection<CurrentMeter>();
-
-    private bool _propellerIsEdited = false;
-    private bool _currentMeterIsEdited = false;
+    public PropellerViewModel PropellerViewModel { get; } = new();
+    public CurrentMeterViewModel CurrentMeterViewModel { get; } = new();
 
     public Propeller_CurrentMeterPage()
     {
         this.InitializeComponent();
         DataContext = this;
-        Loaded += Propeller_CurrentMeterPage_Loaded;
+        PropellerViewModel.Propellers.CollectionChanged += Propeller_CollectionChanged;
+        CurrentMeterViewModel.CurrentMeters.CollectionChanged += CurrentMeter_CollectionChanged;
     }
 
-    private async void Propeller_CurrentMeterPage_Loaded(object sender, RoutedEventArgs e)
+    private void Propeller_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        await Task.Run(() =>
+        // فقط اگر چیزی اضافه، حذف یا لیست ریست شد، شماره‌ها را آپدیت کن
+        if (e.Action == NotifyCollectionChangedAction.Remove ||
+            e.Action == NotifyCollectionChangedAction.Add ||
+            e.Action == NotifyCollectionChangedAction.Reset)
         {
-            GetPropellerFromDB();
-            GetCurrentMeterFromDB();
-        });
+            // اجرای متد بروزرسانی روی ترد اصلی UI
+            DispatcherQueue.TryEnqueue(UpdatePropellerVisibleIndices);
+        }
     }
 
-    #region Propeller
-
-    private void GetPropellerFromDB()
+    private void UpdatePropellerVisibleIndices()
     {
-        DispatcherQueue.TryEnqueue(() =>
+        // حلقه روی تمام آیتم‌های موجود در لیست
+        for (int i = 0; i < PropellerViewModel.Propellers.Count; i++)
         {
-            Propellers?.Clear();
-            using var db = new WaterAssessmentContext();
-            var data = db.Propellers.ToList();
-            Propellers = new(data);
-            propellerListView.ItemsSource = Propellers;
-        });
-    }
+            var item = PropellerViewModel.Propellers[i];
 
-    private void BtnAddPropeller_OnClick(object sender, RoutedEventArgs e)
-    {
-        var btnAdd = sender as Button;
-        using var db = new WaterAssessmentContext();
-        InitInfoBar.ImplementInfoBar(numBoxInfoBar, InfoBarSeverity.Error,
-            String.IsNullOrWhiteSpace(propellerNumBox.Text), "وارد کردن شماره پروانه الزامی است.");
-        InitInfoBar.ImplementInfoBar(aValueInfoBar, InfoBarSeverity.Error,
-            String.IsNullOrWhiteSpace(aValueBox.Text), "وارد کردن ضریب (a) الزامی است.");
-        InitInfoBar.ImplementInfoBar(bValueInfoBar, InfoBarSeverity.Error,
-            String.IsNullOrWhiteSpace(bValueBox.Text), "وارد کردن ضریب (b) الزامی است.");
+            // تلاش برای گرفتن کانتینر (سطر گرافیکی) مربوط به این آیتم
+            // اگر آیتم خارج از دید باشد (اسکرول شده باشد)، مقدار null برمی‌گردد که مشکلی نیست
+            var container = PropellerListView.ContainerFromItem(item) as DependencyObject;
 
-        if (!String.IsNullOrWhiteSpace(propellerNumBox.Text)
-            && !String.IsNullOrWhiteSpace(aValueBox.Text)
-            && !String.IsNullOrWhiteSpace(bValueBox.Text))
-        {
-            Propeller newPropeller = new Propeller
+            if (container != null)
             {
-                DeviceNumber = propellerNumBox.Text,
-                AValue = Convert.ToDouble(aValueBox.Text),
-                BValue = Convert.ToDouble(bValueBox.Text)
-            };
-            var duplicate = db.Propellers.Where(p =>
-                p.DeviceNumber == newPropeller.DeviceNumber && p.AValue == newPropeller.AValue &&
-                p.BValue == newPropeller.BValue).FirstOrDefault();
-
-            if (duplicate != null)
-            {
-                InitInfoBar.ImplementInfoBar(numBoxInfoBar, InfoBarSeverity.Error,
-                    true, $"پروانه شماره {duplicate.DeviceNumber} قبلاً ثبت شده است.");
-                return;
-            }
-
-            if (_propellerIsEdited && btnAdd.DataContext is Propeller selectedPropeller)
-            {
-                Propeller propeller = db.Propellers.Find(selectedPropeller.PropellerID);
-                if (propeller != null)
+                var indexBlock = FindChild<TextBlock>(container, "PropellerIndexTextBlock");
+                if (indexBlock != null)
                 {
-                    propeller.DeviceNumber = newPropeller.DeviceNumber;
-                    propeller.AValue = newPropeller.AValue;
-                    propeller.BValue = newPropeller.BValue;
-                    db.SaveChanges();
-                    _propellerIsEdited = false;
-                    GetPropellerFromDB();
-                    propellerNumBox.Text = String.Empty;
-                    aValueBox.Text = String.Empty;
-                    bValueBox.Text = String.Empty;
-                    btnAdd.Content = "ذخیره";
-                    InitInfoBar.ImplementInfoBar(numBoxInfoBar, InfoBarSeverity.Success,
-                        true, "پروانه مورد نظر شما با موفقیت ویرایش شد.");
-                    propellerNumBox.Focus(FocusState.Pointer);
+                    // اصلاح شماره ردیف
+                    indexBlock.Text = (i + 1).ToString();
                 }
             }
-            else
+        }
+    }
+
+    private void PropellerListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        // اگر آیتم در حال بازیافت است، کاری نکن (برای پرفورمنس)
+        if (args.InRecycleQueue) return;
+
+        // ریشه تمپلیت شما یک UserControl است (طبق کد شما)
+        var root = args.ItemContainer.ContentTemplateRoot as DependencyObject;
+
+        // تلاش برای پیدا کردن تکست‌باکس با نام "IndexTextBlock"
+        var indexBlock = FindChild<TextBlock>(root, "PropellerIndexTextBlock");
+
+        if (indexBlock != null)
+        {
+            // مقداردهی شماره ردیف (ایندکس از 0 شروع می‌شود، پس +1 می‌کنیم)
+            indexBlock.Text = (args.ItemIndex + 1).ToString();
+        }
+    }
+
+    private void CurrentMeter_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        // فقط اگر چیزی اضافه، حذف یا لیست ریست شد، شماره‌ها را آپدیت کن
+        if (e.Action == NotifyCollectionChangedAction.Remove ||
+            e.Action == NotifyCollectionChangedAction.Add ||
+            e.Action == NotifyCollectionChangedAction.Reset)
+        {
+            // اجرای متد بروزرسانی روی ترد اصلی UI
+            DispatcherQueue.TryEnqueue(UpdateCurrentMeterVisibleIndices);
+        }
+    }
+
+    private void UpdateCurrentMeterVisibleIndices()
+    {
+        // حلقه روی تمام آیتم‌های موجود در لیست
+        for (int i = 0; i < CurrentMeterViewModel.CurrentMeters.Count; i++)
+        {
+            var item = CurrentMeterViewModel.CurrentMeters[i];
+
+            // تلاش برای گرفتن کانتینر (سطر گرافیکی) مربوط به این آیتم
+            // اگر آیتم خارج از دید باشد (اسکرول شده باشد)، مقدار null برمی‌گردد که مشکلی نیست
+            var container = CurrentMeterListView.ContainerFromItem(item) as DependencyObject;
+
+            if (container != null)
             {
-                db.Propellers.Add(newPropeller);
-                db.SaveChanges();
-                GetPropellerFromDB();
-                propellerNumBox.Text = String.Empty;
-                aValueBox.Text = String.Empty;
-                bValueBox.Text = String.Empty;
-                InitInfoBar.ImplementInfoBar(numBoxInfoBar, InfoBarSeverity.Success,
-                    true, "پروانه مورد نظر شما با موفقیت ثبت شد.");
-                propellerNumBox.Focus(FocusState.Pointer);
+                var indexBlock = FindChild<TextBlock>(container, "CurrentMeterIndexTextBlock");
+                if (indexBlock != null)
+                {
+                    // اصلاح شماره ردیف
+                    indexBlock.Text = (i + 1).ToString();
+                }
             }
         }
     }
 
-    private void BtnHoverDeletePropeller_OnClick(object sender, RoutedEventArgs e)
+    private void CurrentMeterListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
-        var propellerID = (sender as AppBarButton).DataContext;
-        using var db = new WaterAssessmentContext();
-        var propeller = db.Propellers.Find(propellerID);
-        if (propeller is not null)
+        // اگر آیتم در حال بازیافت است، کاری نکن (برای پرفورمنس)
+        if (args.InRecycleQueue) return;
+
+        // ریشه تمپلیت شما یک UserControl است (طبق کد شما)
+        var root = args.ItemContainer.ContentTemplateRoot as DependencyObject;
+
+        // تلاش برای پیدا کردن تکست‌باکس با نام "IndexTextBlock"
+        var indexBlock = FindChild<TextBlock>(root, "CurrentMeterIndexTextBlock");
+
+        if (indexBlock != null)
         {
-            db.Propellers.Remove(propeller);
-            db.SaveChanges();
-            GetPropellerFromDB();
-            InitInfoBar.ImplementInfoBar(numBoxInfoBar, InfoBarSeverity.Warning, true,
-                "پروانه مورد نظر شما با موفقیت حذف شد.");
+            // مقداردهی شماره ردیف (ایندکس از 0 شروع می‌شود، پس +1 می‌کنیم)
+            indexBlock.Text = (args.ItemIndex + 1).ToString();
         }
     }
 
-    private void BtnHoverEditArea_OnClick(object sender, RoutedEventArgs e)
+    private static T FindChild<T>(DependencyObject parent, string childName) where T : DependencyObject
     {
-        var propellerID = Convert.ToInt32((sender as AppBarButton).DataContext);
-        if (((propellerListView.Items).Where(p => (p is Propeller propeller) && propeller.PropellerID == propellerID)
-                .FirstOrDefault()) is Propeller selectedPropeller)
+        if (parent == null) return null;
+
+        int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < childrenCount; i++)
         {
-            _propellerIsEdited = true;
-            propellerNumBox.Text = selectedPropeller.DeviceNumber;
-            aValueBox.Text = (selectedPropeller.AValue).ToString();
-            bValueBox.Text = (selectedPropeller.BValue).ToString();
-            btnAddPropeller.Content = "ویرایش";
-            btnAddPropeller.DataContext = selectedPropeller;
+            var child = VisualTreeHelper.GetChild(parent, i);
+
+            // بررسی نام و نوع کنترل
+            if (child is FrameworkElement fe && fe.Name == childName && child is T typedChild)
+            {
+                return typedChild;
+            }
+
+            // جستجوی بازگشتی (Recursive) در فرزندان
+            var foundChild = FindChild<T>(child, childName);
+            if (foundChild != null) return foundChild;
         }
+        return null;
     }
 
-    private void BtnClearTextBoxes_OnClick(object sender, RoutedEventArgs e)
-    {
-        if (_propellerIsEdited)
-        {
-            _propellerIsEdited = false;
-        }
-        propellerNumBox.Text = string.Empty;
-        aValueBox.Text = string.Empty;
-        bValueBox.Text = string.Empty;
-        numBoxInfoBar.IsOpen = false;
-        aValueInfoBar.IsOpen = false;
-        bValueInfoBar.IsOpen = false;
-        btnAddPropeller.Content = "ذخیره";
-        propellerNumBox.Focus(FocusState.Pointer);
-    }
-
-    private void PropellerTextBoxes_OnTextChanged(object sender, TextChangedEventArgs e)
-    {
-        var currentTxt = (sender as TextBox).Text;
-        btnClearPropellerBox.IsEnabled = !string.IsNullOrWhiteSpace(currentTxt);
-    }
-
-    private void propellerSwipeContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
+    private void SwipeContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse ||
             e.Pointer.PointerDeviceType == PointerDeviceType.Pen)
@@ -167,140 +154,9 @@ public sealed partial class Propeller_CurrentMeterPage : Page
         }
     }
 
-    private void propellerSwipeContainer_PointerExited(object sender, PointerRoutedEventArgs e)
+    private void SwipeContainer_PointerExited(object sender, PointerRoutedEventArgs e)
     {
         VisualStateManager.GoToState(
             sender as Control, "HoverButtonsHidden", true);
     }
-
-    #endregion
-
-    #region CurrentMeter
-
-    private void GetCurrentMeterFromDB()
-    {
-        DispatcherQueue.TryEnqueue(() =>
-        {
-            CurrentMeters?.Clear();
-            using var db = new WaterAssessmentContext();
-            var data = db.CurrentMeters.ToList();
-            CurrentMeters = new ObservableCollection<CurrentMeter>(data);
-            currentMeterListView.ItemsSource = CurrentMeters;
-        });
-    }
-
-    private void BtnAddCurrentMeter_OnClick(object sender, RoutedEventArgs e)
-    {
-        var btnAdd = sender as Button;
-        using var db = new WaterAssessmentContext();
-
-        InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Error,
-            string.IsNullOrWhiteSpace(currentMeterBox.Text), "لطفاً شماره مولینه را وارد کنید");
-
-        if (!string.IsNullOrWhiteSpace(currentMeterBox.Text))
-        {
-            CurrentMeter newCurrentMeter = new CurrentMeter { CurrentMeterName = currentMeterBox.Text };
-            var duplicate = db.CurrentMeters.Where(c => c.CurrentMeterName == newCurrentMeter.CurrentMeterName)
-                .FirstOrDefault();
-
-            if (duplicate != null)
-            {
-                InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Error, true, $"مولینه {duplicate.CurrentMeterName} قبلاً ثبت شده است.");
-                return;
-            }
-
-            if (_currentMeterIsEdited && btnAdd.DataContext is CurrentMeter selectedCurrentMeter)
-            {
-                CurrentMeter currentMeter = db.CurrentMeters.Find(selectedCurrentMeter.CurrentMeterID);
-                if (currentMeter != null)
-                {
-                    currentMeter.CurrentMeterName = newCurrentMeter.CurrentMeterName;
-                    db.SaveChanges();
-                    _currentMeterIsEdited = false;
-                    GetCurrentMeterFromDB();
-                    currentMeterBox.Text = string.Empty;
-                    btnAdd.Content = "ذخیره";
-                    InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Success,
-                        true, "مولینه مورد نظر شما با موفقیت ویرایش شد.");
-                    currentMeterBox.Focus(FocusState.Pointer);
-                }
-            }
-            else
-            {
-                db.CurrentMeters.Add(newCurrentMeter);
-                db.SaveChanges();
-                GetCurrentMeterFromDB();
-                currentMeterBox.Text = string.Empty;
-                InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Success,
-                    true, "مولینه مورد نظر شما با موفقیت ثبت شد.");
-                currentMeterBox.Focus(FocusState.Pointer);
-            }
-        }
-    }
-
-    private void BtnHoverDeleteCurrentMeter_OnClick(object sender, RoutedEventArgs e)
-    {
-        var currentMeterID = (sender as AppBarButton).DataContext;
-        using var db = new WaterAssessmentContext();
-        var currentMeter = db.CurrentMeters.Find(currentMeterID);
-
-        if (currentMeter != null)
-        {
-            db.CurrentMeters.Remove(currentMeter);
-            db.SaveChanges();
-            GetCurrentMeterFromDB();
-            InitInfoBar.ImplementInfoBar(currentMeterInfoBar, InfoBarSeverity.Warning,
-                true, "مولینه مورد نظر شما با موفقیت حذف شد.");
-        }
-    }
-
-    private void BtnHoverEditCurrentMeter_OnClick(object sender, RoutedEventArgs e)
-    {
-        var currentMeterID = Convert.ToInt32((sender as AppBarButton).DataContext);
-        if (((currentMeterListView.Items)
-                .Where(c => (c is CurrentMeter currentMeter) && currentMeter.CurrentMeterID == currentMeterID)
-                .FirstOrDefault()) is CurrentMeter selectedCurrentMeter)
-        {
-            _currentMeterIsEdited = true;
-            currentMeterBox.Text = selectedCurrentMeter.CurrentMeterName;
-            btnAddCurrentMeter.Content = "ویرایش";
-            btnAddCurrentMeter.DataContext = selectedCurrentMeter;
-        }
-    }
-
-    private void BtnClearCurrentMeterBox_OnClick(object sender, RoutedEventArgs e)
-    {
-        if (_currentMeterIsEdited)
-        {
-            _currentMeterIsEdited = false;
-        }
-        currentMeterBox.Text = string.Empty;
-        currentMeterInfoBar.IsOpen = false;
-        btnAddCurrentMeter.Content = "ذخیره";
-        currentMeterBox.Focus(FocusState.Pointer);
-    }
-
-    private void CurrentMeterBox_OnTextChanged(object sender, TextChangedEventArgs e)
-    {
-        var txtCurrentMeterBox = (sender as TextBox).Text;
-        btnClearCurrentMeterBox.IsEnabled = !string.IsNullOrWhiteSpace(txtCurrentMeterBox);
-    }
-
-    private void CurrentMeterSwipeContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse ||
-            e.Pointer.PointerDeviceType == PointerDeviceType.Pen)
-        {
-            VisualStateManager.GoToState(
-                sender as Control, "HoverButtonsShown", true);
-        }
-    }
-
-    private void CurrentMeterSwipeContainer_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        VisualStateManager.GoToState(
-            sender as Control, "HoverButtonsHidden", true);
-    }
-
-    #endregion
 }

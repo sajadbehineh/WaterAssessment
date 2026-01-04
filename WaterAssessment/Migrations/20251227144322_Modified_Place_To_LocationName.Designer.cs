@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WaterAssessment.Models;
 
@@ -11,9 +12,11 @@ using WaterAssessment.Models;
 namespace WaterAssessment.Migrations
 {
     [DbContext(typeof(WaterAssessmentContext))]
-    partial class WaterAssessmentContextModelSnapshot : ModelSnapshot
+    [Migration("20251227144322_Modified_Place_To_LocationName")]
+    partial class Modified_Place_To_LocationName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,35 +209,14 @@ namespace WaterAssessment.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PropellerID"));
 
-                    b.Property<double>("A1")
+                    b.Property<double>("AValue")
                         .HasColumnType("float");
 
-                    b.Property<double?>("A2")
+                    b.Property<double>("BValue")
                         .HasColumnType("float");
 
-                    b.Property<double?>("A3")
-                        .HasColumnType("float");
-
-                    b.Property<double>("B1")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("B2")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("B3")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Mode")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PropellerName")
+                    b.Property<string>("DeviceNumber")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("TransitionPoint1")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("TransitionPoint2")
-                        .HasColumnType("float");
 
                     b.HasKey("PropellerID");
 

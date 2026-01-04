@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WaterAssessment.Models;
 
@@ -11,9 +12,11 @@ using WaterAssessment.Models;
 namespace WaterAssessment.Migrations
 {
     [DbContext(typeof(WaterAssessmentContext))]
-    partial class WaterAssessmentContextModelSnapshot : ModelSnapshot
+    [Migration("20251227212723_Modified_PropellerNumber_To_PropellerName_And_Added_New_Property")]
+    partial class Modified_PropellerNumber_To_PropellerName_And_Added_New_Property
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

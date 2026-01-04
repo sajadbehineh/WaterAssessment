@@ -15,6 +15,12 @@
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<ImplicitUsing>true</ImplicitUsing>
 	</PropertyGroup>
+	<!--<ItemGroup>
+	  <Compile Remove="Core\**" />
+	  <EmbeddedResource Remove="Core\**" />
+	  <None Remove="Core\**" />
+	  <Page Remove="Core\**" />
+	</ItemGroup>-->
 	<ItemGroup>
 	  <Content Remove="Assets\Fonts\Vazirmatn-Bold.ttf" />
 	  <Content Remove="Assets\Fonts\Vazirmatn-Medium.ttf" />
@@ -29,7 +35,9 @@
 	  <None Remove="Assets\Icons\propeller-svgrepo-com.svg" />
 	  <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
 	  <None Remove="Assets\propeller.png" />
+	  <None Remove="Helpers\CustomControls\CustomNumberBoxStyle.xaml" />
 	  <None Remove="Views\AssessmentFormPage.xaml" />
+	  <None Remove="Views\CreateAssessmentDialog.xaml" />
 	  <None Remove="Views\EmployeePage.xaml" />
 	  <None Remove="Views\LocationPage.xaml" />
 	  <None Remove="Views\Propeller_CurrentMeterPage.xaml" />
@@ -48,19 +56,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.230811-preview" />
+		<PackageReference Include="AK.Toolkit.WinUI3.NumberBoxEx" Version="1.0.1" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.230907" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.10" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.3.230724000" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
 		<PackageReference Include="WinUICommunity.Components" Version="5.0.2" />
 		<PackageReference Include="WinUICommunity.Core" Version="5.0.4" />
@@ -119,4 +131,17 @@
 	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
+	<ItemGroup>
+	  <PRIResource Remove="Core\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Helpers\CustomControls\CustomNumberBoxStyle.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\CreateAssessmentDialog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
 </Project>

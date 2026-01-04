@@ -5,22 +5,22 @@ public class Assessment
     public int AssessmentID { get; set; }
     public int Timer { get; set; }
     public DateTime Date { get; set; }
-    public DateTime Inserted { get; set; }
-    public string Echelon { get; set; }
-    public string Openness { get; set; }
-    public double TotalFlow { get; set; }
+    public DateTime Inserted { get; set; } = DateTime.Now;
+    public double? Echelon { get; set; }
+    public double? Openness { get; set; }
     public bool IsCanal { get; set; }
+    public double TotalFlow { get; set; }
 
     public int LocationID { get; set; }
-    public Location Location { get; set; }
+    public virtual Location Location { get; set; }
 
     public int CurrentMeterID { get; set; }
-    public CurrentMeter CurrentMeter { get; set; }
+    public virtual CurrentMeter CurrentMeter { get; set; }
 
     public int PropellerID { get; set; }
-    public Propeller Propeller { get; set; }
+    public virtual Propeller Propeller { get; set; }
 
-    public List<FormValue> FormValues { get; set; }
+    public virtual List<FormValue> FormValues { get; set; } = new();
 
-    public List<Assessment_Employee> AssessmentEmployees { get; set; }
+    public virtual List<Assessment_Employee> AssessmentEmployees { get; set; }=new();
 }

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml.Media.Animation;
 
 namespace WaterAssessment.Views;

@@ -1,114 +1,97 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Specialized;
 
 namespace WaterAssessment.Views;
 
 public sealed partial class EmployeePage : Page
 {
-    public ObservableCollection<Employee> Employees { get; set; } = new ObservableCollection<Employee>();
-
-    private bool _isEdited = false;
+    public EmployeeViewModel ViewModel { get; } = new();
 
     public EmployeePage()
     {
         this.InitializeComponent();
-        DataContext = this;
-        Loaded += EmployeePage_Loaded;
+        //DataContext = ViewModel;
+        //Loaded += EmployeePage_Loaded;
+        ViewModel.Employees.CollectionChanged += Employees_CollectionChanged;
     }
 
-    private void EmployeePage_Loaded(object sender, RoutedEventArgs e)
+    // رویداد تغییر لیست (حذف/اضافه)
+    private void Employees_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        GetEmployeesFromDB();
-    }
-
-    private void GetEmployeesFromDB()
-    {
-        DispatcherQueue.TryEnqueue(async () =>
+        // فقط اگر چیزی اضافه، حذف یا لیست ریست شد، شماره‌ها را آپدیت کن
+        if (e.Action == NotifyCollectionChangedAction.Remove ||
+            e.Action == NotifyCollectionChangedAction.Add ||
+            e.Action == NotifyCollectionChangedAction.Reset)
         {
-            Employees?.Clear();
-            await using var db = new WaterAssessmentContext();
-            var data = await db.Employees.ToListAsync();
-            Employees = new ObservableCollection<Employee>(data);
-            employeeListView.ItemsSource = Employees;
-        });
+            // اجرای متد بروزرسانی روی ترد اصلی UI
+            DispatcherQueue.TryEnqueue(UpdateVisibleIndices);
+        }
     }
 
-    private void employeeTextBoxes_OnTextChanged(object sender, TextChangedEventArgs e)
+    // این متد فقط شماره سطرهایی که الان دیده می‌شوند را اصلاح می‌کند
+    private void UpdateVisibleIndices()
     {
-        var currentTxt = (sender as TextBox).Text;
-        btnClearEmployeeBox.IsEnabled = !string.IsNullOrWhiteSpace(currentTxt);
-    }
-
-    private void BtnAddEmployee_OnClick(object sender, RoutedEventArgs e)
-    {
-        var btnAdd = sender as Button;
-        using var db = new WaterAssessmentContext();
-        InitInfoBar.ImplementInfoBar(firstNameBoxInfoBar, InfoBarSeverity.Error,
-            string.IsNullOrWhiteSpace(firstNameBox.Text), "لطفاً نام را وارد کنید.");
-        InitInfoBar.ImplementInfoBar(lastNameBoxInfoBar, InfoBarSeverity.Error,
-            string.IsNullOrWhiteSpace(lastNameBox.Text), "لطفاً نام خانوادگی را وارد کنید.");
-
-        if (!string.IsNullOrWhiteSpace(firstNameBox.Text) && !string.IsNullOrWhiteSpace(lastNameBox.Text))
+        // حلقه روی تمام آیتم‌های موجود در لیست
+        for (int i = 0; i < ViewModel.Employees.Count; i++)
         {
-            Employee newEmployee = new Employee
-            {
-                FirstName = firstNameBox.Text,
-                LastName = lastNameBox.Text
-            };
-            var duplicate = db.Employees
-                .Where(emp => emp.FirstName == newEmployee.FirstName && emp.LastName == newEmployee.LastName)
-                .FirstOrDefault();
+            var item = ViewModel.Employees[i];
 
-            if (duplicate != null)
-            {
-                InitInfoBar.ImplementInfoBar(firstNameBoxInfoBar, InfoBarSeverity.Error, true,
-                    $"{duplicate.FirstName} {duplicate.LastName} قبلاً ثبت شده است");
-                return;
-            }
+            // تلاش برای گرفتن کانتینر (سطر گرافیکی) مربوط به این آیتم
+            // اگر آیتم خارج از دید باشد (اسکرول شده باشد)، مقدار null برمی‌گردد که مشکلی نیست
+            var container = employeeListView.ContainerFromItem(item) as DependencyObject;
 
-            if (_isEdited && btnAdd.DataContext is Employee selectedEmployee)
+            if (container != null)
             {
-                Employee employee = db.Employees.Find(selectedEmployee.EmployeeID);
-                if (employee != null)
+                var indexBlock = FindChild<TextBlock>(container, "IndexTextBlock");
+                if (indexBlock != null)
                 {
-                    employee.FirstName = newEmployee.FirstName;
-                    employee.LastName = newEmployee.LastName;
-                    db.SaveChanges();
-                    _isEdited = false;
-                    GetEmployeesFromDB();
-                    firstNameBox.Text = string.Empty;
-                    lastNameBox.Text = string.Empty;
-                    btnAdd.Content = "ذخیره";
-                    InitInfoBar.ImplementInfoBar(firstNameBoxInfoBar, InfoBarSeverity.Success,
-                        true, "همکار مورد نظر شما با موفقیت ویرایش شد.");
-                    firstNameBox.Focus(FocusState.Pointer);
+                    // اصلاح شماره ردیف
+                    indexBlock.Text = (i + 1).ToString();
                 }
             }
-            else
-            {
-                db.Employees.Add(newEmployee);
-                db.SaveChanges();
-                GetEmployeesFromDB();
-                firstNameBox.Text = string.Empty;
-                lastNameBox.Text = string.Empty;
-                InitInfoBar.ImplementInfoBar(firstNameBoxInfoBar, InfoBarSeverity.Success,
-                    true, "همکار مورد نظر شما با موفقیت ثبت شد.");
-                firstNameBox.Focus(FocusState.Pointer);
-            }
         }
     }
 
-    private void BtnClearEmployeeBox_OnClick(object sender, RoutedEventArgs e)
+    // این متد هر بار که یک ردیف می‌خواهد نمایش داده شود (یا اسکرول شود) اجرا می‌شود
+    private void employeeListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
-        if (_isEdited)
+        // اگر آیتم در حال بازیافت است، کاری نکن (برای پرفورمنس)
+        if (args.InRecycleQueue) return;
+
+        // ریشه تمپلیت شما یک UserControl است (طبق کد شما)
+        var root = args.ItemContainer.ContentTemplateRoot as DependencyObject;
+
+        // تلاش برای پیدا کردن تکست‌باکس با نام "IndexTextBlock"
+        var indexBlock = FindChild<TextBlock>(root, "IndexTextBlock");
+
+        if (indexBlock != null)
         {
-            _isEdited = false;
+            // مقداردهی شماره ردیف (ایندکس از 0 شروع می‌شود، پس +1 می‌کنیم)
+            indexBlock.Text = (args.ItemIndex + 1).ToString();
         }
-        firstNameBox.Text = string.Empty;
-        lastNameBox.Text = string.Empty;
-        firstNameBoxInfoBar.IsOpen = false;
-        lastNameBoxInfoBar.IsOpen = false;
-        btnAddEmployee.Content = "ذخیره";
-        firstNameBox.Focus(FocusState.Pointer);
+    }
+
+    // متد کمکی برای جستجو در ویژوال تری (Visual Tree)
+    // این متد داخل لایه‌های تودرتو می‌گردد تا کنترلی با نام مشخص را پیدا کند
+    private static T FindChild<T>(DependencyObject parent, string childName) where T : DependencyObject
+    {
+        if (parent == null) return null;
+
+        int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < childrenCount; i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+
+            // بررسی نام و نوع کنترل
+            if (child is FrameworkElement fe && fe.Name == childName && child is T typedChild)
+            {
+                return typedChild;
+            }
+
+            // جستجوی بازگشتی (Recursive) در فرزندان
+            var foundChild = FindChild<T>(child, childName);
+            if (foundChild != null) return foundChild;
+        }
+        return null;
     }
 
     private void employeeSwipeContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -125,37 +108,5 @@ public sealed partial class EmployeePage : Page
     {
         VisualStateManager.GoToState(
             sender as Control, "HoverButtonsHidden", true);
-    }
-
-    private void BtnHoverDeleteEmployee_OnClick(object sender, RoutedEventArgs e)
-    {
-        var employeeID = (sender as AppBarButton).DataContext;
-        using var db = new WaterAssessmentContext();
-        var employee = db.Employees.Find(employeeID);
-
-        if (employee != null)
-        {
-            db.Employees.Remove(employee);
-            db.SaveChanges();
-            GetEmployeesFromDB();
-            InitInfoBar.ImplementInfoBar(firstNameBoxInfoBar, InfoBarSeverity.Warning,
-                true, "همکار مورد نظر شما با موفقیت حذف شد.");
-            firstNameBox.Focus(FocusState.Pointer);
-        }
-    }
-
-    private void BtnHoverEditEmployee_OnClick(object sender, RoutedEventArgs e)
-    {
-        var employeeID = Convert.ToInt32((sender as AppBarButton).DataContext);
-
-        if (((employeeListView.Items).Where(emp => (emp is Employee employee) && employee.EmployeeID == employeeID))
-            .FirstOrDefault() is Employee selectedEmployee)
-        {
-            _isEdited = true;
-            firstNameBox.Text = selectedEmployee.FirstName;
-            lastNameBox.Text = selectedEmployee.LastName;
-            btnAddEmployee.Content = "ویرایش";
-            btnAddEmployee.DataContext = selectedEmployee;
-        }
     }
 }

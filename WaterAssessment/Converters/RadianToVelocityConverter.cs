@@ -1,6 +1,4 @@
-﻿using WaterAssessment.Models;
-
-namespace WaterAssessment.Converters;
+﻿namespace WaterAssessment.Converters;
 
 internal class RadianToVelocityConverter : IValueConverter
 {
@@ -20,14 +18,14 @@ internal class RadianToVelocityConverter : IValueConverter
             {
                 return oneSecValue;
             }
-            if (parameter != null && parameter.GetType() == typeof(Propeller))
-            {
-                var propeller = (Propeller)parameter;
-                double a = propeller.AValue;
-                double b = propeller.BValue;
-                double v = oneSecValue * a + b;
-                return v.ToString("0.###");
-            }
+            //if (parameter != null && parameter.GetType() == typeof(Propeller))
+            //{
+            //    var propeller = (Propeller)parameter;
+            //    double a = propeller.AValue;
+            //    double b = propeller.BValue;
+            //    double v = oneSecValue * a + b;
+            //    return v.ToString("0.###");
+            //}
         }
         return string.Empty;
     }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WaterAssessment.Mapping
@@ -23,7 +18,8 @@ namespace WaterAssessment.Mapping
             builder
                 .Property(p => p.IsCanal).IsRequired();
             builder
-                .Property(b => b.Inserted).ValueGeneratedOnAdd();
+                .Property(b => b.Inserted)
+                .HasDefaultValueSql("getdate()");
             builder
                 .HasOne(p => p.Location)
                 .WithMany(t => t.Assessments)

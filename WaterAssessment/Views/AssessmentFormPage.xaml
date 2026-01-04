@@ -276,138 +276,16 @@
                             </Border>
                         </StackPanel>
                     </Grid>
-                    <TextBlock
-                        Grid.Column="5"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="عمق مقطع" />
-                    <Rectangle
-                        Grid.Column="5"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <TextBlock
-                        Grid.Column="6"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="عرض مقطع" />
-                    <Rectangle
-                        Grid.Column="6"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <TextBlock
-                        Grid.Column="7"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="10"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="سطح مقطع" />
-                    <Rectangle
-                        Grid.Column="7"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <TextBlock
-                        Grid.Column="8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="دبی مقطع" />
-                    <Rectangle
-                        Grid.Column="8"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                </Grid>
+                    <Grid Name="averageVelocityPanel" Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Name="pointPanel" Grid.Column="0" HorizontalAlignment="Left">
 
-                <ListView
-                    Padding="0"
-                    ItemsSource="{x:Bind ViewModel.FormValues}"
-                    SelectionMode="None">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="Padding" Value="0" />
-
-                            <Setter Property="Margin" Value="0" />
-
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-
-                            <Setter Property="MinHeight" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="viewmodels:FormValueViewModel">
-                            <Grid
-                                MaxHeight="60"
-                                Padding="0"
-                                HorizontalAlignment="Stretch"
-                                BorderBrush="Black"
-                                BorderThickness="1"
-                                CornerRadius="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid
-                                    Grid.Column="0"
-                                    Margin="0"
-                                    Padding="0"
-                                    HorizontalAlignment="Left">
-                                    <Grid.Resources>
-                                        <helpers:DoubleFormatter x:Key="Df" />
-                                    </Grid.Resources>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="52" />
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="88" />
-                                        <ColumnDefinition Width="88" />
-                                        <ColumnDefinition Width="88" />
-                                        <ColumnDefinition Width="88" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border
-                                        Grid.Column="0"
-                                        BorderBrush="Black"
-                                        BorderThickness="0.5">
-                                        <TextBlock
-                                            Grid.Column="0"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Bind RowIndex}" />
-                                    </Border>
-
-                                    <akTools:NumberBoxEx
-                                        x:Name="DistanceNumberBox"
-                                        Grid.Column="1"
-                                        Height="60"
-                                        Padding="0,19,0,0"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        CornerRadius="0"
-                                        NumberFormatter="{StaticResource Df}"
-                                        PlaceholderText="0.00"
-                                        Value="{x:Bind Distance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <akTools:NumberBoxEx
-                                        x:Name="TotalDepthNumberBox"
-                                        Grid.Column="2"
-                                        Height="60"
-                                        Padding="0,19,0,0"
-                                        VerticalAlignment="Center"
-                                        NumberFormatter="{StaticResource Df}"
-                                        Value="{x:Bind TotalDepth, Mode=TwoWay}" />
+                        </StackPanel>
+                        <StackPanel Name="verticalPanel" Grid.Column="1" HorizontalAlignment="Center">
 
                                     <StackPanel
                                         x:Name="NPoints"

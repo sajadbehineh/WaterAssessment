@@ -10,18 +10,16 @@ public sealed partial class SettingsPage : Page
 
     private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
     {
-        ThemeManager.Instance.SetThemeRadioButtonDefaultItem(themePanel);
+        App.Current.themeService.SetThemeRadioButtonDefaultItem(themePanel);
     }
 
     private void OnThemeRadioButtonChecked(object sender, RoutedEventArgs e)
     {
-        ThemeManager.Instance.OnThemeRadioButtonChecked(sender);
+        App.Current.themeService.OnThemeRadioButtonChecked(sender);
     }
 
     private async void BtnSysColorSettings_OnClick(object sender, RoutedEventArgs e)
     {
         _ = await Launcher.LaunchUriAsync(new Uri("ms-settings:colors"));
     }
-
-
 }

@@ -17,7 +17,10 @@ namespace WaterAssessment.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -58,7 +61,8 @@ namespace WaterAssessment.Migrations
 
                     b.Property<DateTime>("Inserted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<bool>("IsCanal")
                         .HasColumnType("bit");
@@ -157,8 +161,14 @@ namespace WaterAssessment.Migrations
                     b.Property<double>("Distance")
                         .HasColumnType("float");
 
-                    b.Property<int>("RadianPerTime")
-                        .HasColumnType("int");
+                    b.Property<string>("RadianPerTime_1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RadianPerTime_2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RadianPerTime_3")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("FormValueID");
 
@@ -178,7 +188,7 @@ namespace WaterAssessment.Migrations
                     b.Property<int>("AreaID")
                         .HasColumnType("int");
 
-                    b.Property<string>("Place")
+                    b.Property<string>("LocationName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LocationID");
@@ -196,14 +206,35 @@ namespace WaterAssessment.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PropellerID"));
 
-                    b.Property<double>("AValue")
+                    b.Property<double>("A1")
                         .HasColumnType("float");
 
-                    b.Property<double>("BValue")
+                    b.Property<double?>("A2")
                         .HasColumnType("float");
 
-                    b.Property<string>("DeviceNumber")
+                    b.Property<double?>("A3")
+                        .HasColumnType("float");
+
+                    b.Property<double>("B1")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("B2")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("B3")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Mode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PropellerName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("TransitionPoint1")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("TransitionPoint2")
+                        .HasColumnType("float");
 
                     b.HasKey("PropellerID");
 

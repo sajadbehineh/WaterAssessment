@@ -12,7 +12,8 @@ internal class ToOneSecConverter : IValueConverter
         if (value.GetType() == typeof(string))
         {
             var val = (string)value;
-            var valueToDouble = System.Convert.ToDouble(val);
+            //var valueToDouble = System.Convert.ToDouble(val);
+            var valueToDouble = ToDoubleSafeHelper.ToDoubleSafe(val);
             if (parameter != null && parameter.GetType() == typeof(int))
             {
                 var t = (int)parameter;

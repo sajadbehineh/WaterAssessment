@@ -7,7 +7,11 @@ public class WaterAssessmentContext : DbContext
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(@"Server=(local);Database=WaterAssessmentDB;Trusted_Connection=True;Encrypt=False;");
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer(@"Server=(local);Database=WaterAssessmentDB;Trusted_Connection=True;Encrypt=False;");
+            optionsBuilder.UseLazyLoadingProxies();
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,6 +24,9 @@ public class WaterAssessmentContext : DbContext
             .HasKey(a => a.AreaID);
 
         modelBuilder.Entity<FormValue>()
+            .HasKey(f => f.FormValueID);
+
+        modelBuilder.Entity<FormValue>()
             .HasOne(p => p.Assessment)
             .WithMany(t => t.FormValues)
             .HasForeignKey(f => f.AssessmentID);
@@ -29,9 +36,6 @@ public class WaterAssessmentContext : DbContext
 
         modelBuilder.Entity<CurrentMeter>()
             .HasKey(c => c.CurrentMeterID);
-
-        modelBuilder.Entity<FormValue>()
-            .HasKey(f => f.FormValueID);
 
         modelBuilder.Entity<Propeller>()
             .HasKey(p => p.PropellerID);

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WaterAssessment.Migrations
 {
     /// <inheritdoc />
-    public partial class implement_Relations_With_FluentAPI : Migration
+    public partial class Generate_DB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -94,7 +94,7 @@ namespace WaterAssessment.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Timer = table.Column<int>(type: "int", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Inserted = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Inserted = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     Echelon = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Openness = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TotalFlow = table.Column<double>(type: "float", nullable: false),
@@ -158,7 +158,9 @@ namespace WaterAssessment.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Distance = table.Column<double>(type: "float", nullable: false),
                     Depth = table.Column<double>(type: "float", nullable: false),
-                    RadianPerTime = table.Column<int>(type: "int", nullable: false),
+                    RadianPerTime_1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RadianPerTime_2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RadianPerTime_3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AssessmentID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

@@ -12,15 +12,18 @@ using WaterAssessment.Models;
 namespace WaterAssessment.Migrations
 {
     [DbContext(typeof(WaterAssessmentContext))]
-    [Migration("20230721041151_implement_Relations_With_FluentAPI")]
-    partial class implement_Relations_With_FluentAPI
+    [Migration("20251227144322_Modified_Place_To_LocationName")]
+    partial class Modified_Place_To_LocationName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -61,7 +64,8 @@ namespace WaterAssessment.Migrations
 
                     b.Property<DateTime>("Inserted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<bool>("IsCanal")
                         .HasColumnType("bit");
@@ -160,8 +164,14 @@ namespace WaterAssessment.Migrations
                     b.Property<double>("Distance")
                         .HasColumnType("float");
 
-                    b.Property<int>("RadianPerTime")
-                        .HasColumnType("int");
+                    b.Property<string>("RadianPerTime_1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RadianPerTime_2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RadianPerTime_3")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("FormValueID");
 
@@ -181,7 +191,7 @@ namespace WaterAssessment.Migrations
                     b.Property<int>("AreaID")
                         .HasColumnType("int");
 
-                    b.Property<string>("Place")
+                    b.Property<string>("LocationName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LocationID");

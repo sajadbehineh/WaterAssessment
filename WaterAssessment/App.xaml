@@ -2,7 +2,8 @@
 <Application
     x:Class="WaterAssessment.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:WaterAssessment.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -22,7 +23,11 @@
             <!--<FontFamily x:Key="VazirmatnBold">Assets/Fonts/Vazirmatn-Bold.ttf#Vazirmatn</FontFamily>
             <FontFamily x:Key="VazirmatnMedium">Assets/Fonts/Vazirmatn-Medium.ttf#Vazirmatn Medium</FontFamily>
             <FontFamily x:Key="VazirmatnRegular">Assets/Fonts/Vazirmatn-Regular.ttf#Vazirmatn</FontFamily>-->
-
+            <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
+            <converters:InverseCountToVisibilityConverter x:Key="InverseCountToVisibilityConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:InverseBooleanConverter x:Key="InverseBoolConverter" />
+            <converters:DateTimeToShamsiConverter x:Key="DateToShamsiConv" />
             <Style
                 x:Key="HorizontalSwipe"
                 BasedOn="{StaticResource ListViewItemRevealStyle}"

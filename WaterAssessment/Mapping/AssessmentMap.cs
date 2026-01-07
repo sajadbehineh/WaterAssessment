@@ -14,10 +14,6 @@ namespace WaterAssessment.Mapping
             builder
                 .Property(p => p.Echelon).IsRequired();
             builder
-                .Property(p => p.Openness).IsRequired();
-            builder
-                .Property(p => p.IsCanal).IsRequired();
-            builder
                 .Property(b => b.Inserted)
                 .HasDefaultValueSql("getdate()");
             builder
@@ -32,6 +28,10 @@ namespace WaterAssessment.Mapping
                 .HasOne(p => p.Propeller)
                 .WithMany(t => t.Assessments)
                 .HasForeignKey(f => f.PropellerID);
+            builder.HasMany(a => a.GateOpenings)
+                .WithOne(g => g.Assessment)
+                .HasForeignKey(g => g.AssessmentID)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

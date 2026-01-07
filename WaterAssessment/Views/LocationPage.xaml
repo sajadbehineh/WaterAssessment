@@ -3,7 +3,9 @@
     x:Class="WaterAssessment.Views.LocationPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:aKTools="using:AK.Toolkit.WinUI3"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:WaterAssessment.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
     xmlns:viewModel="using:WaterAssessment.Models.ViewModel"
@@ -35,6 +37,9 @@
                         HorizontalAlignment="Stretch"
                         Orientation="Vertical"
                         Spacing="25">
+                        <StackPanel.Resources>
+                            <helpers:DoubleFormatter x:Key="Df" />
+                        </StackPanel.Resources>
                         <TextBox
                             Name="locationBox"
                             HorizontalAlignment="Stretch"
@@ -53,6 +58,28 @@
                             ItemsSource="{x:Bind LocationViewModel.Areas, Mode=OneWay}"
                             PlaceholderText="لطفاً حوزه مورد نظر را انتخاب کنید"
                             SelectedItem="{x:Bind LocationViewModel.SelectedAreaForInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <StackPanel
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="10">
+                            <TextBlock VerticalAlignment="Center" Text="نوع:" />
+                            <RadioButton
+                                Content="کانال"
+                                GroupName="ChannelType"
+                                IsChecked="{x:Bind LocationViewModel.SelectedLocation.IsCanal, Mode=TwoWay}" />
+                            <RadioButton
+                                Content="زهکش"
+                                GroupName="ChannelType"
+                                IsChecked="{x:Bind LocationViewModel.SelectedLocation.IsCanal, Mode=TwoWay, Converter={StaticResource InverseBoolConverter}}" />
+                        </StackPanel>
+                        <aKTools:NumberBoxEx
+                            HorizontalAlignment="Left" SpinButtonPlacementMode="Inline"
+                            IsDeleteButtonVisible="False"
+                            Minimum="1"
+                            NumberFormatter="{StaticResource Df}"
+                            NumberHorizontalAlignment="Center"
+                            Value="{x:Bind LocationViewModel.GateCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
                     <StackPanel
@@ -93,7 +120,7 @@
                             HorizontalAlignment="Left"
                             Command="{x:Bind LocationViewModel.ClearFormCommand}"
                             Content="پاک کردن"
-                            IsEnabled="False"
+                            IsEnabled="True"
                             Style="{ThemeResource AccentButtonStyle}" />
                     </StackPanel>
 

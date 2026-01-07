@@ -49,4 +49,5 @@ public class WaterAssessmentContext : DbContext
     public DbSet<FormValue> FormValues { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<Propeller> Propellers { get; set; }
+    public DbSet<AssessmentGate> AssessmentGates { get; set; }
 }

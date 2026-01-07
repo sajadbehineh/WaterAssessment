@@ -37,6 +37,13 @@ namespace WaterAssessment.Models.ViewModel
 
         public int RowIndex => Model.RowIndex;
         public bool IsFirstRow => RowIndex == 1;
+        public double SectionGridHeight => IsFirstRow ? 37 : 74;
+        public VerticalAlignment SectionGridAlignment => VerticalAlignment.Top;
+        public Visibility SectionGridVisibility => IsFirstRow ? Visibility.Collapsed : Visibility.Visible;
+        public Thickness SectionGridMargin => IsFirstRow ? new Thickness(0) : new Thickness(0, 0, 0, -37);
+        public double SectionTranslationY => IsFirstRow ? 0 : -37;
+        public bool ShowCalculationGrid => !IsFirstRow;
+
         // ==========================================================
         // 1. ورودی‌های هندسی (فاصله و عمق کل)
         // ==========================================================

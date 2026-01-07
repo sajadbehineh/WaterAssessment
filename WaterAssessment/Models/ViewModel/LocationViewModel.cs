@@ -23,6 +23,13 @@ namespace WaterAssessment.Models.ViewModel
         [NotifyCanExecuteChangedFor(nameof(AddLocationCommand))]
         private string _locationName = string.Empty;
 
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddLocationCommand))]
+        private bool _isCanal = true; // پیش‌فرض کانال
+
+        [ObservableProperty]
+        private int _gateCount = 1; // پیش‌فرض 1 دریچه
+
         // حوزه‌ای که در ComboBox انتخاب شده است (برای افزودن/ویرایش)
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddLocationCommand))]
@@ -55,6 +62,8 @@ namespace WaterAssessment.Models.ViewModel
             if (value != null)
             {
                 LocationName = value.LocationName;
+                IsCanal = value.IsCanal;
+                GateCount = value.GateCount; // +++ لود کردن تعداد دریچه +++
 
                 // نکته مهم: باید Area مربوطه را در لیست ComboBox پیدا و انتخاب کنیم
                 // تا ComboBox مقدار درست را نشان دهد
@@ -266,9 +275,11 @@ namespace WaterAssessment.Models.ViewModel
                 var newLocation = new Location
                 {
                     LocationName = LocationName,
-                    AreaID = SelectedAreaForInput!.AreaID // آی‌دی را از کمبوباکس می‌گیریم
-                                                          // نکته: Area = ... را ست نمی‌کنیم، فقط ID کافیست.
-                                                          // اما برای نمایش درست در UI، باید آبجکت Area را هم داشته باشیم
+                    AreaID = SelectedAreaForInput!.AreaID, // آی‌دی را از کمبوباکس می‌گیریم
+                                                           // نکته: Area = ... را ست نمی‌کنیم، فقط ID کافیست.
+                                                           // اما برای نمایش درست در UI، باید آبجکت Area را هم داشته باشیم
+                    IsCanal = IsCanal,
+                    GateCount = GateCount
                 };
 
                 db.Locations.Add(newLocation);
@@ -316,6 +327,8 @@ namespace WaterAssessment.Models.ViewModel
                 // اعمال تغییرات
                 locToEdit.LocationName = LocationName;
                 locToEdit.AreaID = SelectedAreaForInput!.AreaID;
+                locToEdit.IsCanal = IsCanal;
+                locToEdit.GateCount = GateCount;
 
                 await db.SaveChangesAsync();
 
@@ -323,6 +336,8 @@ namespace WaterAssessment.Models.ViewModel
                 SelectedLocation.LocationName = LocationName;
                 SelectedLocation.AreaID = SelectedAreaForInput.AreaID;
                 SelectedLocation.Area = SelectedAreaForInput; // آپدیت نویگیشن پراپرتی برای نمایش
+                SelectedLocation.IsCanal = IsCanal;
+                SelectedLocation.GateCount = GateCount;
 
                 // رفرش لیست
                 int index = Locations.IndexOf(SelectedLocation);
@@ -343,6 +358,8 @@ namespace WaterAssessment.Models.ViewModel
             LocationName = string.Empty;
             SelectedAreaForInput = null; // کمبوباکس را خالی کن
             AddEditBtnContent = "ذخیره";
+            IsCanal = true;
+            GateCount = 1;
         }
 
         private void ShowError(string message)

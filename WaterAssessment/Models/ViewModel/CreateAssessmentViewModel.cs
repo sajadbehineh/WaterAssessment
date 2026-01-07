@@ -9,7 +9,16 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WaterAssessment.Models.ViewModel
 {
-    public partial class CreateAssessmentViewModel:ObservableObject
+    // کلاس کمکی برای نگهداری مقادیر ورودی هر دریچه در UI
+    public partial class GateInputViewModel : ObservableObject
+    {
+        public int GateNumber { get; set; } // چون این عدد معمولاً ثابت است، نیاز به ObservableProperty ندارد
+
+        [ObservableProperty]
+        private double _value;
+    }
+
+    public partial class CreateAssessmentViewModel : ObservableObject
     {
         // ==========================================
         // لیست‌های مرجع (برای پر کردن ComboBox ها)
@@ -27,11 +36,28 @@ namespace WaterAssessment.Models.ViewModel
         [ObservableProperty] private DateTimeOffset _date = DateTime.Now;
         [ObservableProperty] private int _timer = 50; // مقدار پیش‌فرض
         [ObservableProperty] private double _echelon;
-        [ObservableProperty] private double? _openness;
-        [ObservableProperty] private bool _isCanal = true; // پیش‌فرض کانال
+
+        // لیست پویا برای ورودی‌های گشودگی (که به UI وصل می‌شود)
+        public ObservableCollection<GateInputViewModel> GateInputs { get; } = new();
 
         [ObservableProperty] private Location _selectedLocation;
+
+        partial void OnSelectedLocationChanged(Location value)
+        {
+            GateInputs.Clear(); // باکس‌های قبلی را پاک کن
+
+            if (value is { IsCanal: true, GateCount: > 0 })
+            {
+                // به تعداد دریچه‌های تعریف شده در Location، باکس ورودی بساز
+                for (int i = 1; i <= value.GateCount; i++)
+                {
+                    GateInputs.Add(new GateInputViewModel { GateNumber = i, Value = 0 });
+                }
+            }
+        }
+
         [ObservableProperty] private CurrentMeter _selectedCurrentMeter;
+
         [ObservableProperty] private Propeller _selectedPropeller;
 
         // برای بخش کارمندان
@@ -131,8 +157,11 @@ namespace WaterAssessment.Models.ViewModel
                 Date = Date.DateTime,
                 Timer = Timer,
                 Echelon = Echelon,
-                Openness = Openness,
-                IsCanal = IsCanal,
+                GateOpenings = GateInputs.Select(g => new AssessmentGate
+                {
+                    GateNumber = g.GateNumber,
+                    Value = g.Value
+                }).ToList(),
 
                 LocationID = SelectedLocation.LocationID,
                 Location = SelectedLocation,

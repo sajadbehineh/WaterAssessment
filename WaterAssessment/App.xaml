@@ -3,7 +3,8 @@
     x:Class="WaterAssessment.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:WaterAssessment.Converters">
+    xmlns:converters="using:WaterAssessment.Converters"
+    xmlns:helpers="using:WaterAssessment.Helpers">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -28,6 +29,10 @@
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:InverseBooleanConverter x:Key="InverseBoolConverter" />
             <converters:DateTimeToShamsiConverter x:Key="DateToShamsiConv" />
+            <converters:DateTimeToDateTimeOffsetConverter x:Key="DateToOffsetConv" />
+
+            <helpers:DoubleFormatter x:Key="Df" />
+            <helpers:DoubleFormatterF1 x:Key="Df1" />
             <Style
                 x:Key="HorizontalSwipe"
                 BasedOn="{StaticResource ListViewItemRevealStyle}"

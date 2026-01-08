@@ -240,6 +240,29 @@
                             </NavigationViewItem>
                         </NavigationViewItem.MenuItems>
                     </NavigationViewItem>
+                    <NavigationViewItem Content="گزارشات">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE9F9;" />
+                        </NavigationViewItem.Icon>
+                        <NavigationViewItem.MenuItems>
+                            <NavigationViewItem
+                                Content="کانال ها"
+                                Tag="Canals"
+                                Tapped="NavigationViewItem_OnTapped">
+                                <NavigationViewItem.Icon>
+                                    <FontIcon Glyph="&#xE9F9;" />
+                                </NavigationViewItem.Icon>
+                            </NavigationViewItem>
+                            <NavigationViewItem
+                                Content="زهکش ها"
+                                Tag="Canals"
+                                Tapped="NavigationViewItem_OnTapped">
+                                <NavigationViewItem.Icon>
+                                    <FontIcon Glyph="&#xE9F9;" />
+                                </NavigationViewItem.Icon>
+                            </NavigationViewItem>
+                        </NavigationViewItem.MenuItems>
+                    </NavigationViewItem>
                 </NavigationView.MenuItems>
 
                 <views:ShellPage FlowDirection="RightToLeft" />

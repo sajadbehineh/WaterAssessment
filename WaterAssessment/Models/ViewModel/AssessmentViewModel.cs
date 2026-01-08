@@ -11,17 +11,66 @@ namespace WaterAssessment.Models.ViewModel
     {
         public Assessment Model { get; }
 
-        private readonly List<Employee> _allEmployeesDataSource; // برای افزودن نفر جدید
+        // ==========================================================
+        // لیست‌های مرجع (برای پر کردن کمبوباکس‌ها)
+        // ==========================================================
+        public ObservableCollection<Location> AllLocations { get; } = new();
+        public ObservableCollection<Propeller> AllPropellers { get; } = new();
+        public ObservableCollection<CurrentMeter> AllCurrentMeters { get; } = new();
+        public ObservableCollection<Employee> AllEmployees { get; } = new();
+
+        // لیست گشودگی دریچه‌ها (برای بایندینگ در UI)
+        public ObservableCollection<AssessmentGate> GateValues { get; } = new();
 
         // لیست ردیف‌های اندازه‌گیری (فرزندان)
         public ObservableCollection<FormValueViewModel> FormValues { get; } = new();
+
         public ObservableCollection<Assessment_Employee> AssessmentEmployees { get; } = new();
-        public ObservableCollection<Employee> AllEmployees { get; } = new();
 
+        // ==========================================================
+        // پراپرتی‌های انتخابی (Selected Items)
+        // ==========================================================
 
-        // پروانه انتخاب شده (برای پاس دادن به فرزندان جهت محاسبه سرعت)
-        [ObservableProperty] private Propeller _selectedPropeller;
+        [ObservableProperty]
+        private Location _selectedLocation;
+        partial void OnSelectedLocationChanged(Location value)
+        {
+            if (value == null) return;
+
+            Model.LocationID = value.LocationID;
+            Model.Location = value;
+
+            // مدیریت دریچه‌ها بر اساس تعداد دریچه مکان انتخاب شده
+            UpdateGateOpenings(value.GateCount);
+        }
+
+        [ObservableProperty]
+        private Propeller _selectedPropeller;
+        partial void OnSelectedPropellerChanged(Propeller value)
+        {
+            if (value == null) return;
+            Model.PropellerID = value.PropellerID;
+            Model.Propeller = value;
+
+            // باید پروانه جدید را به تمام سطرهای فرزند هم اطلاع دهیم تا سرعت را با فرمول جدید حساب کنند
+            foreach (var row in FormValues)
+            {
+                row.Propeller = value;
+            }
+        }
+
+        [ObservableProperty]
+        private CurrentMeter _selectedCurrentMeter;
+        partial void OnSelectedCurrentMeterChanged(CurrentMeter value)
+        {
+            if (value == null) return;
+            Model.CurrentMeterID = value.CurrentMeterID;
+            Model.CurrentMeter = value;
+        }
+
         [ObservableProperty] private Employee _selectedEmployeeToAdd;
+
+
 
         // ==========================================================
         // وضعیت UI (مشغولی، پیام‌ها)
@@ -38,20 +87,37 @@ namespace WaterAssessment.Models.ViewModel
         // این پراپرتی به خاصیت Content دکمه در XAML وصل می‌شود
         public string SaveButtonContent => IsEditMode ? "ثبت تغییرات (ویرایش)" : "ثبت اندازه گیری جدید";
 
-        public AssessmentViewModel(Assessment model, List<Employee> allEmployees)
+        [ObservableProperty]
+        private int _timer;
+        partial void OnTimerChanged(int value)
+        {
+            Model.Timer = value;
+
+            foreach (var row in FormValues) row.MeasureTime = value;
+        }
+
+        [ObservableProperty] private DateTime _date;
+        partial void OnDateChanged(DateTime value) => Model.Date = value;
+
+        [ObservableProperty] private double? _echelon;
+        partial void OnEchelonChanged(double? value) => Model.Echelon = value;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(TotalFlowDisplay))]
+        private double _totalFlow;
+        public string TotalFlowDisplay => TotalFlow.ToString("N3"); // نمایش با 3 رقم اعشار
+
+        public AssessmentViewModel(Assessment model)
         {
             Model = model;
-            _allEmployeesDataSource = allEmployees;
             SelectedPropeller = model.Propeller;
 
-            // مقداردهی اولیه پراپرتی‌ها از مدل
-            _timer = model.Timer;
-            _date = model.Date;
+            // مقداردهی اولیه فیلد‌ها از مدل
+            _timer = model.Timer == 0 ? 50 : model.Timer; // پیش‌فرض 50
+            _date = model.Date == default ? DateTime.Now : model.Date;
             _echelon = model.Echelon;
-
             _totalFlow = model.TotalFlow;
 
-            foreach (var emp in allEmployees) AllEmployees.Add(emp);
             // لود کردن کارمندان انتخاب شده از دیالوگ
             foreach (var rel in model.AssessmentEmployees) AssessmentEmployees.Add(rel);
 
@@ -66,6 +132,78 @@ namespace WaterAssessment.Models.ViewModel
                 }
                 // یک بار محاسبات کلی را انجام بده (برای اطمینان از صحت مقادیر لود شده)
                 RecalculateGeometryAndFlow();
+            }
+
+            // لود کردن داده‌های مرجع (مکان‌ها و...) از دیتابیس
+            LoadReferenceData();
+        }
+
+        private void LoadReferenceData()
+        {
+            using var db = new WaterAssessmentContext();
+
+            // 1. لود کردن لیست‌ها
+            var locations = db.Locations.AsNoTracking().ToList();
+            var propellers = db.Propellers.AsNoTracking().ToList();
+            var meters = db.CurrentMeters.AsNoTracking().ToList();
+            var employees = db.Employees.AsNoTracking().ToList();
+
+            AllLocations.Clear();
+            foreach (var item in locations) AllLocations.Add(item);
+
+            AllPropellers.Clear();
+            foreach (var item in propellers) AllPropellers.Add(item);
+
+            AllCurrentMeters.Clear();
+            foreach (var item in meters) AllCurrentMeters.Add(item);
+
+            AllEmployees.Clear();
+            foreach (var item in employees) AllEmployees.Add(item);
+
+            // 2. ست کردن مقادیر انتخاب شده (اگر ویرایش است یا مدل پر شده است)
+            if (Model.LocationID > 0)
+                SelectedLocation = AllLocations.FirstOrDefault(x => x.LocationID == Model.LocationID);
+
+            if (Model.PropellerID > 0)
+                SelectedPropeller = AllPropellers.FirstOrDefault(x => x.PropellerID == Model.PropellerID);
+
+            if (Model.CurrentMeterID > 0)
+                SelectedCurrentMeter = AllCurrentMeters.FirstOrDefault(x => x.CurrentMeterID == Model.CurrentMeterID);
+
+            // 3. لود کردن دریچه‌ها
+            // اگر ویرایش است، دریچه‌های ذخیره شده را می‌آوریم
+            if (Model.GateOpenings != null && Model.GateOpenings.Any())
+            {
+                foreach (var g in Model.GateOpenings) GateValues.Add(g);
+            }
+            else if (SelectedLocation != null)
+            {
+                // اگر جدید است، بر اساس مکان پیش‌فرض بساز
+                UpdateGateOpenings(SelectedLocation.GateCount);
+            }
+        }
+
+        private void UpdateGateOpenings(int count)
+        {
+            // اگر تعداد فعلی با تعداد درخواستی یکی است، دست نزن (تا مقادیر وارد شده نپرد)
+            if (GateValues.Count == count) return;
+
+            // بازسازی لیست دریچه‌ها
+            var currentValues = GateValues.ToList(); // کپی مقادیر فعلی
+            GateValues.Clear();
+
+            // همگام‌سازی با مدل
+            if (Model.GateOpenings == null) Model.GateOpenings = new List<AssessmentGate>();
+            Model.GateOpenings.Clear();
+
+            for (int i = 1; i <= count; i++)
+            {
+                // اگر قبلاً مقداری داشتیم حفظ کن، وگرنه صفر
+                var existing = currentValues.FirstOrDefault(g => g.GateNumber == i);
+                var newVal = existing ?? new AssessmentGate { GateNumber = i, Value = 0, AssessmentID = Model.AssessmentID };
+
+                GateValues.Add(newVal);
+                Model.GateOpenings.Add(newVal);
             }
         }
 
@@ -93,34 +231,12 @@ namespace WaterAssessment.Models.ViewModel
         public string EmployeeNamesDisplay => AssessmentEmployees.Any()
             ? string.Join(" - ", AssessmentEmployees.Select(ae => ae.Employee?.LastName ?? "?"))
             : "---";
-        public string TotalFlowDisplay => TotalFlow.ToString("N3"); // نمایش با 3 رقم اعشار
-
-        [ObservableProperty]
-        private int _timer;
-        partial void OnTimerChanged(int value)
-        {
-            Model.Timer = value;
-
-            foreach (var row in FormValues) row.MeasureTime = value;
-        }
-
-        [ObservableProperty] private DateTime _date;
-        partial void OnDateChanged(DateTime value) => Model.Date = value;
-
-        [ObservableProperty] private double? _echelon;
-        partial void OnEchelonChanged(double? value) => Model.Echelon = value;
-
-
-        // دبی کل (نتیجه محاسبات)
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(TotalFlowDisplay))]
-        private double _totalFlow;
 
 
         // ==========================================================
-        // مدیریت ردیف‌ها (CRUD در UI)
+        // متدهای ذخیره‌سازی (Add / Edit)
         // ==========================================================
-        // 3. متد هوشمندی که تصمیم می‌گیرد کدام تابع را صدا بزند
+
         [RelayCommand]
         private async Task SubmitFormAsync()
         {
@@ -318,140 +434,6 @@ namespace WaterAssessment.Models.ViewModel
             }
         }
 
-        //[RelayCommand]
-        //private async Task SaveAssessmentAsync()
-        //{
-        //    if (IsBusy) return;
-
-        //    if (FormValues.Count == 0)
-        //    {
-        //        ShowInfo("هیچ سطری برای محاسبه ثبت نشده است.", InfoBarSeverity.Warning);
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        IsBusy = true;
-        //        using var db = new WaterAssessmentContext();
-
-        //        if (Model.AssessmentID == 0)
-        //        {
-        //            await InsertNewAssessment(db);
-        //        }
-        //        else
-        //        {
-        //            await UpdateExistingAssessment(db);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ShowInfo($"خطا در ذخیره سازی: {ex.Message}", InfoBarSeverity.Error);
-        //    }
-        //    finally
-        //    {
-        //        IsBusy = false;
-        //    }
-        //}
-
-        //private async Task InsertNewAssessment(WaterAssessmentContext db)
-        //{
-        //    // جلوگیری از درج تکراری اشیاء وابسته
-        //    Model.Location = null;
-        //    Model.Propeller = null;
-        //    Model.CurrentMeter = null;
-
-        //    foreach (var ae in Model.AssessmentEmployees) ae.Employee = null;
-
-        //    // اطمینان از اینکه مدل با ویومدل یکی است
-        //    Model.FormValues = FormValues.Select(vm => vm.Model).ToList();
-
-        //    db.Assessments.Add(Model);
-        //    await db.SaveChangesAsync();
-
-        //    ShowInfo("اندازه گیری با موفقیت ثبت شد.", InfoBarSeverity.Success);
-        //}
-
-        //private async Task UpdateExistingAssessment(WaterAssessmentContext db)
-        //{
-        //    var existing = await db.Assessments
-        //        .Include(a => a.FormValues)
-        //        .Include(a => a.AssessmentEmployees)
-        //        .Include(a => a.GateOpenings)
-        //        .FirstOrDefaultAsync(a => a.AssessmentID == Model.AssessmentID);
-
-        //    if (existing == null)
-        //    {
-        //        ShowInfo("رکورد یافت نشد.", InfoBarSeverity.Error);
-        //        return;
-        //    }
-
-        //    // 1. آپدیت فیلدها
-        //    existing.Date = Model.Date;
-        //    existing.Timer = Model.Timer;
-        //    existing.Echelon = Model.Echelon;
-        //    existing.TotalFlow = Model.TotalFlow;
-        //    existing.PropellerID = Model.PropellerID;
-        //    existing.CurrentMeterID = Model.CurrentMeterID;
-
-        //    // 2. آپدیت سطرها
-        //    // (چون دکمه حذف را برداشتید، اینجا عملاً فقط سطرهای جدید اضافه می‌شوند یا قدیمی‌ها آپدیت می‌شوند)
-        //    foreach (var vm in FormValues)
-        //    {
-        //        if (vm.Model.FormValueID == 0)
-        //        {
-        //            vm.Model.AssessmentID = existing.AssessmentID;
-        //            existing.FormValues.Add(vm.Model);
-        //        }
-        //        else
-        //        {
-        //            var dbRow = existing.FormValues.FirstOrDefault(r => r.FormValueID == vm.Model.FormValueID);
-        //            if (dbRow != null)
-        //            {
-        //                // کپی مقادیر
-        //                dbRow.Distance = vm.Distance;
-        //                dbRow.TotalDepth = vm.TotalDepth;
-        //                dbRow.RowIndex = vm.RowIndex;
-        //                dbRow.Rev02 = vm.Model.Rev02;
-        //                dbRow.Rev06 = vm.Model.Rev06;
-        //                dbRow.Rev08 = vm.Model.Rev08;
-        //                dbRow.MeasureTime = vm.MeasureTime;
-        //                dbRow.SectionWidth = vm.SectionWidth;
-        //                dbRow.SectionArea = vm.SectionArea;
-        //                dbRow.SectionFlow = vm.SectionFlow;
-        //            }
-        //        }
-        //    }
-
-        //    // 3. آپدیت تیم (جایگزینی کامل لیست)
-        //    db.AssessmentEmployees.RemoveRange(existing.AssessmentEmployees);
-        //    foreach (var ae in AssessmentEmployees)
-        //    {
-        //        existing.AssessmentEmployees.Add(new Assessment_Employee
-        //        {
-        //            AssessmentID = existing.AssessmentID,
-        //            EmployeeID = ae.EmployeeID
-        //        });
-        //    }
-
-        //    // 4. آپدیت گشودگی‌ها (جایگزینی کامل)
-        //    db.AssessmentGates.RemoveRange(existing.GateOpenings);
-        //    if (Model.GateOpenings != null)
-        //    {
-        //        foreach (var gate in Model.GateOpenings)
-        //        {
-        //            existing.GateOpenings.Add(new AssessmentGate
-        //            {
-        //                GateNumber = gate.GateNumber,
-        //                Value = gate.Value,
-        //                AssessmentID = existing.AssessmentID
-        //            });
-        //        }
-        //    }
-
-        //    await db.SaveChangesAsync();
-        //    ShowInfo("ویرایش انجام شد.", InfoBarSeverity.Success);
-        //}
-
         private void ShowInfo(string msg, InfoBarSeverity severity)
         {
             InfoMessage = msg;
@@ -575,11 +557,7 @@ namespace WaterAssessment.Models.ViewModel
         /// </summary>
         private void RecalculateGeometryAndFlow()
         {
-            if (!FormValues.Any())
-            {
-                TotalFlow = 0;
-                return;
-            }
+            if (!FormValues.Any()) { TotalFlow = 0; return; }
 
             // مرتب‌سازی بر اساس فاصله
             var sortedRows = FormValues.OrderBy(x => x.Distance).ToList();
@@ -628,18 +606,6 @@ namespace WaterAssessment.Models.ViewModel
 
             TotalFlow = sumFlow;
             Model.TotalFlow = sumFlow;
-        }
-
-        private void UpdateTotalFlowOnly()
-        {
-            double sum = 0;
-            foreach (var row in FormValues)
-            {
-                sum += row.SectionFlow;
-            }
-
-            TotalFlow = sum;
-            Model.TotalFlow = sum; // ذخیره در مدل اصلی
         }
     }
 }

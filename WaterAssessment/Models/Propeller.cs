@@ -31,6 +31,7 @@ public class Propeller
     // متد محاسبه سرعت بر اساس تعداد معادلات انتخاب شده
     public double CalculateVelocity(double n)
     {
+        if (n <= 0) return 0;
         switch (Mode)
         {
             case CalibrationMode.OneEquation:

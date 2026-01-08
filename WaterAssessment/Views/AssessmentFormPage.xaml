@@ -35,72 +35,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <!--<StackPanel
-            Grid.Row="0"
-            Margin="10"
-            Spacing="10">
-            <StackPanel Orientation="Horizontal" Spacing="20">
-                <TextBlock
-                    FontSize="18"
-                    FontWeight="Bold"
-                    Text="{x:Bind ViewModel.Model.Location.LocationName}" />
-                <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.Model.Date}" />
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <TextBlock Text="تایمر پایه:" />
-                    <NumberBox SmallChange="1" Value="{x:Bind ViewModel.Timer, Mode=TwoWay}" />
-                </StackPanel>
-            </StackPanel>
-
-            <ItemsControl ItemsSource="{x:Bind ViewModel.AssessmentEmployees}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="8" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                            Padding="10,4"
-                            Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                            BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"
-                            BorderThickness="1"
-                            CornerRadius="16">
-
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <TextBlock
-                                    VerticalAlignment="Center"
-                                    FontSize="12"
-                                    Text="{Binding Employee.LastName}" />
-
-                                <Button
-                                    MinWidth="20"
-                                    MinHeight="20"
-                                    Margin="0"
-                                    Padding="2"
-                                    VerticalAlignment="Center"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Command="{Binding ElementName=MyPage, Path=DataContext.RemoveEmployeeCommand}"
-                                    CommandParameter="{Binding}"
-                                    Content="✕"
-                                    FontSize="10"
-                                    ToolTipService.ToolTip="حذف کارمند">
-                                    <Button.Resources>
-                                        <SolidColorBrush x:Key="ButtonBackground" Color="Transparent" />
-                                        <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
-                                    </Button.Resources>
-                                </Button>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>-->
-
         <Grid
             x:Name="InputsPanel"
             Grid.Row="0"
@@ -113,18 +51,44 @@
             Style="{ThemeResource GridPanel}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="50" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="180" />
+                <ColumnDefinition Width="55" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="38" />
+                <RowDefinition Height="38" />
+                <RowDefinition Height="38" />
             </Grid.RowDefinitions>
+
+            <!--  Row 2  -->
+            <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                BorderBrush="Black"
+                BorderThickness="0,1.5,0,1.5">
+                <TextBlock
+                    Padding="5"
+                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                    Style="{ThemeResource CaptionTextBlockStyle}"
+                    Text="تاریخ اندازه گیری" />
+            </Border>
+            <Border
+                Grid.Row="1"
+                Grid.Column="1"
+                BorderBrush="Black"
+                BorderThickness="1.5,1.5,0,1.5">
+                <CalendarDatePicker
+                    HorizontalAlignment="Stretch"
+                    CalendarIdentifier="PersianCalendar"
+                    Date="{x:Bind ViewModel.Date, Mode=TwoWay, Converter={StaticResource DateToOffsetConv}}"
+                    DateFormat="{}{year.full}/{month.integer}/{day.integer}"
+                    Language="fa-IR" />
+            </Border>
 
             <!--  Row 1  -->
             <Border
@@ -143,37 +107,41 @@
                 Grid.Column="1"
                 BorderBrush="Black"
                 BorderThickness="1.5,0,0,0">
-                <TextBlock
-                    Padding="5"
-                    HorizontalAlignment="Center"
-                    Text="{x:Bind ViewModel.LocationNameDisplay}" />
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    DisplayMemberPath="LocationName"
+                    ItemsSource="{x:Bind ViewModel.AllLocations}"
+                    PlaceholderText="انتخاب کنید..."
+                    SelectedItem="{x:Bind ViewModel.SelectedLocation, Mode=TwoWay}" />
             </Border>
             <Border
-                Grid.Row="0"
-                Grid.Column="2"
+                Grid.Row="2"
+                Grid.Column="0"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="0,0,0,0">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
-                    Text="مولینه" />
+                    Text="پروانه" />
             </Border>
             <Border
-                Grid.Row="0"
-                Grid.Column="3"
+                Grid.Row="2"
+                Grid.Column="1"
                 BorderBrush="Black"
                 BorderThickness="1.5,0,0,0">
-                <TextBlock
-                    Padding="5"
-                    HorizontalAlignment="Center"
-                    Text="{x:Bind ViewModel.CurrentMeterNameDisplay}" />
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    DisplayMemberPath="PropellerName"
+                    ItemsSource="{x:Bind ViewModel.AllPropellers}"
+                    PlaceholderText="انتخاب کنید..."
+                    SelectedItem="{x:Bind ViewModel.SelectedPropeller, Mode=TwoWay}" />
             </Border>
             <Border
-                Grid.Row="0"
+                Grid.Row="2"
                 Grid.Column="4"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -181,18 +149,21 @@
                     Text="اشل" />
             </Border>
             <Border
-                Grid.Row="0"
+                Grid.Row="2"
                 Grid.Column="5"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
-                <TextBlock
-                    Padding="5"
-                    HorizontalAlignment="Center"
-                    Text="{x:Bind ViewModel.EchelonDisplay}" />
+                BorderThickness="1.5,1.5,0,0">
+                <akTools:NumberBoxEx
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    NumberFormatter="{StaticResource Df}"
+                    PlaceholderText="مثلا 116.20"
+                    Value="{x:Bind ViewModel.Echelon, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
             </Border>
             <Border
                 Grid.Row="0"
-                Grid.Column="6"
+                Grid.RowSpan="2"
+                Grid.Column="4"
                 BorderBrush="Black"
                 BorderThickness="1.5,0,0,0">
                 <TextBlock
@@ -203,43 +174,73 @@
             </Border>
             <Border
                 Grid.Row="0"
-                Grid.Column="7"
+                Grid.RowSpan="2"
+                Grid.Column="5"
                 BorderBrush="Black"
                 BorderThickness="1.5,0,0,0">
-                <TextBlock
-                    Padding="5"
-                    HorizontalAlignment="Center"
-                    Text="{x:Bind ViewModel.EmployeeNamesDisplay}" />
+                <StackPanel
+                    Margin="5"
+                    VerticalAlignment="Top"
+                    Orientation="Vertical">
+                    <StackPanel Width="230" Orientation="Horizontal">
+                        <ComboBox
+                            Width="190"
+                            HorizontalAlignment="Left"
+                            DisplayMemberPath="LastName"
+                            ItemsSource="{x:Bind ViewModel.AllEmployees}"
+                            SelectedItem="{x:Bind ViewModel.SelectedEmployeeToAdd, Mode=TwoWay}" />
+                        <Button
+                            Height="33"
+                            Margin="4,0,0,5"
+                            HorizontalAlignment="Right"
+                            Command="{x:Bind ViewModel.AddEmployeeCommand}"
+                            Content="+" />
+                    </StackPanel>
+
+                    <ItemsControl VerticalAlignment="Bottom" ItemsSource="{x:Bind ViewModel.AssessmentEmployees}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="8" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:Assessment_Employee">
+                                <Border
+                                    Padding="8,2"
+                                    Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                                    CornerRadius="12">
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Stretch"
+                                            Text="{x:Bind Employee.LastName}" />
+                                        <Button
+                                            Padding="0"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Command="{Binding ElementName=MyPage, Path=DataContext.RemoveEmployeeCommand}"
+                                            CommandParameter="{Binding}"
+                                            Content="✕"
+                                            FontSize="10" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
 
             </Border>
 
-            <!--  Row 2  -->
+            <!--  Row 3  -->
+
             <Border
-                Grid.Row="1"
-                Grid.Column="0"
+                Grid.Row="0"
+                Grid.Column="6"
                 BorderBrush="Black"
-                BorderThickness="0,1.5,0,0">
-                <TextBlock
-                    Padding="5"
-                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                    Style="{ThemeResource CaptionTextBlockStyle}"
-                    Text="تاریخ اندازه گیری" />
-            </Border>
-            <Border
-                Grid.Row="1"
-                Grid.Column="1"
-                BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
-                <TextBlock
-                    Padding="5"
-                    HorizontalAlignment="Center"
-                    Text="{x:Bind ViewModel.Date, Converter={StaticResource DateToShamsiConv}}" />
-            </Border>
-            <Border
-                Grid.Row="1"
-                Grid.Column="2"
-                BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1.5,0,0,0">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -247,50 +248,100 @@
                     Text="تایمر" />
             </Border>
             <Border
-                Grid.Row="1"
-                Grid.Column="3"
+                Grid.Row="0"
+                Grid.Column="7"
+                BorderBrush="Black"
+                BorderThickness="1.5,0,0,0">
+                <akTools:NumberBoxEx
+                    HorizontalAlignment="Stretch"
+                    SmallChange="10"
+                    Value="{x:Bind ViewModel.Timer, Mode=TwoWay}" />
+            </Border>
+            <Border
+                Grid.Row="2"
+                Grid.Column="2"
                 BorderBrush="Black"
                 BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     Padding="5"
-                    HorizontalAlignment="Center"
-                    Text="{x:Bind ViewModel.Timer}" />
+                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                    Style="{ThemeResource CaptionTextBlockStyle}"
+                    Text="مولینه" />
             </Border>
             <Border
-                Grid.Row="1"
-                Grid.Column="4"
+                Grid.Row="2"
+                Grid.Column="3"
                 BorderBrush="Black"
                 BorderThickness="1.5,1.5,0,0">
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    DisplayMemberPath="CurrentMeterName"
+                    ItemsSource="{x:Bind ViewModel.AllCurrentMeters}"
+                    PlaceholderText="انتخاب کنید..."
+                    SelectedItem="{x:Bind ViewModel.SelectedCurrentMeter, Mode=TwoWay}" />
+            </Border>
+            <Border
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="2"
+                BorderBrush="Black"
+                BorderThickness="1.5,0,0,0">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="گشودگی" />
             </Border>
+
             <Border
-                Grid.Row="1"
-                Grid.Column="5"
+                Grid.Row="0"
+                Grid.RowSpan="2"
+                Grid.Column="3"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
-                <TextBlock
-                    Padding="5"
-                    HorizontalAlignment="Center"
-                    FlowDirection="LeftToRight"
-                    Text="{x:Bind ViewModel.GateOpeningsDisplay}" />
+                BorderThickness="1.5,0,0,0">
+                <StackPanel Margin="5">
+                    <ItemsControl ItemsSource="{x:Bind ViewModel.GateValues, Mode=OneWay}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="5" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:AssessmentGate">
+                                <StackPanel>
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        FontSize="10"
+                                        Text="{x:Bind GateNumber}" />
+                                    <akTools:NumberBoxEx
+                                        Width="60"
+                                        Padding="0,7,0,0"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        NumberFormatter="{StaticResource Df}"
+                                        Value="{x:Bind Value, Mode=TwoWay}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
             </Border>
             <Border
                 Grid.Row="1"
+                Grid.RowSpan="2"
                 Grid.Column="6"
                 BorderBrush="Black"
                 BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     Padding="5"
+                    VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="دبی کل" />
             </Border>
             <Border
                 Grid.Row="1"
+                Grid.RowSpan="2"
                 Grid.Column="7"
                 Background="Gold"
                 BorderBrush="Black"
@@ -299,240 +350,246 @@
                     x:Name="TotalFlowBox"
                     Padding="5"
                     HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     Text="{x:Bind ViewModel.TotalFlowDisplay, Mode=OneWay}" />
             </Border>
         </Grid>
-        <ScrollViewer Grid.Row="1" HorizontalAlignment="Center">
-            <StackPanel>
-                <Grid
-                    MinHeight="48"
+        <Grid
+            Grid.Row="1"
+            MinHeight="48"
+            Padding="0"
+            HorizontalAlignment="Center"
+            Background="{ThemeResource SystemAccentColor}"
+            BorderBrush="Black"
+            BorderThickness="1"
+            CornerRadius="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="52" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                Padding="0,0,10,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="ردیف" />
+            <Rectangle
+                Grid.Column="0"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemBaseLowColor}" />
+            <TextBlock
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="فاصله" />
+            <Rectangle
+                Grid.Column="1"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemBaseLowColor}" />
+            <TextBlock
+                Grid.Column="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="عمق" />
+            <Rectangle
+                Grid.Column="2"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemBaseLowColor}" />
+            <Grid
+                Grid.Row="0"
+                Grid.Column="3"
+                HorizontalAlignment="Left">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Border
+                    Grid.Row="0"
                     Padding="0"
-                    HorizontalAlignment="Left"
-                    Background="{ThemeResource SystemAccentColor}"
-                    BorderBrush="Black"
-                    BorderThickness="1"
-                    CornerRadius="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="52" />
-                        <ColumnDefinition Width="80" />
-                        <ColumnDefinition Width="80" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="100" />
-                    </Grid.ColumnDefinitions>
+                    BorderBrush="{ThemeResource SystemBaseLowColor}"
+                    BorderThickness="0,0,1,1">
                     <TextBlock
-                        Grid.Column="0"
-                        Padding="0,0,10,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        FontSize="12"
+                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        FontSize="14"
                         Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="ردیف" />
-                    <Rectangle
-                        Grid.Column="0"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <TextBlock
-                        Grid.Column="1"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="فاصله" />
-                    <Rectangle
-                        Grid.Column="1"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <TextBlock
-                        Grid.Column="2"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="عمق" />
-                    <Rectangle
-                        Grid.Column="2"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <Grid
-                        Grid.Row="0"
-                        Grid.Column="3"
-                        HorizontalAlignment="Left">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Border
-                            Grid.Row="0"
-                            Padding="0"
-                            BorderBrush="{ThemeResource SystemBaseLowColor}"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                FontSize="14"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="تعداد دور /  ثانیه" />
-                        </Border>
-                        <StackPanel
-                            Grid.Row="1"
+                        Text="تعداد دور /  ثانیه" />
+                </Border>
+                <StackPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Stretch"
+                    Orientation="Horizontal">
+                    <Border
+                        Width="88"
+                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderThickness="0,0,1,0">
+                        <TextBlock
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Stretch"
-                            Orientation="Horizontal">
-                            <Border
-                                Width="88"
-                                BorderBrush="{ThemeResource SystemBaseLowColor}"
-                                BorderThickness="0,0,1,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                    FontSize="14"
-                                    Foreground="{ThemeResource SystemAltHighColor}"
-                                    Text="{x:Bind ViewModel.Timer, Mode=TwoWay}" />
-                            </Border>
-                            <Border
-                                Width="88"
-                                BorderBrush="{ThemeResource SystemBaseLowColor}"
-                                BorderThickness="0,0,1,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                    FontSize="14"
-                                    Foreground="{ThemeResource SystemAltHighColor}"
-                                    Text="یک" />
-                            </Border>
-                        </StackPanel>
-                    </Grid>
-                    <Grid
-                        Grid.Column="4"
-                        Width="Auto"
-                        HorizontalAlignment="Right"
-                        Background="{StaticResource SystemAccentColor}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Border
-                            Grid.Row="0"
-                            Padding="0"
-                            BorderBrush="{ThemeResource SystemBaseLowColor}"
-                            BorderThickness="0,0,1,1">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                FontSize="14"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="سرعت متوسط در" />
-                        </Border>
-                        <StackPanel
-                            Grid.Row="1"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Stretch"
-                            Orientation="Horizontal">
-                            <Border
-                                Width="88"
-                                BorderBrush="{ThemeResource SystemBaseLowColor}"
-                                BorderThickness="0,0,1,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                    FontSize="14"
-                                    Foreground="{ThemeResource SystemAltHighColor}"
-                                    Text="نقطه" />
-                            </Border>
-                            <Border
-                                Width="88"
-                                BorderBrush="{ThemeResource SystemBaseLowColor}"
-                                BorderThickness="0,0,1,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                    FontSize="14"
-                                    Foreground="{ThemeResource SystemAltHighColor}"
-                                    Text="قائم" />
-                            </Border>
-                            <Border
-                                Width="88"
-                                BorderBrush="{ThemeResource SystemBaseLowColor}"
-                                BorderThickness="0,0,1,0">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                    FontSize="14"
-                                    Foreground="{ThemeResource SystemAltHighColor}"
-                                    Text="مقطع" />
-                            </Border>
-                        </StackPanel>
-                    </Grid>
+                            VerticalAlignment="Center"
+                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                            FontSize="14"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="{x:Bind ViewModel.Timer, Mode=TwoWay}" />
+                    </Border>
+                    <Border
+                        Width="88"
+                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderThickness="0,0,1,0">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                            FontSize="14"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="یک" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+            <Grid
+                Grid.Column="4"
+                Width="Auto"
+                HorizontalAlignment="Right"
+                Background="{StaticResource SystemAccentColor}">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Border
+                    Grid.Row="0"
+                    Padding="0"
+                    BorderBrush="{ThemeResource SystemBaseLowColor}"
+                    BorderThickness="0,0,1,1">
                     <TextBlock
-                        Grid.Column="5"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        FontSize="12"
+                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        FontSize="14"
                         Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="عمق مقطع" />
-                    <Rectangle
-                        Grid.Column="5"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <TextBlock
-                        Grid.Column="6"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="عرض مقطع" />
-                    <Rectangle
-                        Grid.Column="6"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <TextBlock
-                        Grid.Column="7"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="10"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="سطح مقطع" />
-                    <Rectangle
-                        Grid.Column="7"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                    <TextBlock
-                        Grid.Column="8"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemAltHighColor}"
-                        Text="دبی مقطع" />
-                    <Rectangle
-                        Grid.Column="8"
-                        Width="1"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch"
-                        Fill="{ThemeResource SystemBaseLowColor}" />
-                </Grid>
+                        Text="سرعت متوسط در" />
+                </Border>
+                <StackPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Stretch"
+                    Orientation="Horizontal">
+                    <Border
+                        Width="88"
+                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderThickness="0,0,1,0">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                            FontSize="14"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="نقطه" />
+                    </Border>
+                    <Border
+                        Width="88"
+                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderThickness="0,0,1,0">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                            FontSize="14"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="قائم" />
+                    </Border>
+                    <Border
+                        Width="88"
+                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderThickness="0,0,1,0">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                            FontSize="14"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="مقطع" />
+                    </Border>
+                </StackPanel>
+            </Grid>
+            <TextBlock
+                Grid.Column="5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="عمق مقطع" />
+            <Rectangle
+                Grid.Column="5"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemBaseLowColor}" />
+            <TextBlock
+                Grid.Column="6"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="عرض مقطع" />
+            <Rectangle
+                Grid.Column="6"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemBaseLowColor}" />
+            <TextBlock
+                Grid.Column="7"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="10"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="سطح مقطع" />
+            <Rectangle
+                Grid.Column="7"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemBaseLowColor}" />
+            <TextBlock
+                Grid.Column="8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="دبی مقطع" />
+            <Rectangle
+                Grid.Column="8"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemBaseLowColor}" />
+        </Grid>
+        <ScrollViewer
+            Grid.Row="2"
+            Width="1055"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top">
+            <StackPanel>
                 <ItemsControl ItemsSource="{x:Bind ViewModel.FormValues}">
 
                     <ItemsControl.ItemsPanel>
@@ -567,7 +624,7 @@
                                 <Border
                                     Grid.Column="0"
                                     BorderBrush="Black"
-                                    BorderThickness="1,0,0,1">
+                                    BorderThickness="1,0,0,2">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -577,7 +634,7 @@
                                 <Border
                                     Grid.Column="1"
                                     BorderBrush="Black"
-                                    BorderThickness="1,0,0,1">
+                                    BorderThickness="1,0,0,2">
                                     <akTools:NumberBoxEx
                                         Padding="0,23,0,0"
                                         VerticalAlignment="Stretch"
@@ -589,7 +646,7 @@
                                 <Border
                                     Grid.Column="2"
                                     BorderBrush="Black"
-                                    BorderThickness="1,0,0,1">
+                                    BorderThickness="1,0,0,2">
                                     <akTools:NumberBoxEx
                                         Padding="0,23,0,0"
                                         VerticalAlignment="Stretch"
@@ -604,7 +661,7 @@
                                         BorderThickness="1,0,0,1">
                                         <akTools:NumberBoxEx
                                             Padding="0,2,0,0"
-                                            NumberFormatter="{StaticResource Df}"
+                                            NumberFormatter="{StaticResource Df1}"
                                             SpinButtonPlacementMode="Hidden"
                                             Value="{x:Bind Rev02, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </Border>
@@ -614,17 +671,18 @@
                                         BorderThickness="1,0,0,1">
                                         <akTools:NumberBoxEx
                                             Padding="0,2,0,0"
-                                            NumberFormatter="{StaticResource Df}"
+                                            NumberFormatter="{StaticResource Df1}"
                                             SpinButtonPlacementMode="Hidden"
                                             Value="{x:Bind Rev06, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </Border>
                                     <Border
                                         Height="24.6"
                                         BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
+                                        BorderThickness="1,0,0,2">
                                         <akTools:NumberBoxEx
                                             Padding="0,2,0,0"
-                                            NumberFormatter="{StaticResource Df}"
+                                            FontWeight="bold"
+                                            NumberFormatter="{StaticResource Df1}"
                                             SpinButtonPlacementMode="Hidden"
                                             Value="{x:Bind Rev08, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </Border>
@@ -652,7 +710,7 @@
                                     <Border
                                         Height="24.6"
                                         BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
+                                        BorderThickness="1,0,0,2">
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -683,7 +741,7 @@
                                     <Border
                                         Height="24.6"
                                         BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
+                                        BorderThickness="1,0,0,2">
                                         <TextBlock
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -695,7 +753,7 @@
                                 <Border
                                     Grid.Column="6"
                                     BorderBrush="Black"
-                                    BorderThickness="1,0,1,1">
+                                    BorderThickness="1,0,1,2">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -705,14 +763,12 @@
                                 <Grid
                                     Grid.Column="7"
                                     Width="489"
-                                    VerticalAlignment="Top"
-                                    Background="Transparent">
+                                    VerticalAlignment="Top">
 
                                     <Canvas Visibility="{x:Bind ShowCalculationGrid, Mode=OneWay}">
                                         <Grid
                                             Canvas.Top="-37"
                                             Height="74"
-                                            Background="Transparent"
                                             BorderBrush="Black"
                                             BorderThickness="0,0.5,1,0"
                                             Canvas.ZIndex="99">
@@ -773,6 +829,7 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontWeight="Bold"
+                                                    Foreground="Green"
                                                     Text="{x:Bind SectionFlowDisplay, Mode=OneWay}" />
                                             </Border>
                                         </Grid>
@@ -783,308 +840,24 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <!--<ListView
-                    Padding="0"
-                    ItemsSource="{x:Bind ViewModel.FormValues}"
-                    SelectionMode="None">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="Padding" Value="0" />
-
-                            <Setter Property="Margin" Value="0" />
-
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-
-                            <Setter Property="MinHeight" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="viewmodels:FormValueViewModel">
-                            <Grid
-                                Height="74"
-                                Padding="0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Top"
-                                CornerRadius="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid
-                                    Grid.Column="0"
-                                    Height="75"
-                                    Margin="0"
-                                    Padding="0"
-                                    HorizontalAlignment="Left">
-                                    <Grid.Resources>
-                                        <helpers:DoubleFormatter x:Key="Df" />
-                                    </Grid.Resources>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="52" />
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="80" />
-                                        <ColumnDefinition Width="88" />
-                                        <ColumnDefinition Width="88" />
-                                        <ColumnDefinition Width="88" />
-                                        <ColumnDefinition Width="88" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border
-                                        Grid.Column="0"
-                                        Height="74"
-                                        VerticalAlignment="Top"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            TabIndex="0"
-                                            Text="{x:Bind RowIndex}" />
-                                    </Border>
-                                    <Border
-                                        Grid.Column="1"
-                                        Height="74"
-                                        VerticalAlignment="Top"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <akTools:NumberBoxEx
-                                            x:Name="DistanceNumberBox"
-                                            Padding="0,23,0,0"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            CornerRadius="0"
-                                            NumberFormatter="{StaticResource Df}"
-                                            PlaceholderText="0.00"
-                                            TabIndex="1"
-                                            Value="{x:Bind Distance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </Border>
-                                    <Border
-                                        Grid.Column="2"
-                                        Height="74"
-                                        VerticalAlignment="Top"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1"
-                                        TabIndex="-1">
-                                        <akTools:NumberBoxEx
-                                            x:Name="TotalDepthNumberBox"
-                                            Padding="0,23,0,0"
-                                            VerticalAlignment="Stretch"
-                                            NumberFormatter="{StaticResource Df}"
-                                            TabIndex="2"
-                                            Value="{x:Bind TotalDepth, Mode=TwoWay}" />
-                                    </Border>
-                                    <StackPanel
-                                        x:Name="NPoints"
-                                        Grid.Column="3"
-                                        Padding="0"
-                                        VerticalAlignment="Top"
-                                        Orientation="Vertical">
-                                        <Border BorderBrush="Black" BorderThickness="1,0,0,1">
-                                            <akTools:NumberBoxEx
-                                                x:Name="Rev02NumberBox"
-                                                Height="23.5"
-                                                Padding="0,2,0,0"
-                                                VerticalAlignment="Stretch"
-                                                SpinButtonPlacementMode="Hidden"
-                                                TabIndex="3"
-                                                Value="{x:Bind Rev02, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Border>
-                                        <Border BorderBrush="Black" BorderThickness="1,0,0,1">
-                                            <akTools:NumberBoxEx
-                                                x:Name="Rev06NumberBox"
-                                                Height="23.5"
-                                                Padding="0,2,0,0"
-                                                SpinButtonPlacementMode="Hidden"
-                                                TabIndex="4"
-                                                Value="{x:Bind Rev06, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Border>
-                                        <Border BorderBrush="Black" BorderThickness="1,0,0,1">
-                                            <akTools:NumberBoxEx
-                                                x:Name="Rev08NumberBox"
-                                                Height="23.5"
-                                                Padding="0,2,0,0"
-                                                SpinButtonPlacementMode="Hidden"
-                                                TabIndex="5"
-                                                Value="{x:Bind Rev08, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </Border>
-                                    </StackPanel>
-                                    <StackPanel
-                                        x:Name="NOnSecPoints"
-                                        Grid.Column="4"
-                                        Height="74"
-                                        VerticalAlignment="Top"
-                                        BorderBrush="Black"
-                                        BorderThickness="0,0,0,1"
-                                        Orientation="Vertical">
-                                        <Border
-                                            VerticalAlignment="Center"
-                                            BorderBrush="Black"
-                                            BorderThickness="1,0,0,1">
-                                            <TextBlock
-                                                Height="23.5"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Text="{x:Bind N02Display, Mode=OneWay}" />
-                                        </Border>
-                                        <Border BorderBrush="Black" BorderThickness="1,0,0,1">
-                                            <TextBlock
-                                                Height="23.5"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Text="{x:Bind N06Display, Mode=OneWay}" />
-                                        </Border>
-                                        <Border BorderBrush="Black" BorderThickness="1,0,0,1">
-                                            <TextBlock
-                                                Height="23.5"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontWeight="Bold"
-                                                Text="{x:Bind N08Display, Mode=OneWay}" />
-                                        </Border>
-                                    </StackPanel>
-                                    <StackPanel
-                                        x:Name="PointsVelocity"
-                                        Grid.Column="5"
-                                        Height="74"
-                                        VerticalAlignment="Top"
-                                        Orientation="Vertical">
-                                        <Border BorderBrush="Black" BorderThickness="1,0,0,1">
-                                            <TextBlock
-                                                Height="23.5"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Text="{x:Bind Velocity02Display, Mode=OneWay}" />
-                                        </Border>
-                                        <Border BorderBrush="Black" BorderThickness="1,0,0,1">
-                                            <TextBlock
-                                                Height="23.5"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Text="{x:Bind Velocity06Display, Mode=OneWay}" />
-                                        </Border>
-                                        <Border BorderBrush="Black" BorderThickness="1,0,0,1">
-                                            <TextBlock
-                                                Height="23.5"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontWeight="Bold"
-                                                Text="{x:Bind Velocity08Display, Mode=OneWay}" />
-                                        </Border>
-                                    </StackPanel>
-
-                                    <Border
-                                        Grid.Column="6"
-                                        Height="74"
-                                        VerticalAlignment="Top"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Bind VerticalMeanVelocityDisplay, Mode=OneWay}" />
-                                    </Border>
-
-
-                                    <Canvas Grid.Column="7" Visibility="{x:Bind ShowCalculationGrid, Mode=OneWay}">
-                                        <Grid
-                                            x:Name="AfterVerticalMeanVelocityDisplay"
-                                            Height="74"
-                                            Margin="{x:Bind SectionGridMargin, Mode=OneWay}"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Top"
-                                            BorderBrush="Black"
-                                            BorderThickness="0,0,1,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="88" />
-                                                <ColumnDefinition Width="100" />
-                                                <ColumnDefinition Width="100" />
-                                                <ColumnDefinition Width="100" />
-                                                <ColumnDefinition Width="101" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <Border
-                                                Grid.Column="0"
-                                                Background="Transparent"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,1">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind PanelAvgVelocityDisplay, Mode=OneWay}" />
-                                            </Border>
-                                            <Border
-                                                Grid.Column="1"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,1">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind PanelAvgDepthDisplay, Mode=OneWay}" />
-                                            </Border>
-                                            <Border
-                                                Grid.Column="2"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,1">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind SectionWidthDisplay, Mode=OneWay}" />
-                                            </Border>
-                                            <Border
-                                                Grid.Column="3"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,1">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind SectionAreaDisplay, Mode=OneWay}" />
-                                            </Border>
-                                            <Border
-                                                Grid.Column="4"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,1">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontWeight="Bold"
-                                                    Text="{x:Bind SectionFlowDisplay, Mode=OneWay}" />
-                                            </Border>
-                                        </Grid>
-                                    </Canvas>
-
-
-
-                -->
-                <!--<Button
-        Grid.Column="9"
-        Command="{Binding ElementName=MyPage, Path=DataContext.RemoveRowCommand}"
-        CommandParameter="{x:Bind}"
-        Content="x"
-        Foreground="Red" />-->
-                <!--
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>-->
             </StackPanel>
         </ScrollViewer>
 
         <Grid
-            Grid.Row="2"
+            Grid.Row="3"
             Padding="20,10,20,10"
-            Background="WhiteSmoke">
+            Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
+
             <Button
                 Command="{x:Bind ViewModel.AddRowCommand}"
                 Content="افزودن سطر جدید"
-                Style="{StaticResource AccentButtonStyle}" />
+                Style="{ThemeResource AccentButtonStyle}" />
             <InfoBar
                 x:Name="BoxInfoBar"
                 Grid.Column="2"
@@ -1101,7 +874,10 @@
                 Content="{x:Bind ViewModel.SaveButtonContent, Mode=OneWay}"
                 IsEnabled="{x:Bind ViewModel.IsBusy, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}"
                 Style="{ThemeResource AccentButtonStyle}" />
-            <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
+            <ProgressRing
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
             <StackPanel
                 Grid.Column="3"
                 HorizontalAlignment="Right"

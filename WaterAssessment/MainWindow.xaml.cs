@@ -127,32 +127,33 @@ public sealed partial class MainWindow : Window
             switch (menuItem.Tag)
             {
                 case "AssessmentForm":
-                    await ViewModel.LoadBaseDataAsync();
-                    var dialog = new CreateAssessmentDialog(
-                        ViewModel.Locations,
-                        ViewModel.CurrentMeters,
-                        ViewModel.Propellers,
-                        ViewModel.Employees);
-                    // XamlRoot برای WinUI 3 الزامی است
-                    if (menuItem.XamlRoot != null)
-                    {
-                        dialog.XamlRoot = menuItem.XamlRoot;
-                    }
-                    else
-                    {
-                        // اگر به هر دلیلی نال بود، از Content پنجره استفاده کنید (روش جایگزین)
-                        dialog.XamlRoot = this.Content.XamlRoot;
-                    }
+                    ShellPage.Instance.Navigate(typeof(AssessmentFormPage));
+                    //await ViewModel.LoadBaseDataAsync();
+                    //var dialog = new CreateAssessmentDialog(
+                    //    ViewModel.Locations,
+                    //    ViewModel.CurrentMeters,
+                    //    ViewModel.Propellers,
+                    //    ViewModel.Employees);
+                    //// XamlRoot برای WinUI 3 الزامی است
+                    //if (menuItem.XamlRoot != null)
+                    //{
+                    //    dialog.XamlRoot = menuItem.XamlRoot;
+                    //}
+                    //else
+                    //{
+                    //    // اگر به هر دلیلی نال بود، از Content پنجره استفاده کنید (روش جایگزین)
+                    //    dialog.XamlRoot = this.Content.XamlRoot;
+                    //}
 
-                    await dialog.ShowAsync();
+                    //await dialog.ShowAsync();
 
-                    // بررسی نتیجه
-                    if (dialog.ViewModel.ResultAssessment != null)
-                    {
-                        var createdAssessment = dialog.ViewModel.ResultAssessment;
-                        // رفتن به صفحه اصلی اندازه گیری با این داده‌ها
-                        ShellPage.Instance.Navigate(typeof(AssessmentFormPage), null, createdAssessment);
-                    }
+                    //// بررسی نتیجه
+                    //if (dialog.ViewModel.ResultAssessment != null)
+                    //{
+                    //    var createdAssessment = dialog.ViewModel.ResultAssessment;
+                    //    // رفتن به صفحه اصلی اندازه گیری با این داده‌ها
+                    //    ShellPage.Instance.Navigate(typeof(AssessmentFormPage), null, createdAssessment);
+                    //}
                     break;
                 //case "AssessmentForm":
                 //    InputPanelContentDialog_OnLoaded(null, null);

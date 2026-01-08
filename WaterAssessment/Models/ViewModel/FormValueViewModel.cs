@@ -10,12 +10,34 @@ namespace WaterAssessment.Models.ViewModel
     public partial class FormValueViewModel : ObservableObject
     {
         public FormValue Model { get; }
-        private readonly Propeller _propeller;
+
+        [ObservableProperty]
+        private Propeller _propeller;
+
+        // وقتی پروانه (از طریق فرم پدر) عوض می‌شود، این متد اجرا می‌شود
+        partial void OnPropellerChanged(Propeller value)
+        {
+            // تمام سرعت‌ها را با ضرایب پروانه جدید دوباره حساب کن
+            RecalculateAllVelocities();
+        }
+
+        private void RecalculateAllVelocities()
+        {
+            // با فراخوانی متدهای تغییر دور، محاسبات سرعت تریگر می‌شوند
+            // (فرض بر این است که منطق محاسبه سرعت در متدهای OnRev...Changed قرار دارد)
+
+            if (Rev02 != null) OnRev02Changed(Rev02);
+            if (Rev06 != null) OnRev06Changed(Rev06);
+            if (Rev08 != null) OnRev08Changed(Rev08);
+
+            // محاسبه نهایی سرعت متوسط و دبی پنل
+            CalculateVelocities();
+        }
 
         public FormValueViewModel(FormValue model, Propeller propeller)
         {
             Model = model;
-            _propeller = propeller;
+            Propeller = propeller;
 
             // پر کردن مقادیر اولیه ویومدل از روی مدل
             _measureTime = model.MeasureTime;
@@ -37,11 +59,6 @@ namespace WaterAssessment.Models.ViewModel
 
         public int RowIndex => Model.RowIndex;
         public bool IsFirstRow => RowIndex == 1;
-        public double SectionGridHeight => IsFirstRow ? 37 : 74;
-        public VerticalAlignment SectionGridAlignment => VerticalAlignment.Top;
-        public Visibility SectionGridVisibility => IsFirstRow ? Visibility.Collapsed : Visibility.Visible;
-        public Thickness SectionGridMargin => IsFirstRow ? new Thickness(0) : new Thickness(0, 0, 0, -37);
-        public double SectionTranslationY => IsFirstRow ? 0 : -37;
         public bool ShowCalculationGrid => !IsFirstRow;
 
         // ==========================================================
@@ -67,14 +84,15 @@ namespace WaterAssessment.Models.ViewModel
 
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SectionArea))] // تغییر عمق -> تغییر سطح
+        [NotifyPropertyChangedFor(nameof(SectionArea))] // تغییر عمق -> تغییر سطح مقطع
         [NotifyPropertyChangedFor(nameof(SectionFlow))] // تغییر عمق -> تغییر دبی
+        [NotifyPropertyChangedFor(nameof(VerticalMeanVelocity))] // تغییر عمق -> تغییر سرعت قائم
         private double _totalDepth;
 
         partial void OnTotalDepthChanged(double value)
         {
             Model.TotalDepth = value;
-            CalculateResults();
+            CalculateVelocities();
         }
 
         // ==========================================================
@@ -224,17 +242,17 @@ namespace WaterAssessment.Models.ViewModel
                 if (MeasureTime <= 0 || double.IsNaN(Rev02)) return "-";
 
                 // محاسبه n و نمایش با 3 رقم اعشار
-                return (Rev02 / MeasureTime).ToString("N3");
+                return (Rev02 / MeasureTime).ToString("N2");
             }
         }
 
         public string N06Display => (MeasureTime <= 0 || double.IsNaN(Rev06))
             ? "-"
-            : (Rev06 / MeasureTime).ToString("N3");
+            : (Rev06 / MeasureTime).ToString("N2");
 
         public string N08Display => (MeasureTime <= 0 || double.IsNaN(Rev08))
             ? "-"
-            : (Rev08 / MeasureTime).ToString("N3");
+            : (Rev08 / MeasureTime).ToString("N2");
 
         // ==========================================
         // سرعت‌های نقطه‌ای (محاسبه شده توسط پروانه)
@@ -268,6 +286,9 @@ namespace WaterAssessment.Models.ViewModel
 
         private void CalculateVelocities()
         {
+            // چک کردن اینکه آیا پروانه ست شده است یا خیر (برای جلوگیری از کرش)
+            if (Propeller == null) return;
+
             // 1. اگر زمان صفر است، همه سرعت‌ها صفر یا نامعتبر می‌شوند
             if (MeasureTime <= 0)
             {
@@ -279,21 +300,21 @@ namespace WaterAssessment.Models.ViewModel
             }
 
             // 2. محاسبه سرعت نقطه 0.2
-            if (!double.IsNaN(Rev02)) // فقط اگر کاربر عددی وارد کرده باشد
+            if (!double.IsNaN(Rev02))
             {
                 double n = (Rev02 > 0) ? Rev02 / MeasureTime : 0;
-                Velocity02 = _propeller.CalculateVelocity(n);
+                Velocity02 = Propeller.CalculateVelocity(n);
             }
             else
             {
-                Velocity02 = double.NaN; // خالی بماند
+                Velocity02 = double.NaN;
             }
 
             // 3. محاسبه سرعت نقطه 0.6
             if (!double.IsNaN(Rev06))
             {
                 double n = (Rev06 > 0) ? Rev06 / MeasureTime : 0;
-                Velocity06 = _propeller.CalculateVelocity(n);
+                Velocity06 = Propeller.CalculateVelocity(n);
             }
             else
             {
@@ -304,45 +325,64 @@ namespace WaterAssessment.Models.ViewModel
             if (!double.IsNaN(Rev08))
             {
                 double n = (Rev08 > 0) ? Rev08 / MeasureTime : 0;
-                Velocity08 = _propeller.CalculateVelocity(n);
+                Velocity08 = Propeller.CalculateVelocity(n);
             }
             else
             {
                 Velocity08 = double.NaN;
             }
 
-            // 5. میانگین‌گیری (از مقادیر پراپرتی‌ها استفاده می‌کنیم)
-            // نکته: اگر Velocity02 مقدار NaN باشد، یعنی آن نقطه اندازه‌گیری نشده است
+            // 5. میانگین‌گیری (بخش اصلی تغییرات)
             bool has02 = !double.IsNaN(Velocity02);
             bool has06 = !double.IsNaN(Velocity06);
             bool has08 = !double.IsNaN(Velocity08);
 
             double vMean = 0;
 
-            // توجه: وقتی مقدار NaN است، در جمع ریاضی نتیجه را NaN می‌کند
-            // بنابراین باید از مقادیر عددی یا 0 استفاده کنیم
             double val02 = has02 ? Velocity02 : 0;
             double val06 = has06 ? Velocity06 : 0;
             double val08 = has08 ? Velocity08 : 0;
 
-            if (has02 && has08)
+            // --- تغییرات جدید اینجاست ---
+
+            // حالت ۳ نقطه‌ای (هر سه موجود باشند)
+            if (has02 && has06 && has08)
             {
-                if (has06)
-                    vMean = (val02 + 2 * val06 + val08) / 4; // سه نقطه‌ای
+                // اگر عمق کمتر یا مساوی 3 متر است: میانگین ساده حسابی
+                if (TotalDepth < 3)
+                {
+                    vMean = (val02 + val06 + val08) / 3.0;
+                }
+                // اگر عمق بیشتر از 3 متر است: میانگین وزنی
                 else
-                    vMean = (val02 + val08) / 2; // دو نقطه‌ای
+                {
+                    vMean = (val02 + 2 * val06 + val08) / 4.0;
+                }
             }
+            // حالت ۲ نقطه‌ای (فقط 0.2 و 0.8)
+            else if (has02 && has08)
+            {
+                vMean = (val02 + val08) / 2.0;
+            }
+            // حالت تک نقطه‌ای (فقط 0.6)
             else if (has06)
             {
-                vMean = val06; // تک نقطه‌ای
+                vMean = val06;
             }
+            // سایر حالات (مثلاً فقط 0.2)
             else if (has02)
             {
-                vMean = val02; // فقط سطح
+                vMean = val02;
+            }
+            else if (has08)
+            {
+                vMean = val08;
             }
 
             // 6. ذخیره نهایی
             VerticalMeanVelocity = vMean;
+
+            // ذخیره در مدل (اگر نیاز است که مدل دیتابیسی هم همین الان آپدیت شود)
             Model.VerticalMeanVelocity = vMean;
         }
 

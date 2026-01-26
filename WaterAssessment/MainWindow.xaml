@@ -247,7 +247,7 @@
                         <NavigationViewItem.MenuItems>
                             <NavigationViewItem
                                 Content="کانال ها"
-                                Tag="Canals"
+                                Tag="ChannelsReportPage"
                                 Tapped="NavigationViewItem_OnTapped">
                                 <NavigationViewItem.Icon>
                                     <FontIcon Glyph="&#xE9F9;" />

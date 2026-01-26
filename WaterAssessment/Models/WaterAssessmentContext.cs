@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using WaterAssessment.Mapping;
 
 namespace WaterAssessment.Models;
@@ -10,7 +11,7 @@ public class WaterAssessmentContext : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlServer(@"Server=(local);Database=WaterAssessmentDB;Trusted_Connection=True;Encrypt=False;");
-            optionsBuilder.UseLazyLoadingProxies();
+            //optionsBuilder.UseLazyLoadingProxies();
         }
     }
 

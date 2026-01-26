@@ -33,9 +33,9 @@ namespace WaterAssessment.Models
         // نال‌پذیر هستند چون شاید کاربر در هر ۳ عمق اندازه‌گیری نکند
         // ==========================================
 
-        public int? Rev02 { get; set; } // دور در عمق 0.2
-        public int? Rev06 { get; set; } // دور در عمق 0.6
-        public int? Rev08 { get; set; } // دور در عمق 0.8
+        public double? Rev02 { get; set; } // دور در عمق 0.2
+        public double? Rev06 { get; set; } // دور در عمق 0.6
+        public double? Rev08 { get; set; } // دور در عمق 0.8
 
         // ==========================================
         // مقادیر محاسباتی (ذخیره جهت گزارش‌گیری سریع و تاریخچه)

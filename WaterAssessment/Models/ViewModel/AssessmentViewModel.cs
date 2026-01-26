@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 using System.Globalization;
 using WinUICommunity;
@@ -111,15 +112,21 @@ namespace WaterAssessment.Models.ViewModel
         {
             Model = model;
             SelectedPropeller = model.Propeller;
+            //SelectedLocation = model.Location;
 
             // مقداردهی اولیه فیلد‌ها از مدل
-            _timer = model.Timer == 0 ? 50 : model.Timer; // پیش‌فرض 50
-            _date = model.Date == default ? DateTime.Now : model.Date;
-            _echelon = model.Echelon;
-            _totalFlow = model.TotalFlow;
+            Timer = model.Timer == 0 ? 50 : model.Timer; // پیش‌فرض 50
+            Date = model.Date == default ? DateTime.Now : model.Date;
+            Echelon = model.Echelon;
+            TotalFlow = model.TotalFlow;
 
             // لود کردن کارمندان انتخاب شده از دیالوگ
             foreach (var rel in model.AssessmentEmployees) AssessmentEmployees.Add(rel);
+
+            foreach (var gateVal in model.GateOpenings)
+            {
+                GateValues.Add(gateVal);
+            }
 
             // اگر مدل شامل ردیف‌های ذخیره شده قبلی است، آن‌ها را لود کن
             if (model.FormValues != null)
@@ -172,10 +179,10 @@ namespace WaterAssessment.Models.ViewModel
 
             // 3. لود کردن دریچه‌ها
             // اگر ویرایش است، دریچه‌های ذخیره شده را می‌آوریم
-            if (Model.GateOpenings != null && Model.GateOpenings.Any())
-            {
-                foreach (var g in Model.GateOpenings) GateValues.Add(g);
-            }
+            //if (Model.GateOpenings != null && Model.GateOpenings.Any())
+            //{
+            //    foreach (var g in Model.GateOpenings) GateValues.Add(g);
+            //}
             else if (SelectedLocation != null)
             {
                 // اگر جدید است، بر اساس مکان پیش‌فرض بساز

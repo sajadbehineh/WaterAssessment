@@ -118,7 +118,7 @@ namespace WaterAssessment.Models.ViewModel
         partial void OnRev02Changed(double value)
         {
             // تبدیل double به int? برای مدل
-            Model.Rev02 = double.IsNaN(value) ? null : (int)value;
+            Model.Rev02 = double.IsNaN(value) ? null : value;
             CalculateVelocities();
         }
 
@@ -127,7 +127,7 @@ namespace WaterAssessment.Models.ViewModel
         private double _rev06;
         partial void OnRev06Changed(double value)
         {
-            Model.Rev06 = double.IsNaN(value) ? null : (int)value;
+            Model.Rev06 = double.IsNaN(value) ? null : value;
             CalculateVelocities();
         }
 
@@ -136,7 +136,7 @@ namespace WaterAssessment.Models.ViewModel
         private double _rev08;
         partial void OnRev08Changed(double value)
         {
-            Model.Rev08 = double.IsNaN(value) ? null : (int)value;
+            Model.Rev08 = double.IsNaN(value) ? null : value;
             CalculateVelocities();
         }
 
@@ -339,44 +339,48 @@ namespace WaterAssessment.Models.ViewModel
 
             double vMean = 0;
 
-            double val02 = has02 ? Velocity02 : 0;
-            double val06 = has06 ? Velocity06 : 0;
-            double val08 = has08 ? Velocity08 : 0;
+            double v02 = has02 ? Velocity02 : 0;
+            double v06 = has06 ? Velocity06 : 0;
+            double v08 = has08 ? Velocity08 : 0;
 
-            // --- تغییرات جدید اینجاست ---
 
-            // حالت ۳ نقطه‌ای (هر سه موجود باشند)
             if (has02 && has06 && has08)
             {
-                // اگر عمق کمتر یا مساوی 3 متر است: میانگین ساده حسابی
                 if (TotalDepth < 3)
-                {
-                    vMean = (val02 + val06 + val08) / 3.0;
-                }
-                // اگر عمق بیشتر از 3 متر است: میانگین وزنی
+                    vMean = (v02 + v06 + v08) / 3.0; // میانگین حسابی
                 else
-                {
-                    vMean = (val02 + 2 * val06 + val08) / 4.0;
-                }
+                    vMean = (v02 + 2 * v06 + v08) / 4.0; // میانگین وزنی
             }
-            // حالت ۲ نقطه‌ای (فقط 0.2 و 0.8)
-            else if (has02 && has08)
+            // --- ب) فقط 2 نقطه موجود است (ترکیبات مختلف) ---
+            else if (has02 && has08) // حالت استاندارد 2 نقطه‌ای
             {
-                vMean = (val02 + val08) / 2.0;
+                vMean = (v02 + v08) / 2.0;
             }
-            // حالت تک نقطه‌ای (فقط 0.6)
+            else if (has02 && has06) // درخواستی شما (0.2 و 0.6 هست، 0.8 نیست)
+            {
+                vMean = (v02 + v06) / 2.0;
+            }
+            else if (has06 && has08) // (0.6 و 0.8 هست، 0.2 نیست)
+            {
+                vMean = (v06 + v08) / 2.0;
+            }
+            // --- ج) فقط 1 نقطه موجود است ---
             else if (has06)
             {
-                vMean = val06;
+                vMean = v06;
             }
-            // سایر حالات (مثلاً فقط 0.2)
             else if (has02)
             {
-                vMean = val02;
+                vMean = v02;
             }
             else if (has08)
             {
-                vMean = val08;
+                vMean = v08;
+            }
+            else
+            {
+                // هیچ سرعتی محاسبه نشده
+                vMean = 0;
             }
 
             // 6. ذخیره نهایی

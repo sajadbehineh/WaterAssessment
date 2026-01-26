@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="WaterAssessment.Views.ChannelsReportPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:converters="using:WaterAssessment.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:WaterAssessment.Models"
+    xmlns:wuc="using:WinUICommunity"
+    FontFamily="{StaticResource SamimBold}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:DateTimeToShamsiConverter x:Key="ShamsiConv" />
+        <converters:DateTimeToDateTimeOffsetConverter x:Key="DateToOffsetConv" />
+    </Page.Resources>
+
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,20"
+            Spacing="10">
+            <TextBlock
+                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="گزارشات اندازه گیری کانال‌ها" />
+
+            <StackPanel
+                Padding="10"
+                Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                CornerRadius="8"
+                Orientation="Horizontal"
+                Spacing="15">
+
+                <StackPanel>
+                    <TextBlock
+                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="مکان:" />
+                    <ComboBox
+                        Width="200"
+                        DisplayMemberPath="LocationName"
+                        ItemsSource="{x:Bind ViewModel.Locations}"
+                        PlaceholderText="همه مکان‌ها"
+                        SelectedItem="{x:Bind ViewModel.FilterLocation, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock
+                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="از تاریخ:" />
+                    <CalendarDatePicker
+                        Width="150"
+                        CalendarIdentifier="PersianCalendar"
+                        Date="{x:Bind ViewModel.FilterStartDate, Mode=TwoWay}"
+                        DateFormat="{}{year.full}/{month.integer}/{day.integer}"
+                        Language="fa-IR" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock
+                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="تا تاریخ:" />
+                    <CalendarDatePicker
+                        Width="150"
+                        CalendarIdentifier="PersianCalendar"
+                        Date="{x:Bind ViewModel.FilterEndDate, Mode=TwoWay}"
+                        DateFormat="{}{year.full}/{month.integer}/{day.integer}"
+                        Language="fa-IR" />
+                </StackPanel>
+
+                <Button
+                    VerticalAlignment="Bottom"
+                    Command="{x:Bind ViewModel.ApplyFiltersCommand}"
+                    Content="اعمال فیلتر"
+                    Style="{ThemeResource AccentButtonStyle}" />
+
+                <Button
+                    VerticalAlignment="Bottom"
+                    Command="{x:Bind ViewModel.ClearFiltersCommand}"
+                    Content="حذف فیلترها" />
+            </StackPanel>
+        </StackPanel>
+
+        <controls:DataGrid
+            x:Name="ReportDataGrid"
+            Grid.Row="1"
+            AutoGenerateColumns="False"
+            BorderBrush="{ThemeResource SystemControlBackgroundBaseMediumLowBrush}"
+            BorderThickness="1"
+            CanUserResizeColumns="True"
+            CanUserSortColumns="True"
+            DataContext="{x:Bind ViewModel}"
+            GridLinesVisibility="Horizontal"
+            HeadersVisibility="Column"
+            IsReadOnly="True"
+            ItemsSource="{x:Bind ViewModel.Assessments}"
+            Tag="{x:Bind ViewModel}">
+
+            <controls:DataGrid.Columns>
+                <controls:DataGridTextColumn
+                    Width="200"
+                    Binding="{Binding Location.LocationName}"
+                    Header="نام مکان" />
+
+                <controls:DataGridTextColumn
+                    Width="120"
+                    Binding="{Binding Date, Converter={StaticResource ShamsiConv}}"
+                    Header="تاریخ" />
+
+                <controls:DataGridTextColumn
+                    Width="120"
+                    Binding="{Binding TotalFlow, Converter={StaticResource DoubleToStringConv}, ConverterParameter='N3'}"
+                    Header="دبی کل (CMS)" />
+
+                <controls:DataGridTextColumn
+                    Width="120"
+                    Binding="{Binding VerticalMeanVelocity, Converter={StaticResource DoubleToStringConv}, ConverterParameter='N3'}"
+                    Header="سرعت متوسط" />
+
+                <controls:DataGridTemplateColumn Width="100" Header="عملیات">
+                    <controls:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="models:Assessment">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="10">
+                                <!--<Button
+                                    Padding="4"
+                                    Command="{Binding ElementName=ReportDataGrid, Path=DataContext.EditAssessmentCommand}"
+                                    CommandParameter="{Binding}"
+                                    ToolTipService.ToolTip="ویرایش">
+                                    <FontIcon FontSize="14" Glyph="&#xE70F;" />
+                                </Button>
+
+                                <Button
+                                    Padding="4"
+                                    Background="Red"
+                                    Command="{Binding ElementName=ReportDataGrid, Path=DataContext.DeleteAssessmentCommand}"
+                                    CommandParameter="{Binding}"
+                                    Foreground="White"
+                                    ToolTipService.ToolTip="حذف">
+                                    <FontIcon FontSize="14" Glyph="&#xE74D;" />
+                                </Button>-->
+                                <Button
+                                    Padding="4"
+                                    Click="OnEditClick"
+                                    DataContext="{Binding}"
+                                    ToolTipService.ToolTip="ویرایش">
+                                    <FontIcon FontSize="14" Glyph="&#xE70F;" />
+                                </Button>
+
+                                <Button
+                                    Padding="4"
+                                    Background="Red"
+                                    Click="OnDeleteClick"
+                                    DataContext="{Binding}"
+                                    Foreground="White"
+                                    ToolTipService.ToolTip="حذف">
+                                    <FontIcon FontSize="14" Glyph="&#xE74D;" />
+                                </Button>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </controls:DataGridTemplateColumn.CellTemplate>
+                </controls:DataGridTemplateColumn>
+
+            </controls:DataGrid.Columns>
+        </controls:DataGrid>
+    </Grid>
+</Page>

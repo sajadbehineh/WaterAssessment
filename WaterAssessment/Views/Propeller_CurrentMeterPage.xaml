@@ -3,6 +3,7 @@
     x:Class="WaterAssessment.Views.Propeller_CurrentMeterPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:akTools="using:AK.Toolkit.WinUI3"
     xmlns:converters="using:WaterAssessment.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:WaterAssessment.Helpers"
@@ -14,6 +15,12 @@
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:NullableDoubleToDoubleConverter x:Key="NullDoubleConv" />
+        <Style TargetType="akTools:NumberBoxEx">
+            <Setter Property="IsDeleteButtonVisible" Value="False" />
+            <Setter Property="NumberHorizontalAlignment" Value="Center" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="SpinButtonPlacementMode" Value="Hidden" />
+        </Style>
     </Page.Resources>
 
     <TabView IsAddTabButtonVisible="False" SelectedIndex="0">
@@ -23,8 +30,8 @@
             IsClosable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
@@ -58,47 +65,74 @@
                             SelectedItem="{x:Bind PropellerViewModel.SelectedOption, Mode=TwoWay}" />
                         <TextBlock FontWeight="Bold" Text="معادله اول (n &lt; N1)" />
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <NumberBox
-                                Header="ضریب A"
-                                NumberFormatter="{StaticResource DF}"
-                                Value="{x:Bind PropellerViewModel.A1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
-                            <NumberBox
-                                Header="ضریب B"
-                                NumberFormatter="{StaticResource DF}"
-                                Value="{x:Bind PropellerViewModel.B1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
+                            <akTools:NumberBoxEx Header="ضریب A" Value="{x:Bind PropellerViewModel.A1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
+
+                            <akTools:NumberBoxEx Header="ضریب B" Value="{x:Bind PropellerViewModel.B1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
                         </StackPanel>
 
                         <StackPanel Visibility="{x:Bind PropellerViewModel.IsSection2Visible, Mode=OneWay, Converter={StaticResource BoolToVis}}">
-                            <NumberBox
+                            <akTools:NumberBoxEx
                                 Width="200"
                                 HorizontalAlignment="Left"
                                 Header="نقطه شکست اول (N1)"
-                                Value="{x:Bind PropellerViewModel.TransitionPoint1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
+                                Value="{x:Bind PropellerViewModel.TransitionPoint1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="3" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
 
                             <TextBlock
                                 Margin="0,10,0,0"
                                 FontWeight="Bold"
                                 Text="معادله دوم (N1 &lt; n &lt; N2)" />
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <NumberBox Header="ضریب A" Value="{x:Bind PropellerViewModel.A2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
-                                <NumberBox Header="ضریب B" Value="{x:Bind PropellerViewModel.B2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
+                                <akTools:NumberBoxEx Header="ضریب A" Value="{x:Bind PropellerViewModel.A2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                    <NumberBox.NumberFormatter>
+                                        <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                    </NumberBox.NumberFormatter>
+                                </akTools:NumberBoxEx>
+                                <akTools:NumberBoxEx Header="ضریب B" Value="{x:Bind PropellerViewModel.B2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                    <NumberBox.NumberFormatter>
+                                        <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                    </NumberBox.NumberFormatter>
+                                </akTools:NumberBoxEx>
                             </StackPanel>
                         </StackPanel>
 
                         <StackPanel Visibility="{x:Bind PropellerViewModel.IsSection3Visible, Mode=OneWay, Converter={StaticResource BoolToVis}}">
-                            <NumberBox
+                            <akTools:NumberBoxEx
                                 Width="200"
                                 HorizontalAlignment="Left"
                                 Header="نقطه شکست دوم (N2)"
-                                Value="{x:Bind PropellerViewModel.TransitionPoint2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
+                                Value="{x:Bind PropellerViewModel.TransitionPoint2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="3" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
 
                             <TextBlock
                                 Margin="0,10,0,0"
                                 FontWeight="Bold"
                                 Text="معادله سوم (n &gt; N2)" />
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <NumberBox Header="ضریب A" Value="{x:Bind PropellerViewModel.A3, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
-                                <NumberBox Header="ضریب B" Value="{x:Bind PropellerViewModel.B3, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
+                                <akTools:NumberBoxEx Header="ضریب A" Value="{x:Bind PropellerViewModel.A3, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                    <NumberBox.NumberFormatter>
+                                        <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                    </NumberBox.NumberFormatter>
+                                </akTools:NumberBoxEx>
+                                <akTools:NumberBoxEx Header="ضریب B" Value="{x:Bind PropellerViewModel.B3, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                    <NumberBox.NumberFormatter>
+                                        <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                    </NumberBox.NumberFormatter>
+                                </akTools:NumberBoxEx>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>

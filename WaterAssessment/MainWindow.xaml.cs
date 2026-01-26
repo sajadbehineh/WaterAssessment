@@ -175,6 +175,9 @@ public sealed partial class MainWindow : Window
                 case "Settings":
                     ShellPage.Instance.Navigate(typeof(SettingsPage));
                     break;
+                case "ChannelsReportPage":
+                    ShellPage.Instance.Navigate(typeof(ChannelsReportPage));
+                    break;
             }
         }
     }

@@ -35,8 +35,8 @@
 	  <None Remove="Assets\Icons\propeller-svgrepo-com.svg" />
 	  <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
 	  <None Remove="Assets\propeller.png" />
-	  <None Remove="Helpers\CustomControls\CustomNumberBoxStyle.xaml" />
 	  <None Remove="Views\AssessmentFormPage.xaml" />
+	  <None Remove="Views\ChannelsReportPage.xaml" />
 	  <None Remove="Views\CreateAssessmentDialog.xaml" />
 	  <None Remove="Views\EmployeePage.xaml" />
 	  <None Remove="Views\LocationPage.xaml" />
@@ -135,7 +135,7 @@
 	  <PRIResource Remove="Core\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Helpers\CustomControls\CustomNumberBoxStyle.xaml">
+	  <Page Update="Views\ChannelsReportPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

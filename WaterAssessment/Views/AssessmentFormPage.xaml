@@ -7,11 +7,9 @@
     xmlns:converters="using:WaterAssessment.Converters"
     xmlns:customControls="using:WaterAssessment.Helpers.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:format="using:Windows.Globalization.NumberFormatting"
     xmlns:helpers="using:WaterAssessment.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
-    xmlns:system="using:ABI.System"
     xmlns:viewmodels="using:WaterAssessment.Models.ViewModel"
     xmlns:wct="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:wuc="using:WinUICommunity"
@@ -22,8 +20,6 @@
     mc:Ignorable="d">
     <Page.Resources>
         <converters:NullableDoubleToDoubleConverter x:Key="NullDoubleConv" />
-        <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="Transparent" />
-        <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="Transparent" />
         <Style TargetType="akTools:NumberBoxEx">
             <Setter Property="IsDeleteButtonVisible" Value="False" />
             <Setter Property="NumberHorizontalAlignment" Value="Center" />

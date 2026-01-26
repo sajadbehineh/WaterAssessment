@@ -30,6 +30,8 @@
             <converters:InverseBooleanConverter x:Key="InverseBoolConverter" />
             <converters:DateTimeToShamsiConverter x:Key="DateToShamsiConv" />
             <converters:DateTimeToDateTimeOffsetConverter x:Key="DateToOffsetConv" />
+            <converters:DoubleToStringConverter x:Key="DoubleToStringConv" />
+            <helpers:FlexibleDoubleFormatter x:Key="FlexibleFormatter" />
 
             <helpers:DoubleFormatter x:Key="Df" />
             <helpers:DoubleFormatterF1 x:Key="Df1" />

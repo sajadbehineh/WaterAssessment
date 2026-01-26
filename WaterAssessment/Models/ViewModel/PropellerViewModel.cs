@@ -178,13 +178,29 @@ public partial class PropellerViewModel : ObservableObject
 
                 await db.SaveChangesAsync();
 
-                // رفرش کردن آبجکت در لیست مموری
-                SelectedPropeller.PropellerName = PropellerName;
-                SelectedPropeller.Mode = SelectedMode;
+                var updatedUiModel = new Propeller
+                {
+                    PropellerID = SelectedPropeller.PropellerID,
+                    PropellerName = PropellerName,              // نام جدید
+                    Mode = SelectedMode,                        // مد جدید
+                    A1 = A1,
+                    B1 = B1,
+                    TransitionPoint1 = IsSection2Visible ? TransitionPoint1 : null,
+                    A2 = IsSection2Visible ? A2 : null,
+                    B2 = IsSection2Visible ? B2 : null,
+                    TransitionPoint2 = IsSection3Visible ? TransitionPoint2 : null,
+                    A3 = IsSection3Visible ? A3 : null,
+                    B3 = IsSection3Visible ? B3 : null,
+                };
 
-                SelectedPropeller.PropellerName = PropellerName;
+                // پیدا کردن جایگاه آیتم در لیست
                 int index = Propellers.IndexOf(SelectedPropeller);
-                if (index != -1) Propellers[index] = SelectedPropeller;
+
+                if (index != -1)
+                {
+                    // جایگزینی با شیء جدید -> این خط باعث آپدیت آنی در ListView می‌شود
+                    Propellers[index] = updatedUiModel;
+                }
 
                 ResetInputs();
                 ShowSuccess("ویرایش با موفقیت انجام شد.");

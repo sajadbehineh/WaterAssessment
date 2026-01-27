@@ -44,11 +44,9 @@ namespace WaterAssessment.Models.ViewModel
             _distance = model.Distance;
             _totalDepth = model.TotalDepth;
 
-            // تبدیل int? مدل به double برای استفاده در NumberBox
-            // اگر نال بود، NaN میگذاریم که نامبرباکس خالی نشان دهد
-            _rev02 = model.Rev02.HasValue ? model.Rev02.Value : double.NaN;
-            _rev06 = model.Rev06.HasValue ? model.Rev06.Value : double.NaN;
-            _rev08 = model.Rev08.HasValue ? model.Rev08.Value : double.NaN;
+            _rev02 = model.Rev02;
+            _rev06 = model.Rev06;
+            _rev08 = model.Rev08;
 
             // اگر مقادیر از قبل در مدل بود، محاسبات اولیه انجام شود
             if (model.MeasureTime > 0)
@@ -114,29 +112,29 @@ namespace WaterAssessment.Models.ViewModel
         // تعداد دور در نقطه 0.2
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(N02Display))]
-        private double _rev02;
-        partial void OnRev02Changed(double value)
+        private double? _rev02;
+        partial void OnRev02Changed(double? value)
         {
             // تبدیل double به int? برای مدل
-            Model.Rev02 = double.IsNaN(value) ? null : value;
+            Model.Rev02 = value;
             CalculateVelocities();
         }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(N06Display))]
-        private double _rev06;
-        partial void OnRev06Changed(double value)
+        private double? _rev06;
+        partial void OnRev06Changed(double? value)
         {
-            Model.Rev06 = double.IsNaN(value) ? null : value;
+            Model.Rev06 = value;
             CalculateVelocities();
         }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(N08Display))]
-        private double _rev08;
-        partial void OnRev08Changed(double value)
+        private double? _rev08;
+        partial void OnRev08Changed(double? value)
         {
-            Model.Rev08 = double.IsNaN(value) ? null : value;
+            Model.Rev08 = value;
             CalculateVelocities();
         }
 
@@ -239,20 +237,20 @@ namespace WaterAssessment.Models.ViewModel
             get
             {
                 // اگر زمان صفر است یا دوری وارد نشده، خط تیره یا خالی نشان بده
-                if (MeasureTime <= 0 || double.IsNaN(Rev02)) return "-";
+                if (MeasureTime <= 0 || !Rev02.HasValue) return "-";
 
                 // محاسبه n و نمایش با 3 رقم اعشار
-                return (Rev02 / MeasureTime).ToString("N2");
+                return (Rev02.Value / MeasureTime).ToString("N2");
             }
         }
 
-        public string N06Display => (MeasureTime <= 0 || double.IsNaN(Rev06))
+        public string N06Display => (MeasureTime <= 0 || !Rev06.HasValue)
             ? "-"
-            : (Rev06 / MeasureTime).ToString("N2");
+            : (Rev06.Value / MeasureTime).ToString("N2");
 
-        public string N08Display => (MeasureTime <= 0 || double.IsNaN(Rev08))
+        public string N08Display => (MeasureTime <= 0 || !Rev08.HasValue)
             ? "-"
-            : (Rev08 / MeasureTime).ToString("N2");
+            : (Rev08.Value / MeasureTime).ToString("N2");
 
         // ==========================================
         // سرعت‌های نقطه‌ای (محاسبه شده توسط پروانه)
@@ -300,9 +298,9 @@ namespace WaterAssessment.Models.ViewModel
             }
 
             // 2. محاسبه سرعت نقطه 0.2
-            if (!double.IsNaN(Rev02))
+            if (Rev02.HasValue)
             {
-                double n = (Rev02 > 0) ? Rev02 / MeasureTime : 0;
+                double n = (Rev02.Value > 0) ? Rev02.Value / MeasureTime : 0;
                 Velocity02 = Propeller.CalculateVelocity(n);
             }
             else
@@ -311,9 +309,9 @@ namespace WaterAssessment.Models.ViewModel
             }
 
             // 3. محاسبه سرعت نقطه 0.6
-            if (!double.IsNaN(Rev06))
+            if (Rev06.HasValue)
             {
-                double n = (Rev06 > 0) ? Rev06 / MeasureTime : 0;
+                double n = (Rev06.Value > 0) ? Rev06.Value / MeasureTime : 0;
                 Velocity06 = Propeller.CalculateVelocity(n);
             }
             else
@@ -322,9 +320,9 @@ namespace WaterAssessment.Models.ViewModel
             }
 
             // 4. محاسبه سرعت نقطه 0.8
-            if (!double.IsNaN(Rev08))
+            if (Rev08.HasValue)
             {
-                double n = (Rev08 > 0) ? Rev08 / MeasureTime : 0;
+                double n = (Rev08.Value > 0) ? Rev08.Value / MeasureTime : 0;
                 Velocity08 = Propeller.CalculateVelocity(n);
             }
             else

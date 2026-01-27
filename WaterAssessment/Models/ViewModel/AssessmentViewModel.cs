@@ -112,7 +112,6 @@ namespace WaterAssessment.Models.ViewModel
         {
             Model = model;
             SelectedPropeller = model.Propeller;
-            //SelectedLocation = model.Location;
 
             // مقداردهی اولیه فیلد‌ها از مدل
             Timer = model.Timer == 0 ? 50 : model.Timer; // پیش‌فرض 50
@@ -121,17 +120,17 @@ namespace WaterAssessment.Models.ViewModel
             TotalFlow = model.TotalFlow;
 
             // لود کردن کارمندان انتخاب شده از دیالوگ
-            foreach (var rel in model.AssessmentEmployees) AssessmentEmployees.Add(rel);
+            foreach (var emp in model.AssessmentEmployees) AssessmentEmployees.Add(emp);
 
             foreach (var gateVal in model.GateOpenings)
             {
                 GateValues.Add(gateVal);
             }
 
-            // اگر مدل شامل ردیف‌های ذخیره شده قبلی است، آن‌ها را لود کن
-            if (model.FormValues != null)
+            if (model.FormValues != null && model.FormValues.Any())
             {
-                foreach (var fv in model.FormValues)
+                // حالت ویرایش: لود کردن سطرهای موجود
+                foreach (var fv in model.FormValues)        
                 {
                     var vm = new FormValueViewModel(fv, SelectedPropeller);
                     SubscribeToChildEvents(vm); // اشتراک در رویدادها
@@ -139,6 +138,11 @@ namespace WaterAssessment.Models.ViewModel
                 }
                 // یک بار محاسبات کلی را انجام بده (برای اطمینان از صحت مقادیر لود شده)
                 RecalculateGeometryAndFlow();
+            }
+            else
+            {
+                // +++ حالت جدید: ایجاد ۶ سطر پیش‌فرض +++
+                InitializeDefaultRows();
             }
 
             // لود کردن داده‌های مرجع (مکان‌ها و...) از دیتابیس
@@ -305,8 +309,7 @@ namespace WaterAssessment.Models.ViewModel
 
                 ShowInfo("اندازه گیری جدید با موفقیت ثبت شد.", InfoBarSeverity.Success);
 
-                // اختیاری: پاک کردن فرم برای ثبت بعدی
-                // ClearForm(); 
+                ResetToNewForm(); 
             }
             catch (Exception ex)
             {
@@ -469,6 +472,7 @@ namespace WaterAssessment.Models.ViewModel
 
             // پیشنهاد هوشمندانه فاصله:
             // اگر ردیف قبلی وجود دارد، فاصله جدید را مثلاً 1 متر بعد از آن پیشنهاد بده
+
             if (FormValues.Any())
             {
                 newVM.Distance = FormValues.Last().Distance + 1; // مقدار پیشنهادی
@@ -532,6 +536,40 @@ namespace WaterAssessment.Models.ViewModel
         {
             Model.AssessmentEmployees.Remove(item);
             AssessmentEmployees.Remove(item);
+        }
+
+        [RelayCommand]
+        public void ResetToNewForm()
+        {
+            // 1. تغییر وضعیت مدل به حالت "جدید" (ID صفر شود)
+            Model.AssessmentID = 0;
+
+            // 2. ریست کردن فیلدهای اصلی
+            SelectedLocation = null;
+            SelectedPropeller = null;
+            SelectedCurrentMeter = null;
+            SelectedEmployeeToAdd = null;
+
+            Timer = 50;
+            Date = DateTime.Now;
+            Echelon = null;
+
+            // 3. پاک کردن لیست‌ها
+            AssessmentEmployees.Clear();
+            Model.AssessmentEmployees.Clear();
+
+            GateValues.Clear();
+            Model.GateOpenings.Clear();
+
+            // 4. ایجاد سطرهای پیش‌فرض (خالی)
+            InitializeDefaultRows(6);
+
+            // 5. اطلاع‌رسانی به UI برای تغییر دکمه‌ها و وضعیت
+            OnPropertyChanged(nameof(IsEditMode));
+            OnPropertyChanged(nameof(SaveButtonContent));
+
+            // بستن پیام‌های قبلی
+            IsInfoOpen = false;
         }
 
         // ==========================================================
@@ -613,6 +651,35 @@ namespace WaterAssessment.Models.ViewModel
 
             TotalFlow = sumFlow;
             Model.TotalFlow = sumFlow;
+        }
+
+        // این متد را به کلاس AssessmentViewModel اضافه کنید
+        private void InitializeDefaultRows(int count = 6)
+        {
+            // پاک کردن سطرهای موجود
+            FormValues.Clear();
+            // پاک کردن از مدل برای اطمینان
+            if (Model.FormValues == null) Model.FormValues = new List<FormValue>();
+            Model.FormValues.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                var newModel = new FormValue
+                {
+                    AssessmentID = Model.AssessmentID, // اگر آیدی 0 باشد مشکلی نیست
+                    RowIndex = i + 1,
+                    MeasureTime = this.Timer,
+                    Distance = i, // فاصله پیش‌فرض
+                    TotalDepth = 0
+                };
+
+                var newVM = new FormValueViewModel(newModel, SelectedPropeller);
+                SubscribeToChildEvents(newVM); // اشتراک در رویدادها برای محاسبات
+                FormValues.Add(newVM);
+            }
+
+            // محاسبه مجدد برای اینکه جمع کل صفر شود
+            RecalculateGeometryAndFlow();
         }
     }
 }

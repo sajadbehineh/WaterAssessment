@@ -326,7 +326,7 @@
                 Grid.Row="1"
                 Grid.RowSpan="2"
                 Grid.Column="6"
-                BorderBrush="Black"
+                BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                 BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     Padding="5"
@@ -340,7 +340,7 @@
                 Grid.RowSpan="2"
                 Grid.Column="7"
                 Background="Gold"
-                BorderBrush="Black"
+                BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                 BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     x:Name="TotalFlowBox"
@@ -352,10 +352,11 @@
         </Grid>
         <Grid
             Grid.Row="1"
+            Width="1054.5"
             MinHeight="48"
             Padding="0"
-            HorizontalAlignment="Center"
-            Background="{ThemeResource SystemAccentColor}"
+            HorizontalAlignment="Stretch"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             BorderBrush="Black"
             BorderThickness="1"
             CornerRadius="0">
@@ -372,10 +373,9 @@
             </Grid.ColumnDefinitions>
             <TextBlock
                 Grid.Column="0"
-                Padding="0,0,10,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="12"
+                FontSize="14"
                 Foreground="{ThemeResource SystemAltHighColor}"
                 Text="ردیف" />
             <Rectangle
@@ -383,12 +383,12 @@
                 Width="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Fill="{ThemeResource SystemBaseLowColor}" />
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
             <TextBlock
                 Grid.Column="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="12"
+                FontSize="14"
                 Foreground="{ThemeResource SystemAltHighColor}"
                 Text="فاصله" />
             <Rectangle
@@ -396,12 +396,12 @@
                 Width="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Fill="{ThemeResource SystemBaseLowColor}" />
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
             <TextBlock
                 Grid.Column="2"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="12"
+                FontSize="14"
                 Foreground="{ThemeResource SystemAltHighColor}"
                 Text="عمق" />
             <Rectangle
@@ -409,7 +409,7 @@
                 Width="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Fill="{ThemeResource SystemBaseLowColor}" />
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
             <Grid
                 Grid.Row="0"
                 Grid.Column="3"
@@ -421,7 +421,7 @@
                 <Border
                     Grid.Row="0"
                     Padding="0"
-                    BorderBrush="{ThemeResource SystemBaseLowColor}"
+                    BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                     BorderThickness="0,0,1,1">
                     <TextBlock
                         HorizontalAlignment="Center"
@@ -438,7 +438,7 @@
                     Orientation="Horizontal">
                     <Border
                         Width="88"
-                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                         BorderThickness="0,0,1,0">
                         <TextBlock
                             HorizontalAlignment="Center"
@@ -450,7 +450,7 @@
                     </Border>
                     <Border
                         Width="88"
-                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                         BorderThickness="0,0,1,0">
                         <TextBlock
                             HorizontalAlignment="Center"
@@ -465,8 +465,7 @@
             <Grid
                 Grid.Column="4"
                 Width="Auto"
-                HorizontalAlignment="Right"
-                Background="{StaticResource SystemAccentColor}">
+                HorizontalAlignment="Right">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -474,7 +473,7 @@
                 <Border
                     Grid.Row="0"
                     Padding="0"
-                    BorderBrush="{ThemeResource SystemBaseLowColor}"
+                    BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                     BorderThickness="0,0,1,1">
                     <TextBlock
                         HorizontalAlignment="Center"
@@ -491,7 +490,7 @@
                     Orientation="Horizontal">
                     <Border
                         Width="88"
-                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                         BorderThickness="0,0,1,0">
                         <TextBlock
                             HorizontalAlignment="Center"
@@ -503,7 +502,7 @@
                     </Border>
                     <Border
                         Width="88"
-                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                         BorderThickness="0,0,1,0">
                         <TextBlock
                             HorizontalAlignment="Center"
@@ -515,7 +514,7 @@
                     </Border>
                     <Border
                         Width="88"
-                        BorderBrush="{ThemeResource SystemBaseLowColor}"
+                        BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                         BorderThickness="0,0,1,0">
                         <TextBlock
                             HorizontalAlignment="Center"
@@ -531,7 +530,7 @@
                 Grid.Column="5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="12"
+                FontSize="14"
                 Foreground="{ThemeResource SystemAltHighColor}"
                 Text="عمق مقطع" />
             <Rectangle
@@ -539,12 +538,12 @@
                 Width="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Fill="{ThemeResource SystemBaseLowColor}" />
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
             <TextBlock
                 Grid.Column="6"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="12"
+                FontSize="14"
                 Foreground="{ThemeResource SystemAltHighColor}"
                 Text="عرض مقطع" />
             <Rectangle
@@ -552,12 +551,12 @@
                 Width="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Fill="{ThemeResource SystemBaseLowColor}" />
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
             <TextBlock
                 Grid.Column="7"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="10"
+                FontSize="14"
                 Foreground="{ThemeResource SystemAltHighColor}"
                 Text="سطح مقطع" />
             <Rectangle
@@ -565,20 +564,14 @@
                 Width="1"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Fill="{ThemeResource SystemBaseLowColor}" />
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
             <TextBlock
                 Grid.Column="8"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                FontSize="12"
+                FontSize="14"
                 Foreground="{ThemeResource SystemAltHighColor}"
                 Text="دبی مقطع" />
-            <Rectangle
-                Grid.Column="8"
-                Width="1"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Stretch"
-                Fill="{ThemeResource SystemBaseLowColor}" />
         </Grid>
         <ScrollViewer
             Grid.Row="2"
@@ -607,7 +600,7 @@
                                     <ColumnDefinition Width="88" />
                                     <ColumnDefinition Width="88" />
                                     <ColumnDefinition Width="88" />
-                                    <ColumnDefinition Width="88" />
+                                    <ColumnDefinition Width="89" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.Clip>
@@ -659,7 +652,7 @@
                                             Padding="0,2,0,0"
                                             NumberFormatter="{StaticResource Df1}"
                                             SpinButtonPlacementMode="Hidden"
-                                            Value="{x:Bind Rev02, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            Value="{x:Bind Rev02, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
                                     </Border>
                                     <Border
                                         Height="24.6"
@@ -669,7 +662,7 @@
                                             Padding="0,2,0,0"
                                             NumberFormatter="{StaticResource Df1}"
                                             SpinButtonPlacementMode="Hidden"
-                                            Value="{x:Bind Rev06, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            Value="{x:Bind Rev06, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
                                     </Border>
                                     <Border
                                         Height="24.6"
@@ -680,7 +673,7 @@
                                             FontWeight="bold"
                                             NumberFormatter="{StaticResource Df1}"
                                             SpinButtonPlacementMode="Hidden"
-                                            Value="{x:Bind Rev08, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            Value="{x:Bind Rev08, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
                                     </Border>
                                 </StackPanel>
 
@@ -774,7 +767,7 @@
                                             </Grid.RenderTransform>-->
 
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="88" />
+                                                <ColumnDefinition Width="86.5" />
                                                 <ColumnDefinition Width="100" />
                                                 <ColumnDefinition Width="100" />
                                                 <ColumnDefinition Width="100" />
@@ -842,10 +835,10 @@
         <Grid
             Grid.Row="3"
             Padding="20,10,20,10"
-            Background="{ThemeResource AppBarBackgroundThemeBrush}">
+            Background="{ThemeResource SystemChromeAltMediumHighColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
@@ -863,13 +856,22 @@
                 IsOpen="{x:Bind ViewModel.IsInfoOpen, Mode=TwoWay}"
                 Message="{x:Bind ViewModel.InfoMessage, Mode=TwoWay}"
                 Severity="{x:Bind ViewModel.InfoSeverity, Mode=TwoWay}" />
-            <Button
+            <StackPanel
                 Grid.Column="1"
-                Margin="20,0,0,0"
-                Command="{x:Bind ViewModel.SubmitFormCommand}"
-                Content="{x:Bind ViewModel.SaveButtonContent, Mode=OneWay}"
-                IsEnabled="{x:Bind ViewModel.IsBusy, Converter={StaticResource InverseBoolConverter}, Mode=OneWay}"
-                Style="{ThemeResource AccentButtonStyle}" />
+                Orientation="Horizontal"
+                Spacing="10">
+                <Button
+                    VerticalAlignment="Center"
+                    Command="{x:Bind ViewModel.SubmitFormCommand}"
+                    Content="{x:Bind ViewModel.SaveButtonContent, Mode=OneWay}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+
+                <Button
+                    VerticalAlignment="Center"
+                    Command="{x:Bind ViewModel.ResetToNewFormCommand}"
+                    Content="فرم جدید (پاک کردن)"
+                    Style="{ThemeResource ButtonRevealStyle}" />
+            </StackPanel>
             <ProgressRing
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"

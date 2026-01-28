@@ -59,26 +59,22 @@
                             PlaceholderText="لطفاً حوزه مورد نظر را انتخاب کنید"
                             SelectedItem="{x:Bind LocationViewModel.SelectedAreaForInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <StackPanel
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="10">
-                            <TextBlock VerticalAlignment="Center" Text="نوع:" />
-                            <RadioButton
-                                Content="کانال"
-                                GroupName="ChannelType"
-                                IsChecked="{x:Bind LocationViewModel.SelectedLocation.IsCanal, Mode=TwoWay}" />
-                            <RadioButton
-                                Content="زهکش"
-                                GroupName="ChannelType"
-                                IsChecked="{x:Bind LocationViewModel.SelectedLocation.IsCanal, Mode=TwoWay, Converter={StaticResource InverseBoolConverter}}" />
-                        </StackPanel>
+                        <ComboBox
+                            HorizontalAlignment="Stretch"
+                            DisplayMemberPath="Title"
+                            Header="نوع مکان"
+                            ItemsSource="{x:Bind LocationViewModel.LocationTypes}"
+                            PlaceholderText="انتخاب کنید..."
+                            SelectedItem="{x:Bind LocationViewModel.SelectedLocationType, Mode=TwoWay}" />
+
                         <aKTools:NumberBoxEx
-                            HorizontalAlignment="Left" SpinButtonPlacementMode="Inline"
+                            HorizontalAlignment="Left"
+                            Header="تعداد دریچه"
                             IsDeleteButtonVisible="False"
-                            Minimum="1"
+                            Minimum="0"
                             NumberFormatter="{StaticResource Df}"
                             NumberHorizontalAlignment="Center"
+                            SpinButtonPlacementMode="Inline"
                             Value="{x:Bind LocationViewModel.GateCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
@@ -491,6 +487,217 @@
                         <!--<ListView.HeaderTemplate>
                 <DataTemplate />
             </ListView.HeaderTemplate>-->
+                    </ListView>
+                </Grid>
+            </Grid>
+        </TabViewItem>
+
+        <TabViewItem Header="ثبت نوع مکان های اندازه گیری" IsClosable="False">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2.5*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="20,10"
+                        HorizontalAlignment="Stretch"
+                        Orientation="Vertical"
+                        Spacing="25">
+                        <TextBox
+                            Name="TitleBox"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            Header="نوع مکان اندازه گیری"
+                            IsSpellCheckEnabled="False"
+                            PlaceholderText="لطفاً نوع مکان مورد نظر را وارد کنید"
+                            Text="{x:Bind LocationTypeViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel
+                        x:Name="LocationTypeInfoPanel"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="1"
+                        Padding="5,15,5,0"
+                        Spacing="10">
+                        <InfoBar
+                            x:Name="TitleBoxInfoBar"
+                            VerticalAlignment="Top"
+                            IsClosable="True"
+                            IsOpen="{x:Bind LocationTypeViewModel.IsTitleErrorVisible, Mode=TwoWay}"
+                            Message="{x:Bind LocationTypeViewModel.InfoBarMessage, Mode=TwoWay}"
+                            Severity="{x:Bind LocationTypeViewModel.InfoBarSeverity, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="20,10"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal"
+                        Spacing="10">
+                        <Button
+                            Name="BtnAddLocationType"
+                            HorizontalAlignment="Left"
+                            Command="{x:Bind LocationTypeViewModel.AddLocationTypeCommand}"
+                            Content="{x:Bind LocationTypeViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="True"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                        <Button
+                            Name="BtnClearTitleBox"
+                            HorizontalAlignment="Left"
+                            Command="{x:Bind LocationTypeViewModel.ClearFormCommand}"
+                            Content="پاک کردن"
+                            IsEnabled="True"
+                            Style="{ThemeResource AccentButtonStyle}" />
+                    </StackPanel>
+                </Grid>
+                <Grid
+                    Grid.Column="1"
+                    Width="500"
+                    Margin="15,10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    DataContext="{x:Bind LocationTypeViewModel}"
+                    Style="{ThemeResource GridPanel}"
+                    Translation="0 0 48">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid
+                        Grid.Row="0"
+                        MinHeight="48"
+                        Background="{ThemeResource SystemAccentColor}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="52" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="68" />
+                            <ColumnDefinition Width="68" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Padding="0,0,10,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="ردیف" />
+                        <Rectangle
+                            Grid.Column="0"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="نوع مکان" />
+                    </Grid>
+
+                    <ListView
+                        Name="LocationTypeListView"
+                        Grid.Row="1"
+                        ContainerContentChanging="locationTypeListView_ContainerContentChanging"
+                        ItemContainerStyle="{StaticResource HorizontalSwipe}"
+                        ItemsSource="{x:Bind LocationTypeViewModel.LocationTypes, Mode=OneWay}"
+                        SelectionMode="Single">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:LocationType">
+                                <UserControl
+                                    FontFamily="{StaticResource SamimFD}"
+                                    PointerEntered="locationTypeSwipeContainer_PointerEntered"
+                                    PointerExited="locationTypeSwipeContainer_PointerExited">
+                                    <Grid>
+                                        <SwipeControl>
+                                            <Grid VerticalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="52" />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="68" />
+                                                    <ColumnDefinition Width="68" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock
+                                                    x:Name="LocationTypeIndexTextBlock"
+                                                    Grid.Column="0"
+                                                    Padding="0,0,10,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="12"
+                                                    Foreground="{ThemeResource SystemBaseHighColor}" />
+                                                <Rectangle
+                                                    Grid.Column="0"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind Title}" />
+                                                <AppBarButton
+                                                    x:Name="btnHoverEditLocationType"
+                                                    Grid.Column="3"
+                                                    Width="60"
+                                                    Height="60"
+                                                    HorizontalAlignment="Left"
+                                                    Command="{Binding ElementName=LocationTypeListView, Path=DataContext.PrepareForEditCommand}"
+                                                    CommandParameter="{x:Bind LocationTypeID}"
+                                                    Icon="Edit"
+                                                    IsTabStop="False"
+                                                    Label="ویرایش"
+                                                    Visibility="Collapsed" />
+                                                <AppBarButton
+                                                    x:Name="btnHoverDeleteLocationType"
+                                                    Grid.Column="2"
+                                                    Width="60"
+                                                    Height="60"
+                                                    HorizontalAlignment="Left"
+                                                    Command="{Binding ElementName=LocationTypeListView, Path=DataContext.DeleteLocationTypeCommand}"
+                                                    CommandParameter="{x:Bind LocationTypeID}"
+                                                    Icon="Delete"
+                                                    IsTabStop="False"
+                                                    Label="حذف"
+                                                    Visibility="Collapsed" />
+                                            </Grid>
+                                        </SwipeControl>
+
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="HoveringStates">
+                                                <VisualState x:Name="HoverButtonsHidden" />
+                                                <VisualState x:Name="HoverButtonsShown">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="btnHoverDeleteLocationType.Visibility" Value="Visible" />
+                                                        <Setter Target="btnHoverEditLocationType.Visibility" Value="Visible" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+                                </UserControl>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <!--<ListView.HeaderTemplate>
+        <DataTemplate />
+    </ListView.HeaderTemplate>-->
                     </ListView>
                 </Grid>
             </Grid>

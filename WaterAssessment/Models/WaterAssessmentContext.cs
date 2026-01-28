@@ -40,6 +40,11 @@ public class WaterAssessmentContext : DbContext
 
         modelBuilder.Entity<Propeller>()
             .HasKey(p => p.PropellerID);
+
+        modelBuilder.Entity<LocationType>().HasData(
+            new LocationType { LocationTypeID = 1, Title = "کانال" },
+            new LocationType { LocationTypeID = 2, Title = "زهکش" }
+        );
     }
 
     public DbSet<Assessment> Assessments { get; set; }
@@ -49,6 +54,7 @@ public class WaterAssessmentContext : DbContext
     public DbSet<Employee> Employees { get; set; }
     public DbSet<FormValue> FormValues { get; set; }
     public DbSet<Location> Locations { get; set; }
+    public DbSet<LocationType> LocationTypes { get; set; }
     public DbSet<Propeller> Propellers { get; set; }
     public DbSet<AssessmentGate> AssessmentGates { get; set; }
 }

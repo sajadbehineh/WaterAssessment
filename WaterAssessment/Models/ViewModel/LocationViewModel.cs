@@ -11,6 +11,8 @@ namespace WaterAssessment.Models.ViewModel
         // لیست اصلی مکان‌ها (برای نمایش در جدول)
         public ObservableCollection<Location> Locations { get; } = new();
 
+        public ObservableCollection<LocationType> LocationTypes { get; } = new();
+
         // لیست حوزه‌ها (برای نمایش در ComboBox جهت انتخاب)
         public ObservableCollection<Area> Areas { get; } = new();
 
@@ -56,13 +58,16 @@ namespace WaterAssessment.Models.ViewModel
         [NotifyCanExecuteChangedFor(nameof(AddLocationCommand))]
         private Location? _selectedLocation;
 
+        [ObservableProperty]
+        private LocationType? _selectedLocationType;
+
         // وقتی یک ردیف در جدول انتخاب می‌شود، فرم را پر کن
         partial void OnSelectedLocationChanged(Location? value)
         {
             if (value != null)
             {
                 LocationName = value.LocationName;
-                IsCanal = value.IsCanal;
+                SelectedLocationType = value.LocationType;
                 GateCount = value.GateCount; // +++ لود کردن تعداد دریچه +++
 
                 // نکته مهم: باید Area مربوطه را در لیست ComboBox پیدا و انتخاب کنیم
@@ -132,6 +137,54 @@ namespace WaterAssessment.Models.ViewModel
                     if (recipient.SelectedAreaForInput != null && recipient.SelectedAreaForInput.AreaID == deletedId)
                     {
                         recipient.SelectedAreaForInput = null;
+                    }
+                }
+            });
+
+            // گوش دادن به پیامِ "نوع مکان اضافه شد"
+            WeakReferenceMessenger.Default.Register<LocationViewModel, LocationTypeAddedMessage>(this, (recipient, message) =>
+            {
+                // آبجکت جدید را به لیست Areas اضافه می‌کنیم تا در ComboBox دیده شود
+                // چون روی ترد UI هستیم نیازی به Dispatcher نیست
+                recipient.LocationTypes.Add(message.Value);
+            });
+
+            WeakReferenceMessenger.Default.Register<LocationViewModel, LocationTypeUpdatedMessage>(this, (recipient, message) =>
+            {
+                // پیدا کردن آیتم ویرایش شده در لیست حوزه‌های فرم مکان
+                var locationTypeInList = recipient.LocationTypes.FirstOrDefault(a => a.LocationTypeID == message.Value.LocationTypeID);
+
+                if (locationTypeInList != null)
+                {
+                    // آپدیت نام
+                    locationTypeInList.Title = message.Value.Title;
+
+                    int index = recipient.LocationTypes.IndexOf(locationTypeInList);
+                    if (index != -1)
+                    {
+                        recipient.LocationTypes[index] = locationTypeInList;
+                    }
+                }
+            });
+
+            WeakReferenceMessenger.Default.Register<LocationViewModel, LocationTypeDeletedMessage>(this, (recipient, message) =>
+            {
+                int deletedId = message.Value.LocationTypeID; // آی‌دی حذف شده
+
+                // پیدا کردن آیتم در لیست کمبوباکس
+                var locationTypeToRemove = recipient.LocationTypes.FirstOrDefault(a => a.LocationTypeID == deletedId);
+
+                if (locationTypeToRemove != null)
+                {
+                    // حذف از لیست
+                    recipient.LocationTypes.Remove(locationTypeToRemove);
+
+                    // نکته حیاتی:
+                    // اگر کاربری همین الان این حوزه را در کمبوباکس انتخاب کرده باشد،
+                    // باید انتخابش را بپرانیم تا اشتباهی ثبت نکند.
+                    if (recipient.SelectedLocationType != null && recipient.SelectedLocationType.LocationTypeID == deletedId)
+                    {
+                        recipient.SelectedLocationType = null;
                     }
                 }
             });
@@ -213,6 +266,7 @@ namespace WaterAssessment.Models.ViewModel
             if (loc != null)
             {
                 SelectedLocation = loc; // تریگر کردن OnSelectedLocationChanged
+                SelectedLocationType = LocationTypes.FirstOrDefault(t => t.LocationTypeID == loc.LocationTypeID);
                 IsErrorVisible = false;
             }
         }
@@ -236,6 +290,18 @@ namespace WaterAssessment.Models.ViewModel
             {
                 using var db = new WaterAssessmentContext();
 
+                var types = await db.LocationTypes.AsNoTracking().ToListAsync();
+                LocationTypes.Clear();
+                foreach (var t in types) LocationTypes.Add(t);
+
+                var list = await db.Locations
+                    .Include(l => l.LocationType)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                Locations.Clear();
+                foreach (var item in list) Locations.Add(item);
+
                 // 1. لود کردن حوزه‌ها برای پر کردن ComboBox
                 var areasList = await db.Areas.AsNoTracking().ToListAsync();
                 Areas.Clear();
@@ -257,6 +323,24 @@ namespace WaterAssessment.Models.ViewModel
 
         private async Task InsertNewLocationAsync()
         {
+            if (string.IsNullOrWhiteSpace(LocationName))
+            {
+                ShowError("لطفاً نام مکان را وارد کنید.");
+                return;
+            }
+
+            if (SelectedAreaForInput == null)
+            {
+                ShowError("لطفاً حوزه آبریز را انتخاب کنید.");
+                return;
+            }
+
+            if (SelectedLocationType == null)
+            {
+                ShowError("لطفاً نوع مکان (کانال/زهکش و...) را انتخاب کنید.");
+                return;
+            }
+
             try
             {
                 using var db = new WaterAssessmentContext();
@@ -275,10 +359,10 @@ namespace WaterAssessment.Models.ViewModel
                 var newLocation = new Location
                 {
                     LocationName = LocationName,
-                    AreaID = SelectedAreaForInput!.AreaID, // آی‌دی را از کمبوباکس می‌گیریم
-                                                           // نکته: Area = ... را ست نمی‌کنیم، فقط ID کافیست.
-                                                           // اما برای نمایش درست در UI، باید آبجکت Area را هم داشته باشیم
-                    IsCanal = IsCanal,
+                    AreaID = SelectedAreaForInput.AreaID, // آی‌دی را از کمبوباکس می‌گیریم
+                                                          // نکته: Area = ... را ست نمی‌کنیم، فقط ID کافیست.
+                                                          // اما برای نمایش درست در UI، باید آبجکت Area را هم داشته باشیم
+                    LocationTypeID = SelectedLocationType.LocationTypeID,
                     GateCount = GateCount
                 };
 
@@ -287,6 +371,7 @@ namespace WaterAssessment.Models.ViewModel
 
                 // برای اینکه در لیست UI نام حوزه درست نمایش داده شود، آبجکت Area را دستی ست می‌کنیم
                 newLocation.Area = SelectedAreaForInput;
+                newLocation.LocationType = SelectedLocationType;
 
                 Locations.Add(newLocation);
 
@@ -301,6 +386,14 @@ namespace WaterAssessment.Models.ViewModel
 
         private async Task UpdateExistingLocationAsync()
         {
+            if (SelectedLocation == null) return;
+
+            if (SelectedLocationType == null)
+            {
+                ShowError("لطفاً نوع مکان را انتخاب کنید.");
+                return;
+            }
+
             try
             {
                 using var db = new WaterAssessmentContext();
@@ -327,7 +420,7 @@ namespace WaterAssessment.Models.ViewModel
                 // اعمال تغییرات
                 locToEdit.LocationName = LocationName;
                 locToEdit.AreaID = SelectedAreaForInput!.AreaID;
-                locToEdit.IsCanal = IsCanal;
+                locToEdit.LocationTypeID = SelectedLocationType.LocationTypeID;
                 locToEdit.GateCount = GateCount;
 
                 await db.SaveChangesAsync();
@@ -336,7 +429,9 @@ namespace WaterAssessment.Models.ViewModel
                 SelectedLocation.LocationName = LocationName;
                 SelectedLocation.AreaID = SelectedAreaForInput.AreaID;
                 SelectedLocation.Area = SelectedAreaForInput; // آپدیت نویگیشن پراپرتی برای نمایش
-                SelectedLocation.IsCanal = IsCanal;
+                SelectedLocation.LocationTypeID = SelectedLocationType.LocationTypeID;
+                SelectedLocation.LocationType = SelectedLocationType;
+
                 SelectedLocation.GateCount = GateCount;
 
                 // رفرش لیست
@@ -356,6 +451,7 @@ namespace WaterAssessment.Models.ViewModel
         {
             SelectedLocation = null;
             LocationName = string.Empty;
+            SelectedLocationType = null;
             SelectedAreaForInput = null; // کمبوباکس را خالی کن
             AddEditBtnContent = "ذخیره";
             IsCanal = true;

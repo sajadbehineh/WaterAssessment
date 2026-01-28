@@ -47,7 +47,7 @@ namespace WaterAssessment.Models.ViewModel
 
             // 1. پر کردن لیست مکان‌ها (فقط کانال‌ها) برای کمبوباکس فیلتر
             Locations.Clear();
-            var locs = db.Locations.Where(l => l.IsCanal).ToList();
+            var locs = db.Locations.Where(a => a.LocationType.Title == "کانال").ToList();
             foreach (var l in locs) Locations.Add(l);
 
             // 2. اعمال فیلترها و جستجو
@@ -65,10 +65,11 @@ namespace WaterAssessment.Models.ViewModel
                 .Include(a=>a.Propeller)
                 .Include(a=>a.AssessmentEmployees)
                 .Include(a => a.Location)
+                .ThenInclude(l => l.LocationType)
                 .Include(a=>a.GateOpenings)
                 .Include(a => a.FormValues)
                 //.Include(a => a.Propeller)
-                .Where(a => a.Location.IsCanal)
+                .Where(a => a.Location.LocationType.Title == "کانال")
                 .AsQueryable();
 
             // فیلتر مکان

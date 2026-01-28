@@ -7,11 +7,25 @@ public sealed partial class LocationPage : Page
     public AreaViewModel AreaViewModel { get; } = new();
     public LocationViewModel LocationViewModel { get; } = new();
 
+    public LocationTypeViewModel LocationTypeViewModel { get; } = new();
+
     public LocationPage()
     {
         this.InitializeComponent();
         AreaViewModel.Areas.CollectionChanged += Areas_CollectionChanged;
         LocationViewModel.Locations.CollectionChanged += Locations_CollectionChanged;
+        LocationTypeViewModel.LocationTypes.CollectionChanged += LocationTypes_CollectionChanged;
+    }
+
+    private void LocationTypes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.Action == NotifyCollectionChangedAction.Remove ||
+            e.Action == NotifyCollectionChangedAction.Add ||
+            e.Action == NotifyCollectionChangedAction.Reset)
+        {
+            // اجرای متد بروزرسانی روی ترد اصلی UI
+            DispatcherQueue.TryEnqueue(UpdateVisibleIndices);
+        }
     }
 
     // رویداد تغییر لیست (حذف/اضافه)
@@ -84,6 +98,29 @@ public sealed partial class LocationPage : Page
         }
     }
 
+    private void UpdateLocationTypeVisibleIndices()
+    {
+        // حلقه روی تمام آیتم‌های موجود در لیست
+        for (int i = 0; i < LocationTypeViewModel.LocationTypes.Count; i++)
+        {
+            var item = LocationTypeViewModel.LocationTypes[i];
+
+            // تلاش برای گرفتن کانتینر (سطر گرافیکی) مربوط به این آیتم
+            // اگر آیتم خارج از دید باشد (اسکرول شده باشد)، مقدار null برمی‌گردد که مشکلی نیست
+            var container = LocationTypeListView.ContainerFromItem(item) as DependencyObject;
+
+            if (container != null)
+            {
+                var indexBlock = FindChild<TextBlock>(container, "LocationIndexTextBlock");
+                if (indexBlock != null)
+                {
+                    // اصلاح شماره ردیف
+                    indexBlock.Text = (i + 1).ToString();
+                }
+            }
+        }
+    }
+
     private void areaListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
         // اگر آیتم در حال بازیافت است، کاری نکن (برای پرفورمنس)
@@ -94,6 +131,24 @@ public sealed partial class LocationPage : Page
 
         // تلاش برای پیدا کردن تکست‌باکس با نام "IndexTextBlock"
         var indexBlock = FindChild<TextBlock>(root, "IndexTextBlock");
+
+        if (indexBlock != null)
+        {
+            // مقداردهی شماره ردیف (ایندکس از 0 شروع می‌شود، پس +1 می‌کنیم)
+            indexBlock.Text = (args.ItemIndex + 1).ToString();
+        }
+    }
+
+    private void locationTypeListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        // اگر آیتم در حال بازیافت است، کاری نکن (برای پرفورمنس)
+        if (args.InRecycleQueue) return;
+
+        // ریشه تمپلیت شما یک UserControl است (طبق کد شما)
+        var root = args.ItemContainer.ContentTemplateRoot as DependencyObject;
+
+        // تلاش برای پیدا کردن تکست‌باکس با نام "IndexTextBlock"
+        var indexBlock = FindChild<TextBlock>(root, "LocationTypeIndexTextBlock");
 
         if (indexBlock != null)
         {
@@ -158,4 +213,19 @@ public sealed partial class LocationPage : Page
             sender as Control, "HoverButtonsHidden", true);
     }
 
+    private void locationTypeSwipeContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        if (e.Pointer.PointerDeviceType == PointerDeviceType.Mouse ||
+            e.Pointer.PointerDeviceType == PointerDeviceType.Pen)
+        {
+            VisualStateManager.GoToState(
+                sender as Control, "HoverButtonsShown", true);
+        }
+    }
+
+    private void locationTypeSwipeContainer_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        VisualStateManager.GoToState(
+            sender as Control, "HoverButtonsHidden", true);
+    }
 }

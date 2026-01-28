@@ -46,7 +46,7 @@ namespace WaterAssessment.Models.ViewModel
         {
             GateInputs.Clear(); // باکس‌های قبلی را پاک کن
 
-            if (value is { IsCanal: true, GateCount: > 0 })
+            if (value is { GateCount: > 0 })
             {
                 // به تعداد دریچه‌های تعریف شده در Location، باکس ورودی بساز
                 for (int i = 1; i <= value.GateCount; i++)

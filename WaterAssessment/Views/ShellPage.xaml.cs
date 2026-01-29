@@ -10,6 +10,22 @@ public sealed partial class ShellPage : Page
     {
         this.InitializeComponent();
         Instance = this;
+        this.Loaded += ShellPage_Loaded;
+    }
+
+    private void ShellPage_Loaded(object sender, RoutedEventArgs e)
+    {
+        // —Ê?œ«œ —« Õ–› ò‰?œ  « ›ﬁÿ ?ò »«— «Ã—« ‘Êœ
+        this.Loaded -= ShellPage_Loaded;
+
+        // œ” —”? »Â ViewModel «“ ÿ—?ﬁ ‰„Ê‰Â MainWindow
+        var mainViewModel = MainWindow.Instance.ViewModel;
+
+        // «ê— ò«—»— ·«ê?‰ ‰ò—œÂ »«‘œ° »Â ’›ÕÂ ·«ê?‰ »—Ê?œ
+        if (!mainViewModel.IsLoggedIn)
+        {
+            Navigate(typeof(LoginPage));
+        }
     }
 
     public void Navigate(Type pageType, NavigationTransitionInfo transitionInfo = null, object parameter = null)

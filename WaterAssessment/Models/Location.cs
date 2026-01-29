@@ -8,7 +8,14 @@ public class Location
     public int LocationTypeID { get; set; }
     public LocationType LocationType { get; set; }
 
-    public int GateCount { get; set; } = 1;     // تعداد دریچه‌ها (مثلاً کانال W1 مقدارش 2 است)
+    public int GateCount { get; set; } = 1;
+
+    public DateTime CreatedAt { get; set; }
+    public int? CreatedByUserID { get; set; }
+    public virtual User CreatedBy { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public int? UpdatedByUserID { get; set; } // کلید خارجی
+    public virtual User UpdatedBy { get; set; }
 
     public int AreaID { get; set; }
     public virtual Area Area { get; set; }

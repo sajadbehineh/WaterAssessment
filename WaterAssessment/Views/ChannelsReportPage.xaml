@@ -30,7 +30,7 @@
             <TextBlock
                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                 Style="{StaticResource TitleTextBlockStyle}"
-                Text="گزارشات اندازه گیری کانال‌ها" />
+                Text="گزارشات اندازه گیری ‌ها" />
 
             <StackPanel
                 Padding="10"
@@ -50,6 +50,19 @@
                         ItemsSource="{x:Bind ViewModel.Locations}"
                         PlaceholderText="همه مکان‌ها"
                         SelectedItem="{x:Bind ViewModel.FilterLocation, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock
+                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="نوع مکان:" />
+                    <ComboBox
+                        Width="200"
+                        DisplayMemberPath="Title"
+                        ItemsSource="{x:Bind ViewModel.LocationTypes}"
+                        PlaceholderText="همه نوع مکان"
+                        SelectedItem="{x:Bind ViewModel.FilterLocationType, Mode=TwoWay}" />
                 </StackPanel>
 
                 <StackPanel>

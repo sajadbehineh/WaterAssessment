@@ -13,142 +13,17 @@
     xmlns:viewModel="using:WaterAssessment.Models.ViewModel"
     xmlns:views="using:WaterAssessment.Views"
     mc:Ignorable="d">
-    <Grid FlowDirection="RightToLeft">
+
+    <Grid x:Name="RootGrid" FlowDirection="RightToLeft">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
-
-        <!--<ContentDialog
-            x:Name="inputPanelContentDialog"
-            Title="فرم ورود اطلاعات اندازه گیری"
-            CloseButtonText="بستن"
-            Loaded="InputPanelContentDialog_OnLoaded"
-            PrimaryButtonClick="InputPanelContentDialog_OnPrimaryButtonClick"
-            PrimaryButtonText="ثبت">
-            <StackPanel
-                Width="730"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Orientation="Vertical"
-                Spacing="20">
-
-                <StackPanel
-                    HorizontalAlignment="Stretch"
-                    BorderBrush="Black"
-                    BorderThickness="0"
-                    Orientation="Horizontal"
-                    Spacing="50">
-                    <ComboBox
-                        Name="cmbLocation"
-                        Width="295"
-                        Header="محل اندازه گیری"
-                        PlaceholderText="لطفاً مکان اندازه گیری را انتخاب کنید">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="viewModel:LocationViewModel">
-                                <TextBlock Text="{x:Bind LocationArea}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <DatePicker
-                        Name="datePicker"
-                        Height="59"
-                        Margin="0,3,0,0"
-                        Header="تاریخ"
-                        Loaded="DatePicker_OnLoaded" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="50">
-                    <TextBox
-                        x:Name="echelonBox"
-                        Width="200"
-                        VerticalAlignment="Top"
-                        Header="اشل" />
-                    <TextBox
-                        x:Name="opennessBox"
-                        Width="200"
-                        Header="گشودگی" />
-
-        -->
-        <!--<Expander MaxHeight="200" Header="انتخاب اندازه گیر">
-                        <ListView x:Name="employeeList" SelectionMode="Multiple">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:Employee">
-                                    <TextBlock Text="{x:Bind ToString()}" />
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Expander>-->
-        <!--
-                </StackPanel>
-                <StackPanel Orientation="Vertical" Spacing="4">
-                    <controls:TokenizingTextBox
-                        x:Name="TokenBox"
-                        MaxWidth="620"
-                        HorizontalAlignment="Left"
-                        FlowDirection="RightToLeft"
-                        Header="انتخاب اندازه گیرها"
-                        ItemsSource="{x:Bind SelectedEmployees, Mode=TwoWay}"
-                        MaximumTokens="3"
-                        PlaceholderText="لطفاً همکاران مورد نظر را انتخاب کنید"
-                        QueryIcon="{ui:FontIconSource Glyph=&#xE721;,
-                                                      FontSize=12}"
-                        SuggestedItemsSource="{x:Bind Employees, Mode=OneWay}"
-                        TextMemberPath="LastName"
-                        TokenDelimiter=","
-                        TokenItemAdded="TokenBox_OnTokenItemAdded"
-                        TokenItemRemoving="TokenBox_OnTokenItemRemoved">
-                        <controls:TokenizingTextBox.SuggestedItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Padding="8,0,0,0" Text="{Binding LastName}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </controls:TokenizingTextBox.SuggestedItemTemplate>
-                        <controls:TokenizingTextBox.TokenItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Padding="8,0,0,0" Text="{Binding LastName}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </controls:TokenizingTextBox.TokenItemTemplate>
-                    </controls:TokenizingTextBox>
-
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Spacing="50">
-                    <StackPanel>
-                        <ComboBox
-                            Name="cmbPropeller"
-                            DisplayMemberPath="DeviceNumber"
-                            Header="انتخاب پروانه"
-                            PlaceholderText="پروانه مورد نظر را انتخاب کنید" />
-                    </StackPanel>
-                    <StackPanel>
-                        <ComboBox
-                            Name="cmbCurrentMeter"
-                            DisplayMemberPath="CurrentMeterName"
-                            Header="انتخاب مولینه"
-                            PlaceholderText="مولینه مورد نظر را انتخاب کنید" />
-                    </StackPanel>
-                    <StackPanel>
-                        <ComboBox
-                            Name="cmbTimer"
-                            Width="150"
-                            Header="زمان تایمر"
-                            ItemsSource="{Binding Source={helpers:EnumBindingSource EnumType=models:Timer}}"
-                            SelectedIndex="1"
-                            SelectionChanged="CmbTimer_OnSelectionChanged" />
-                        <NumberBox
-                            Name="rowsCountNumberBox"
-                            Width="60"
-                            VerticalAlignment="Top"
-                            Header="تعداد ردیف ها" />
-                    </StackPanel>
-                </StackPanel>
-
-            </StackPanel>
-        </ContentDialog>-->
-        <MenuBar Grid.Row="0" FlowDirection="RightToLeft">
+        <MenuBar
+            Grid.Row="0"
+            FlowDirection="RightToLeft"
+            Visibility="{Binding ViewModel.MenuVisibility, Mode=OneWay}">
             <MenuBarItem Title="پرونده ها" AccessKey="F">
                 <MenuFlyoutItem Tag="Print" Text="چاپ">
                     <MenuFlyoutItem.KeyboardAccelerators>
@@ -174,12 +49,12 @@
                 </MenuFlyoutItem>
             </MenuBarItem>
             <MenuBarItem Title="افزونه ها" AccessKey="P">
-                <MenuFlyoutItem Tag="Translation" Text="مدیریت ترجمه ها">
+                <MenuFlyoutItem Tag="Translation" Text="مدیریت">
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Key="T" Modifiers="Control" />
                     </MenuFlyoutItem.KeyboardAccelerators>
                 </MenuFlyoutItem>
-                <MenuFlyoutItem Tag="Qari" Text="مدیریت قاری ها">
+                <MenuFlyoutItem Tag="Qari" Text="مدیریت">
                     <MenuFlyoutItem.KeyboardAccelerators>
                         <KeyboardAccelerator Key="Q" Modifiers="Control" />
                     </MenuFlyoutItem.KeyboardAccelerators>
@@ -195,7 +70,11 @@
 
         </MenuBar>
         <Grid Grid.Row="1">
-            <NavigationView IsBackButtonVisible="Collapsed" IsSettingsVisible="False">
+            <NavigationView
+                IsBackButtonVisible="Collapsed"
+                IsPaneOpen="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
+                IsPaneVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
+                IsSettingsVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}">
                 <NavigationView.PaneFooter>
                     <NavigationViewItem
                         Content="تنظیمات"
@@ -212,7 +91,10 @@
                             <FontIcon Glyph="&#xF0E4;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="ثبت اطلاعات پایه" Icon="Edit">
+                    <NavigationViewItem
+                        Content="ثبت اطلاعات پایه"
+                        Icon="Edit"
+                        Visibility="{Binding ViewModel.IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                         <NavigationViewItem.MenuItems>
                             <NavigationViewItem
                                 Content="ثبت اطلاعات همکاران"
@@ -246,16 +128,8 @@
                         </NavigationViewItem.Icon>
                         <NavigationViewItem.MenuItems>
                             <NavigationViewItem
-                                Content="کانال ها"
+                                Content="اندازه گیری ها"
                                 Tag="ChannelsReportPage"
-                                Tapped="NavigationViewItem_OnTapped">
-                                <NavigationViewItem.Icon>
-                                    <FontIcon Glyph="&#xE9F9;" />
-                                </NavigationViewItem.Icon>
-                            </NavigationViewItem>
-                            <NavigationViewItem
-                                Content="زهکش ها"
-                                Tag="Canals"
                                 Tapped="NavigationViewItem_OnTapped">
                                 <NavigationViewItem.Icon>
                                     <FontIcon Glyph="&#xE9F9;" />
@@ -265,7 +139,7 @@
                     </NavigationViewItem>
                 </NavigationView.MenuItems>
 
-                <views:ShellPage FlowDirection="RightToLeft" />
+                <views:ShellPage x:Name="MyShell" FlowDirection="RightToLeft" />
 
             </NavigationView>
         </Grid>

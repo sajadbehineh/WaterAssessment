@@ -26,6 +26,13 @@ public class Propeller
     public double? A3 { get; set; }
     public double? B3 { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+    public int? CreatedByUserID { get; set; }
+    public virtual User CreatedBy { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public int? UpdatedByUserID { get; set; } // کلید خارجی
+    public virtual User UpdatedBy { get; set; }
+
     public virtual List<Assessment> Assessments { get; set; } = new();
 
     // متد محاسبه سرعت بر اساس تعداد معادلات انتخاب شده

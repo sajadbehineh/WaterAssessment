@@ -2,28 +2,18 @@
 
 namespace WaterAssessment.Models
 {
-    public class Employee : ObservableObject
+    public class Employee
     {
-        private int _employeeId;
-        public int EmployeeID
-        {
-            get => _employeeId;
-            set => SetProperty(ref _employeeId, value);
-        }
+        public int EmployeeID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
-        private string _firstName;
-        public  string FirstName
-        {
-            get => _firstName;
-            set => SetProperty(ref _firstName, value);
-        }
-
-        private string _lastName;
-        public  string LastName
-        {
-            get => _lastName;
-            set => SetProperty(ref _lastName, value);
-        }   
+        public DateTime CreatedAt { get; set; }
+        public int? CreatedByUserID { get; set; }
+        public virtual User CreatedBy { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public int? UpdatedByUserID { get; set; } // کلید خارجی
+        public virtual User UpdatedBy { get; set; }
 
         public override string ToString() => $"{FirstName} {LastName}";
 

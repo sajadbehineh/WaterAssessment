@@ -19,10 +19,13 @@ namespace WaterAssessment.Models.ViewModel
         // لیست مکان‌ها برای فیلتر
         public ObservableCollection<Location> Locations { get; } = new();
 
+        public ObservableCollection<LocationType> LocationTypes { get; } = new();
+
         // =======================
         // فیلترها
         // =======================
         [ObservableProperty] private Location _filterLocation;
+        [ObservableProperty] private LocationType? _filterLocationType;
         [ObservableProperty] private DateTimeOffset? _filterStartDate;
         [ObservableProperty] private DateTimeOffset? _filterEndDate;
 
@@ -34,21 +37,18 @@ namespace WaterAssessment.Models.ViewModel
             LoadData();
         }
 
-        private AppWindow GetAppWindowForCurrentWindow()
-        {
-            IntPtr hWnd = WindowNative.GetWindowHandle(MainWindow.Instance);
-            WindowId wndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            return AppWindow.GetFromWindowId(wndId);
-        }
-
         public void LoadData()
         {
             using var db = new WaterAssessmentContext();
 
             // 1. پر کردن لیست مکان‌ها (فقط کانال‌ها) برای کمبوباکس فیلتر
             Locations.Clear();
-            var locs = db.Locations.Where(a => a.LocationType.Title == "کانال").ToList();
+            var locs = db.Locations.ToList();
             foreach (var l in locs) Locations.Add(l);
+
+            LocationTypes.Clear();
+            var locTypes = db.LocationTypes.ToList();
+            foreach (var locType in locTypes) LocationTypes.Add(locType);
 
             // 2. اعمال فیلترها و جستجو
             ApplyFilters();
@@ -62,20 +62,23 @@ namespace WaterAssessment.Models.ViewModel
             // شروع کوئری: فقط رکوردها مربوط به کانال‌ها را بیاور
             // Include کردن Location برای نمایش نام مکان ضروری است
             var query = db.Assessments
-                .Include(a=>a.Propeller)
-                .Include(a=>a.AssessmentEmployees)
+                .Include(a => a.Propeller)
+                .Include(a => a.AssessmentEmployees)
                 .Include(a => a.Location)
                 .ThenInclude(l => l.LocationType)
-                .Include(a=>a.GateOpenings)
+                .Include(a => a.GateOpenings)
                 .Include(a => a.FormValues)
-                //.Include(a => a.Propeller)
-                .Where(a => a.Location.LocationType.Title == "کانال")
                 .AsQueryable();
 
             // فیلتر مکان
             if (FilterLocation != null)
             {
                 query = query.Where(a => a.LocationID == FilterLocation.LocationID);
+            }
+
+            if (FilterLocationType != null)
+            {
+                query = query.Where(a => a.Location.LocationTypeID == FilterLocationType.LocationTypeID);
             }
 
             // فیلتر تاریخ شروع
@@ -89,8 +92,9 @@ namespace WaterAssessment.Models.ViewModel
             if (FilterEndDate.HasValue)
             {
                 var dt = FilterEndDate.Value.DateTime.Date;
+                var nextDay = FilterEndDate.Value.DateTime.Date.AddDays(1);
                 // تا آخر آن روز
-                query = query.Where(a => a.Date <= dt);
+                query = query.Where(a => a.Date < nextDay);
             }
 
             // مرتب‌سازی بر اساس تاریخ (نزولی)
@@ -104,6 +108,7 @@ namespace WaterAssessment.Models.ViewModel
         private void ClearFilters()
         {
             FilterLocation = null;
+            FilterLocationType = null;
             FilterStartDate = null;
             FilterEndDate = null;
             ApplyFilters();
@@ -116,18 +121,8 @@ namespace WaterAssessment.Models.ViewModel
         [RelayCommand]
         private void EditAssessment(Assessment item)
         {
-            //await using var db = new WaterAssessmentContext();
-            //var item1 = await db.Assessments
-            //    .Include(a => a.FormValues)
-            //    .Include(a => a.Propeller)
-            //    .FirstOrDefaultAsync(x => x.AssessmentID == item.AssessmentID);
-
             if (item == null) return;
-            // نویگیت به صفحه فرم با پاس دادن آیتم برای ویرایش
-            // (فرض بر این است که ShellPage دارید که فریم اصلی را دارد)
-            //var frame = (App.MainWindow.Content as ShellPage)?.AppFrame;
             ShellPage.Instance.Navigate(typeof(AssessmentFormPage), null, item);
-            //frame?.Navigate(typeof(AssessmentFormPage), item);
         }
 
         [RelayCommand]

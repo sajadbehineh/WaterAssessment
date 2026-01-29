@@ -162,6 +162,14 @@ namespace WaterAssessment.Models.ViewModel
                 // 1. پیدا کردن رکورد در دیتابیس
                 var empToDelete = await db.Employees.FindAsync(id);
 
+                bool hasDependents = await db.AssessmentEmployees.AnyAsync(ae => ae.EmployeeID == id);
+
+                if (hasDependents)
+                {
+                    ShowWarning("این کارمند دارای اندازه‌گیری‌های ثبت شده است و قابل حذف نیست.");
+                    return;
+                }
+
                 if (empToDelete != null)
                 {
                     // 2. حذف از دیتابیس
@@ -176,11 +184,7 @@ namespace WaterAssessment.Models.ViewModel
                         Employees.Remove(empInList);
                     }
 
-                    // 4. نمایش پیام موفقیت
-                    InfoBarMessage = "همکار با موفقیت حذف شد.";
-                    InfoBarSeverity = InfoBarSeverity.Success;
-                    IsFirstNameErrorVisible = true; // باز کردن اینفوبار (یا پراپرتی جنرال اگر دارید)
-                    //FirstName = LastName = string.Empty;
+                    ShowSuccess("همکار با موفقیت حذف شد.");
 
                     // اگر آیتم حذف شده همان آیتمی بود که در حال ویرایشش بودیم، فرم را خالی کن
                     if (SelectedEmployee != null && SelectedEmployee.EmployeeID == id)
@@ -192,10 +196,7 @@ namespace WaterAssessment.Models.ViewModel
                 }
                 else
                 {
-                    // اگر پیدا نشد (مثلا قبلا حذف شده)
-                    InfoBarSeverity = InfoBarSeverity.Warning;
-                    InfoBarMessage = "این رکورد قبلاً حذف شده یا وجود ندارد.";
-                    IsFirstNameErrorVisible = true;
+                    ShowWarning("این رکورد قبلاً حذف شده یا وجود ندارد.");
                 }
             }
             catch (Exception ex)
@@ -270,9 +271,7 @@ namespace WaterAssessment.Models.ViewModel
 
                 if (exists)
                 {
-                    IsFirstNameErrorVisible = true;
-                    InfoBarSeverity = InfoBarSeverity.Error;
-                    InfoBarMessage = "همکار مورد نظر قبلاً ثبت شده است.";
+                    ShowError("همکار مورد نظر قبلاً ثبت شده است.");
                     return;
                 }
 
@@ -289,10 +288,7 @@ namespace WaterAssessment.Models.ViewModel
                 Employees.Add(newEmp);
                 ClearForm(); // متد پاکسازی که خودتان داشتید
 
-                // نمایش پیام موفقیت
-                InfoBarSeverity = InfoBarSeverity.Success;
-                InfoBarMessage = "همکار جدید با موفقیت ثبت شد.";
-                IsFirstNameErrorVisible = true;
+                ShowSuccess("همکار جدید با موفقیت ثبت شد.");
             }
             catch (Exception e)
             {
@@ -312,9 +308,7 @@ namespace WaterAssessment.Models.ViewModel
 
                 if (empToEdit == null)
                 {
-                    InfoBarSeverity = InfoBarSeverity.Error;
-                    InfoBarMessage = "این رکورد یافت نشد (شاید حذف شده است).";
-                    IsFirstNameErrorVisible = true;
+                    ShowError("این رکورد یافت نشد (شاید حذف شده است).");
                     return;
                 }
 
@@ -327,9 +321,7 @@ namespace WaterAssessment.Models.ViewModel
 
                 if (isDuplicate)
                 {
-                    InfoBarSeverity = InfoBarSeverity.Error;
-                    InfoBarMessage = "نام و نام خانوادگی تکراری است.";
-                    IsFirstNameErrorVisible = true;
+                    ShowError("نام و نام خانوادگی تکراری است.");
                     return;
                 }
 
@@ -347,9 +339,7 @@ namespace WaterAssessment.Models.ViewModel
                 if (index != -1) Employees[index] = SelectedEmployee;
 
                 // نمایش پیام موفقیت و پاکسازی
-                InfoBarSeverity = InfoBarSeverity.Success;
-                InfoBarMessage = "ویرایش با موفقیت انجام شد.";
-                IsFirstNameErrorVisible = true;
+                ShowSuccess("ویرایش با موفقیت انجام شد.");
 
                 ClearForm();
             }
@@ -367,6 +357,35 @@ namespace WaterAssessment.Models.ViewModel
             InfoBarMessage = $"خطا در {operation}: {ex.Message}";
         }
 
+        private async void ShowError(string message, int durationSeconds = 5)
+        {
+            InfoBarMessage = message;
+            InfoBarSeverity = InfoBarSeverity.Error;
+            IsFirstNameErrorVisible = true;
+            await Task.Delay(durationSeconds * 1000);
+
+            // بستن اینفوبار
+            IsFirstNameErrorVisible = false;
+        }
+
+        private async void ShowSuccess(string message, int durationSeconds = 5)
+        {
+            InfoBarMessage = message;
+            InfoBarSeverity = InfoBarSeverity.Success;
+            IsFirstNameErrorVisible = true;
+            await Task.Delay(durationSeconds * 1000);
+
+            IsFirstNameErrorVisible = false;
+        }
+
+        private async void ShowWarning(string message, int durationSeconds = 5)
+        {
+            InfoBarMessage = message;
+            InfoBarSeverity = InfoBarSeverity.Warning;
+            IsFirstNameErrorVisible = true;
+            await Task.Delay(durationSeconds * 1000);
+            IsFirstNameErrorVisible = false;
+        }
     }
 }
 

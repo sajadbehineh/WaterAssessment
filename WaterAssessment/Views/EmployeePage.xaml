@@ -112,6 +112,7 @@
                     Width="500"
                     Margin="0,10"
                     HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
                     DataContext="{x:Bind ViewModel}"
                     Style="{ThemeResource GridPanel}"
                     Translation="0 0 48">

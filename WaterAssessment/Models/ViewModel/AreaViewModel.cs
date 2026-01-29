@@ -183,7 +183,7 @@ namespace WaterAssessment.Models.ViewModel
                 if (hasDependents)
                 {
                     // اگر زیرمجموعه داشت، خطا بده و خارج شو
-                    ShowError("این حوزه دارای مکان‌های ثبت شده است. برای حذف، ابتدا باید مکان‌های مربوطه را حذف کنید.");
+                    ShowWarning("این حوزه دارای مکان‌های ثبت شده است. برای حذف، ابتدا باید مکان‌های مربوطه را حذف کنید.");
                     return;
                 }
 
@@ -273,18 +273,34 @@ namespace WaterAssessment.Models.ViewModel
 
 
         // متدهای کمکی برای تمیز شدن کد اصلی
-        private void ShowError(string message)
+        private async void ShowError(string message, int durationSeconds = 5)
         {
             InfoBarMessage = message;
             InfoBarSeverity = InfoBarSeverity.Error;
             IsAreaNameErrorVisible = true;
+            await Task.Delay(durationSeconds * 1000);
+
+            // بستن اینفوبار
+            IsAreaNameErrorVisible = false;
         }
 
-        private void ShowSuccess(string message)
+        private async void ShowSuccess(string message, int durationSeconds = 5)
         {
             InfoBarMessage = message;
             InfoBarSeverity = InfoBarSeverity.Success;
             IsAreaNameErrorVisible = true;
+            await Task.Delay(durationSeconds * 1000);
+
+            IsAreaNameErrorVisible = false;
+        }
+
+        private async void ShowWarning(string message, int durationSeconds = 5)
+        {
+            InfoBarMessage = message;
+            InfoBarSeverity = InfoBarSeverity.Warning;
+            IsAreaNameErrorVisible = true;
+            await Task.Delay(durationSeconds * 1000);
+            IsAreaNameErrorVisible = false;
         }
     }
 }

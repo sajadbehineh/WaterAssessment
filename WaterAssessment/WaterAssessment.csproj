@@ -40,6 +40,7 @@
 	  <None Remove="Views\CreateAssessmentDialog.xaml" />
 	  <None Remove="Views\EmployeePage.xaml" />
 	  <None Remove="Views\LocationPage.xaml" />
+	  <None Remove="Views\LoginPage.xaml" />
 	  <None Remove="Views\Propeller_CurrentMeterPage.xaml" />
 	  <None Remove="Views\SettingsPage.xaml" />
 	  <None Remove="Views\ShellPage.xaml" />
@@ -57,6 +58,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AK.Toolkit.WinUI3.NumberBoxEx" Version="1.0.1" />
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.230907" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
@@ -133,6 +135,11 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <PRIResource Remove="Core\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\LoginPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\ChannelsReportPage.xaml">

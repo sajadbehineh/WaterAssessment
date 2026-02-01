@@ -5,7 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:akTools="using:AK.Toolkit.WinUI3"
     xmlns:converters="using:WaterAssessment.Converters"
-    xmlns:customControls="using:WaterAssessment.Helpers.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:WaterAssessment.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

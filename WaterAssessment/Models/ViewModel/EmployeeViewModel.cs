@@ -121,7 +121,10 @@ namespace WaterAssessment.Models.ViewModel
         private async Task LoadEmployeesAsync()
         {
             using var db = new WaterAssessmentContext();
-            var list = await db.Employees.AsNoTracking().ToListAsync();
+            var list = await db.Employees
+                .Include(e=>e.CreatedBy)
+                .Include(e=>e.UpdatedBy)
+                .AsNoTracking().ToListAsync();
 
             Employees.Clear();
 

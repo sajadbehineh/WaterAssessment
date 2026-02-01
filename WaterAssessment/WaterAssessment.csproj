@@ -44,6 +44,7 @@
 	  <None Remove="Views\Propeller_CurrentMeterPage.xaml" />
 	  <None Remove="Views\SettingsPage.xaml" />
 	  <None Remove="Views\ShellPage.xaml" />
+	  <None Remove="Views\UserManagementPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -135,6 +136,11 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <PRIResource Remove="Core\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Views\UserManagementPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\LoginPage.xaml">

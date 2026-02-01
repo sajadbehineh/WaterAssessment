@@ -5,6 +5,7 @@ using System.Diagnostics.Metrics;
 using WaterAssessment.Messages;
 using WaterAssessment.Models;
 using WaterAssessment.Views;
+using static WaterAssessment.Models.ViewModel.MainViewModel;
 
 namespace WaterAssessment;
 
@@ -29,34 +30,17 @@ public sealed partial class MainWindow : Window
             // چون روی ترد UI هستیم مستقیم نویگیت میکنیم
             ShellPage.Instance.Navigate(typeof(ChannelsReportPage)); // یا هر صفحه پیش‌فرض دیگر
         });
-        //this.AppWindow.DispatcherQueue.TryEnqueue(() =>
-        //{
-        //    if (!ViewModel.IsLoggedIn)
-        //    {
-        //        ShellPage.Instance.Navigate(typeof(LoginPage));
-        //    }
-        //});
-        // رویداد لود شدن پنجره برای نمایش صفحه لاگین
-        //this.Activated += MainWindow_Activated;
-        //ShellPage.Instance.Loaded += Instance_Loaded;
-        //ShellPage.Instance.Navigate(typeof(LoginPage));
+        // مدیریت خروج از حساب
+        WeakReferenceMessenger.Default.Register<LogoutMessage>(this, (r, m) =>
+        {
+            MyShell.Navigate(typeof(LoginPage));
+        });
+        ShellPage.Instance.Loaded += Instance_Loaded;
     }
 
-    //private void Instance_Loaded(object sender, RoutedEventArgs e)
-    //{
-    //    ShellPage.Instance.Loaded -= Instance_Loaded;
-    //    // هدایت اولیه به صفحه لاگین
-    //    if (!ViewModel.IsLoggedIn)
-    //    {
-    //        ShellPage.Instance.Navigate(typeof(LoginPage));
-    //    }
-    //}
-
-    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+    private void Instance_Loaded(object sender, RoutedEventArgs e)
     {
-        // فقط بار اول اجرا شود
-        this.Activated -= MainWindow_Activated;
-
+        ShellPage.Instance.Loaded -= Instance_Loaded;
         // هدایت اولیه به صفحه لاگین
         if (!ViewModel.IsLoggedIn)
         {
@@ -94,7 +78,15 @@ public sealed partial class MainWindow : Window
                 case "ChannelsReportPage":
                     ShellPage.Instance.Navigate(typeof(ChannelsReportPage));
                     break;
+                case "UserManagement":
+                    ShellPage.Instance.Navigate(typeof(UserManagementPage));
+                    break;
             }
         }
+    }
+
+    private void LogoutNavItem_OnTapped(object sender, TappedRoutedEventArgs e)
+    {
+        ViewModel.LogoutCommand.Execute(e);
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using User = WaterAssessment.Models.User;
+﻿using User = WaterAssessment.Models.User;
 
 namespace WaterAssessment.Core
 {
@@ -14,6 +9,7 @@ namespace WaterAssessment.Core
 
         // یک پراپرتی کمکی برای چک کردن اینکه آیا کسی لاگین هست یا نه
         public static bool IsLoggedIn => CurrentUser != null;
+        public static bool IsAdmin => CurrentUser?.Role == "Admin";
 
         public static void Login(User user)
         {

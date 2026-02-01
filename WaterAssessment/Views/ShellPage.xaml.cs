@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml.Media.Animation;
+using WaterAssessment.Core;
 
 namespace WaterAssessment.Views;
 
@@ -10,7 +11,7 @@ public sealed partial class ShellPage : Page
     {
         this.InitializeComponent();
         Instance = this;
-        this.Loaded += ShellPage_Loaded;
+        //this.Loaded += ShellPage_Loaded;
     }
 
     private void ShellPage_Loaded(object sender, RoutedEventArgs e)
@@ -40,6 +41,11 @@ public sealed partial class ShellPage : Page
             {
                 shellFrame.Navigate(pageType, parameter, transitionInfo);
             }
+        }
+
+        if (pageType != typeof(LoginPage) && !AppSession.IsLoggedIn)
+        {
+            shellFrame.Navigate(typeof(LoginPage));
         }
     }
 }

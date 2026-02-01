@@ -17,33 +17,33 @@ public class WaterAssessmentContext : DbContext
         }
     }
 
-    //public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    //{
-    //    var entries = ChangeTracker.Entries()
-    //        .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
 
-    //    foreach (var entry in entries)
-    //    {
-    //        // پر کردن تاریخ و کاربر ویرایش‌کننده
-    //        if (entry.Entity.GetType().GetProperty("UpdatedAt") != null)
-    //        {
-    //            entry.Property("UpdatedAt").CurrentValue = DateTime.Now;
-    //            entry.Property("UpdatedByUserID").CurrentValue = AppSession.CurrentUser?.UserID;
-    //        }
+        foreach (var entry in entries)
+        {
+            // پر کردن تاریخ و کاربر ویرایش‌کننده
+            if (entry.Entity.GetType().GetProperty("UpdatedAt") != null)
+            {
+                entry.Property("UpdatedAt").CurrentValue = DateTime.Now;
+                entry.Property("UpdatedByUserID").CurrentValue = AppSession.CurrentUser?.UserID;
+            }
 
-    //        // پر کردن تاریخ و کاربر ایجادکننده (فقط هنگام افزودن)
-    //        if (entry.State == EntityState.Added)
-    //        {
-    //            if (entry.Entity.GetType().GetProperty("CreatedAt") != null)
-    //            {
-    //                entry.Property("CreatedAt").CurrentValue = DateTime.Now;
-    //                entry.Property("CreatedByUserID").CurrentValue = AppSession.CurrentUser?.UserID;
-    //            }
-    //        }
-    //    }
+            // پر کردن تاریخ و کاربر ایجادکننده (فقط هنگام افزودن)
+            if (entry.State == EntityState.Added)
+            {
+                if (entry.Entity.GetType().GetProperty("CreatedAt") != null)
+                {
+                    entry.Property("CreatedAt").CurrentValue = DateTime.Now;
+                    entry.Property("CreatedByUserID").CurrentValue = AppSession.CurrentUser?.UserID;
+                }
+            }
+        }
 
-    //    return base.SaveChangesAsync(cancellationToken);
-    //}
+        return base.SaveChangesAsync(cancellationToken);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

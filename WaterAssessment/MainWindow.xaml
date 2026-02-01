@@ -74,7 +74,7 @@
                 IsBackButtonVisible="Collapsed"
                 IsPaneOpen="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
                 IsPaneVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
-                IsSettingsVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}">
+                IsSettingsVisible="False">
                 <NavigationView.PaneFooter>
                     <NavigationViewItem
                         Content="تنظیمات"
@@ -137,6 +137,16 @@
                             </NavigationViewItem>
                         </NavigationViewItem.MenuItems>
                     </NavigationViewItem>
+                    <NavigationViewItem
+                        Content="مدیریت کاربران"
+                        Icon="People"
+                        Tag="UserManagement"
+                        Tapped="NavigationViewItem_OnTapped"
+                        Visibility="{Binding ViewModel.IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                    <NavigationViewItem
+                        x:Name="LogoutNavItem"
+                        Content="خروج از حساب"
+                        Tapped="LogoutNavItem_OnTapped" />
                 </NavigationView.MenuItems>
 
                 <views:ShellPage x:Name="MyShell" FlowDirection="RightToLeft" />

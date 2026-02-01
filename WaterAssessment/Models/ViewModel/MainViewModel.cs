@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
+using WaterAssessment.Core;
 using WaterAssessment.Messages;
+using WaterAssessment.Views;
 
 namespace WaterAssessment.Models.ViewModel
 {
@@ -22,37 +25,36 @@ namespace WaterAssessment.Models.ViewModel
         [ObservableProperty]
         private Visibility _menuVisibility = Visibility.Collapsed;
 
-        public List<Location> Locations { get; private set; } = new();
-        public List<CurrentMeter> CurrentMeters { get; private set; } = new();
-        public List<Propeller> Propellers { get; private set; } = new();
-        public List<Employee> Employees { get; private set; } = new();
-
         public MainViewModel()
         {
             WeakReferenceMessenger.Default.Register<LoginSuccessMessage>(this);
-            // در سازنده یا یک متد Initialize، داده‌ها را لود کنید
-            _ = LoadBaseDataAsync();
+            //WeakReferenceMessenger.Default.Register<LoginSuccessMessage>(this, (r, m) =>
+            //{
+            //    IsLoggedIn = true;
+            //    IsAdmin = AppSession.IsAdmin;
+            //    MenuVisibility = Visibility.Visible;
+            //});
         }
 
-        // متدی برای خواندن اطلاعات پایه از دیتابیس
-        public async Task LoadBaseDataAsync()
+        [RelayCommand]
+        private void Logout()
         {
-            try
-            {
-                using var db = new WaterAssessmentContext();
+            // 1. پاک کردن سشن
+            AppSession.Logout();
 
-                // استفاده از ToListAsync (اگر EF Core Async دارید) یا ToList
-                // بهتر است AsNoTracking باشد چون فقط برای خواندن در کامبوباکس است
-                Locations = db.Locations.AsNoTracking().ToList();
-                CurrentMeters = db.CurrentMeters.AsNoTracking().ToList();
-                Propellers = db.Propellers.AsNoTracking().ToList();
-                Employees = db.Employees.AsNoTracking().ToList();
-            }
-            catch (System.Exception ex)
-            {
-                // مدیریت خطا (مثلاً لاگ کردن)
-            }
+            // 2. به‌روزرسانی وضعیت UI
+            IsLoggedIn = false;
+            IsAdmin = false;
+            MenuVisibility = Visibility.Collapsed;
+
+            // 3. ارسال پیام برای ناوبری به صفحه لاگین
+            WeakReferenceMessenger.Default.Send(new LogoutMessage());
+            //if (!this.IsLoggedIn)
+            //{
+            //    ShellPage.Instance.Navigate(typeof(LoginPage));
+            //}
         }
+
         public void Receive(LoginSuccessMessage message)
         {
             var user = message.Value;
@@ -64,5 +66,8 @@ namespace WaterAssessment.Models.ViewModel
             // چک کردن نقش کاربر
             IsAdmin = user.Role == "Admin";
         }
+
+        // یک کلاس پیام خالی برای اطلاع‌رسانی خروج
+        public sealed class LogoutMessage { }
     }
 }

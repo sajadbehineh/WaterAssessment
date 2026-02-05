@@ -356,7 +356,7 @@
             Padding="6,4"
             HorizontalAlignment="Stretch"
             BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
-            BorderThickness="1 1 1 0"
+            BorderThickness="1,1,1,0"
             CornerRadius="0"
             Visibility="{x:Bind ViewModel.HasPumps, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel>
@@ -876,7 +876,7 @@
 
         <Grid
             Grid.Row="4"
-            Padding="20,10,20,10"
+            Padding="20,8,20,8"
             Background="{ThemeResource SystemChromeAltMediumHighColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -892,9 +892,10 @@
             <InfoBar
                 x:Name="BoxInfoBar"
                 Grid.Column="2"
+                Height="48"
                 Margin="20,0,0,0"
                 VerticalAlignment="Center"
-                IsClosable="True"
+                IsClosable="False"
                 IsOpen="{x:Bind ViewModel.IsInfoOpen, Mode=TwoWay}"
                 Message="{x:Bind ViewModel.InfoMessage, Mode=TwoWay}"
                 Severity="{x:Bind ViewModel.InfoSeverity, Mode=TwoWay}" />

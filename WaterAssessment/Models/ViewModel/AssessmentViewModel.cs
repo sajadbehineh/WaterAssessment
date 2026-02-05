@@ -1,12 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using WaterAssessment.Services;
 
 namespace WaterAssessment.Models.ViewModel
 {
     public partial class AssessmentViewModel : ObservableObject
     {
+        private readonly IAssessmentService _assessmentService;
         public Assessment Model { get; }
 
         // ==========================================================
@@ -91,7 +92,7 @@ namespace WaterAssessment.Models.ViewModel
 
         // 2. تعیین متن دکمه بر اساس حالت
         // این پراپرتی به خاصیت Content دکمه در XAML وصل می‌شود
-        public string SaveButtonContent => IsEditMode ? "ثبت تغییرات (ویرایش)" : "ثبت اندازه گیری جدید";
+        public string SaveButtonContent => IsEditMode ? "ذخیره تغییرات (ویرایش)" : "ذخیره اندازه گیری";
 
         [ObservableProperty]
         private int _timer;
@@ -118,8 +119,9 @@ namespace WaterAssessment.Models.ViewModel
             ? string.Join(" | ", PumpStates.Select(p => $"{p.LocationPump?.PumpName}: {(p.IsRunning ? "روشن" : "خاموش")}"))
             : "بدون پمپ";
 
-        public AssessmentViewModel(Assessment model)
+        public AssessmentViewModel(Assessment model, IAssessmentService assessmentService)
         {
+            _assessmentService = assessmentService;
             Model = model;
             SelectedPropeller = model.Propeller;
 
@@ -156,18 +158,20 @@ namespace WaterAssessment.Models.ViewModel
             }
 
             // لود کردن داده‌های مرجع (مکان‌ها و...) از دیتابیس
-            LoadReferenceData();
+            _ = LoadReferenceDataAsync();
         }
 
-        private void LoadReferenceData()
+        private async Task LoadReferenceDataAsync()
         {
-            using var db = new WaterAssessmentContext();
-
-            // 1. لود کردن لیست‌ها
-            var locations = db.Locations.AsNoTracking().ToList();
-            var propellers = db.Propellers.AsNoTracking().ToList();
-            var meters = db.CurrentMeters.AsNoTracking().ToList();
-            var employees = db.Employees.AsNoTracking().ToList();
+            var referenceData = await _assessmentService.GetReferenceDataAsync();
+            var locations = referenceData.Locations;
+            var propellers = referenceData.Propellers;
+            var meters = referenceData.CurrentMeters;
+            var employees = referenceData.Employees;
+            //var locations = await _assessmentService.GetAllLocationsAsync();
+            //var propellers = await _assessmentService.GetAllPropellersAsync();
+            //var meters = await _assessmentService.GetAllCurrentMetersAsync();
+            //var employees = await _assessmentService.GetAllEmployeesAsync();
 
             AllLocations.Clear();
             foreach (var item in locations) AllLocations.Add(item);
@@ -239,11 +243,8 @@ namespace WaterAssessment.Models.ViewModel
                                      .ToDictionary(state => state.LocationPumpID, state => state.IsRunning)
                                  ?? new Dictionary<int, bool>();
 
-            using var db = new WaterAssessmentContext();
             // لود کردن پمپ‌هایی که برای این مکان تعریف شده‌اند
-            var pumps = await db.LocationPumps
-                                .Where(p => p.LocationID == location.LocationID)
-                                .ToListAsync();
+            var pumps = await _assessmentService.GetLocationPumpsAsync(location.LocationID);
 
             foreach (var pump in pumps)
             {
@@ -301,31 +302,31 @@ namespace WaterAssessment.Models.ViewModel
         {
             if (SelectedLocation == null)
             {
-                ShowInfo("لطفاً محل اندازه گیری را انتخاب کنید.", InfoBarSeverity.Warning);
+                await ShowInfo("لطفاً محل اندازه گیری را انتخاب کنید.", InfoBarSeverity.Warning);
                 return;
             }
 
             if (SelectedPropeller == null)
             {
-                ShowInfo("لطفاً پروانه را انتخاب کنید.", InfoBarSeverity.Warning);
+                await ShowInfo("لطفاً پروانه را انتخاب کنید.", InfoBarSeverity.Warning);
                 return;
             }
 
             if (SelectedCurrentMeter == null)
             {
-                ShowInfo("لطفاً مولینه را انتخاب کنید.", InfoBarSeverity.Warning);
+                await ShowInfo("لطفاً مولینه را انتخاب کنید.", InfoBarSeverity.Warning);
                 return;
             }
 
             if (!Echelon.HasValue)
             {
-                ShowInfo("لطفاً مقدار اشل را وارد کنید.", InfoBarSeverity.Warning);
+                await ShowInfo("لطفاً مقدار اشل را وارد کنید.", InfoBarSeverity.Warning);
                 return;
             }
 
             if (!AssessmentEmployees.Any())
             {
-                ShowInfo("لطفاً حداقل یک اندازه گیر را انتخاب کنید",InfoBarSeverity.Warning);
+                await ShowInfo("لطفاً حداقل یک اندازه گیر را انتخاب کنید", InfoBarSeverity.Warning);
                 return;
             }
 
@@ -347,51 +348,35 @@ namespace WaterAssessment.Models.ViewModel
             // 1. اعتبارسنجی ساده
             if (FormValues.Count == 0)
             {
-                ShowInfo("هیچ سطری برای ثبت وجود ندارد.", InfoBarSeverity.Warning);
+                await ShowInfo("هیچ سطری برای ثبت وجود ندارد.", InfoBarSeverity.Warning);
                 return;
             }
 
             try
             {
                 IsBusy = true; // قفل کردن UI
-                using var db = new WaterAssessmentContext();
 
-                // 2. آماده‌سازی مدل برای درج
-                // نکته مهم: چون Location و Propeller قبلاً در دیتابیس هستند،
-                // باید آبجکت آن‌ها را نال کنیم تا EF تلاش نکند دوباره آن‌ها را بسازد.
-                // EF فقط با ID ها (LocationID, PropellerID) کار خواهد کرد.
-                Model.Location = null;
-                Model.Propeller = null;
-                Model.CurrentMeter = null;
+                var formValues = BuildFormValueModels();
 
-                // قطع رابطه شیئی کارمندان (فقط ID مهم است)
-                foreach (var ae in Model.AssessmentEmployees)
+                var success = await _assessmentService.AddAssessmentAsync(
+                    Model,
+                    formValues,
+                    PumpStates,
+                    Model.AssessmentEmployees);
+
+                if (success)
                 {
-                    ae.Employee = null;
+                    ResetToNewForm();
+                    await ShowInfo("اندازه گیری جدید با موفقیت ثبت شد.", InfoBarSeverity.Success);
                 }
-
-                // همگام‌سازی لیست سطرها (مطمئن شویم چیزی که در گرید است ذخیره می‌شود)
-                Model.FormValues = FormValues.Select(vm => vm.Model).ToList();
-
-                // اضافه کردن وضعیت پمپ‌ها به مدل قبل از ذخیره
-                Model.PumpStates = PumpStates.Select(ps => new AssessmentPump
+                else
                 {
-                    LocationPumpID = ps.LocationPumpID,
-                    IsRunning = ps.IsRunning
-                }).ToList();
-
-                // 3. درج در کانتکست
-                db.Assessments.Add(Model);
-
-                // 4. ذخیره نهایی در دیتابیس
-                await db.SaveChangesAsync();
-
-                ResetToNewForm();
-                ShowInfo("اندازه گیری جدید با موفقیت ثبت شد.", InfoBarSeverity.Success);
+                    await ShowInfo(_assessmentService.GetLastErrorMessage(), InfoBarSeverity.Error);
+                }
             }
             catch (Exception ex)
             {
-                ShowInfo($"خطا در ثبت اطلاعات: {ex.Message}", InfoBarSeverity.Error);
+                await ShowInfo($"خطا در ثبت اطلاعات: {ex.Message}", InfoBarSeverity.Error);
             }
             finally
             {
@@ -409,125 +394,27 @@ namespace WaterAssessment.Models.ViewModel
             try
             {
                 IsBusy = true;
-                using var db = new WaterAssessmentContext();
+                var formValues = BuildFormValueModels();
 
-                // 1. لود کردن رکورد موجود از دیتابیس همراه با تمام جزئیات
-                // استفاده از Include حیاتی است تا بتوانیم فرزندان را ویرایش کنیم
-                var existing = await db.Assessments
-                    .Include(a => a.FormValues)
-                    .Include(a => a.AssessmentEmployees)
-                    .Include(a => a.GateOpenings)
-                    .Include(a => a.PumpStates)
-                    .FirstOrDefaultAsync(a => a.AssessmentID == Model.AssessmentID);
-
-                if (existing == null)
+                var success = await _assessmentService.UpdateAssessmentAsync(
+                    Model,
+                    formValues,
+                    PumpStates,
+                    AssessmentEmployees,
+                    Model.GateOpenings ?? new List<AssessmentGate>());
+                if (success)
                 {
-                    ShowInfo("این رکورد در دیتابیس یافت نشد (شاید قبلاً حذف شده است).", InfoBarSeverity.Error);
-                    return;
+                    ResetToNewForm();
+                    await ShowInfo("ویرایش با موفقیت انجام شد.", InfoBarSeverity.Success);
                 }
-
-                // 2. آپدیت فیلدهای اصلی (Header)
-                existing.Date = Model.Date;
-                existing.Timer = Model.Timer;
-                existing.Echelon = Model.Echelon;
-                existing.TotalFlow = Model.TotalFlow;
-
-                // آپدیت کلیدهای خارجی (اگر کاربر پروانه یا مولینه را عوض کرده باشد)
-                existing.PropellerID = Model.PropellerID;
-                existing.CurrentMeterID = Model.CurrentMeterID;
-
-                // نکته: معمولاً LocationID در ویرایش تغییر نمی‌کند، اما اگر لازم است:
-                // existing.LocationID = Model.LocationID;
-
-                // 3. آپدیت سطرها (FormValues)
-                foreach (var vm in FormValues)
+                else
                 {
-                    if (vm.Model.FormValueID == 0)
-                    {
-                        // حالت الف: سطر جدید است (کاربر دکمه افزودن سطر را زده)
-                        // باید ID پدر را ست کنیم و به لیست اضافه کنیم
-                        vm.Model.AssessmentID = existing.AssessmentID;
-                        existing.FormValues.Add(vm.Model);
-                    }
-                    else
-                    {
-                        // حالت ب: سطر قدیمی است (باید مقادیرش آپدیت شود)
-                        var dbRow = existing.FormValues.FirstOrDefault(r => r.FormValueID == vm.Model.FormValueID);
-                        if (dbRow != null)
-                        {
-                            // کپی مقادیر از ویومدل به سطر دیتابیس
-                            dbRow.Distance = vm.Distance;
-                            dbRow.TotalDepth = vm.TotalDepth;
-                            dbRow.RowIndex = vm.RowIndex;
-                            dbRow.MeasureTime = vm.MeasureTime;
-
-                            // نکته مهم: خواندن دورها از vm.Model برای جلوگیری از خطای تبدیل نوع (double? به int?)
-                            dbRow.Rev02 = vm.Model.Rev02;
-                            dbRow.Rev06 = vm.Model.Rev06;
-                            dbRow.Rev08 = vm.Model.Rev08;
-
-                            // ذخیره نتایج محاسباتی
-                            dbRow.SectionWidth = vm.SectionWidth;
-                            dbRow.SectionArea = vm.SectionArea;
-                            dbRow.SectionFlow = vm.SectionFlow;
-
-                            // ذخیره سرعت میانگین (ممکن است فرمولش تغییر کرده باشد)
-                            // dbRow.VerticalMeanVelocity = vm.VerticalMeanVelocity; // اگر این فیلد را در دیتابیس دارید
-                        }
-                    }
+                    await ShowInfo(_assessmentService.GetLastErrorMessage(), InfoBarSeverity.Error);
                 }
-
-                // آپدیت پمپ‌ها (حذف و درج مجدد برای سادگی)
-                db.AssessmentPumps.RemoveRange(existing.PumpStates);
-                foreach (var ps in PumpStates)
-                {
-                    existing.PumpStates.Add(new AssessmentPump
-                    {
-                        AssessmentID = existing.AssessmentID,
-                        LocationPumpID = ps.LocationPumpID,
-                        IsRunning = ps.IsRunning
-                    });
-                }
-
-                // 4. آپدیت تیم اندازه گیری (AssessmentEmployees)
-                // استراتژی: حذف همه روابط قبلی و درج روابط جدید
-                db.AssessmentEmployees.RemoveRange(existing.AssessmentEmployees);
-                foreach (var ae in AssessmentEmployees)
-                {
-                    existing.AssessmentEmployees.Add(new Assessment_Employee
-                    {
-                        AssessmentID = existing.AssessmentID,
-                        EmployeeID = ae.EmployeeID
-                        // Employee = null // نیازی نیست چون فقط با ID کار داریم
-                    });
-                }
-
-                // 5. آپدیت گشودگی دریچه‌ها (GateOpenings)
-                // استراتژی: حذف همه و درج مجدد
-                // (فرض بر این است که DbSet مربوطه در کانتکست AssessmentGates نام دارد)
-                db.AssessmentGates.RemoveRange(existing.GateOpenings);
-
-                if (Model.GateOpenings != null)
-                {
-                    foreach (var gate in Model.GateOpenings)
-                    {
-                        existing.GateOpenings.Add(new AssessmentGate
-                        {
-                            AssessmentID = existing.AssessmentID,
-                            GateNumber = gate.GateNumber,
-                            Value = gate.Value
-                        });
-                    }
-                }
-
-                // 6. ذخیره نهایی تغییرات
-                await db.SaveChangesAsync();
-                ResetToNewForm();
-                ShowInfo("ویرایش با موفقیت انجام شد.", InfoBarSeverity.Success);
             }
             catch (Exception ex)
             {
-                ShowInfo($"خطا در ویرایش اطلاعات: {ex.Message}", InfoBarSeverity.Error);
+                await ShowInfo($"خطا در ویرایش اطلاعات: {ex.Message}", InfoBarSeverity.Error);
             }
             finally
             {
@@ -535,20 +422,44 @@ namespace WaterAssessment.Models.ViewModel
             }
         }
 
-        private void ShowInfo(string msg, InfoBarSeverity severity)
+        private async Task ShowInfo(string message, InfoBarSeverity severity, int durationSeconds = 4)
         {
-            InfoMessage = msg;
+            InfoMessage = message;
             InfoSeverity = severity;
             IsInfoOpen = true;
+
+            await Task.Delay(durationSeconds * 1000);
+
+            if (InfoMessage == message)
+            {
+                IsInfoOpen = false;
+            }
+        }
+
+        private List<FormValue> BuildFormValueModels()
+        {
+            foreach (var vm in FormValues)
+            {
+                vm.Model.SectionWidth = vm.SectionWidth;
+                vm.Model.SectionArea = vm.SectionArea;
+                vm.Model.SectionFlow = vm.SectionFlow;
+                vm.Model.VerticalMeanVelocity = vm.VerticalMeanVelocity;
+            }
+
+            return FormValues.Select(vm => vm.Model).ToList();
         }
 
         /// <summary>
         /// افزودن سطر جدید به صورت داینامیک در UI
         /// </summary>
         [RelayCommand]
-        private void AddRow()
+        private async Task AddRowAsync()
         {
-            if (SelectedPropeller == null) return; // یا هندل کردن خطا
+            if (SelectedPropeller == null)
+            {
+                await ShowInfo("لطفاً پروانه مورد نظر را انتخاب کنید.", InfoBarSeverity.Warning);
+                return;
+            }
 
             // 1. ساخت مدل جدید
             var newModel = new FormValue

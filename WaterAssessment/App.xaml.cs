@@ -32,6 +32,7 @@ namespace WaterAssessment
             services.AddTransient<IAreaService, AreaService>();
             services.AddTransient<ILocationService, LocationService>();
             services.AddTransient<ILocationTypeService, LocationTypeService>();
+            services.AddTransient<IAssessmentService, AssessmentService>();
 
             // ثبت EmployeeViewModel به صورت Transient
             services.AddTransient<EmployeeViewModel>();
@@ -40,6 +41,7 @@ namespace WaterAssessment
             services.AddTransient<AreaViewModel>();
             services.AddTransient<LocationViewModel>();
             services.AddTransient<LocationTypeViewModel>();
+            //services.AddTransient<AssessmentViewModel>();
 
             // services.AddDbContext<WaterAssessmentContext>(...);
 

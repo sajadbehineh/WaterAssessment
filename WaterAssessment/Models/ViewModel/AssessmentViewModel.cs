@@ -234,6 +234,11 @@ namespace WaterAssessment.Models.ViewModel
             PumpStates.Clear();
             AvailablePumps.Clear();
 
+            var existingStates = Model.PumpStates?
+                                     .Where(state => state.LocationPumpID != 0)
+                                     .ToDictionary(state => state.LocationPumpID, state => state.IsRunning)
+                                 ?? new Dictionary<int, bool>();
+
             using var db = new WaterAssessmentContext();
             // لود کردن پمپ‌هایی که برای این مکان تعریف شده‌اند
             var pumps = await db.LocationPumps
@@ -249,7 +254,7 @@ namespace WaterAssessment.Models.ViewModel
                 {
                     LocationPumpID = pump.Id,
                     LocationPump = pump,
-                    IsRunning = false, // پیش‌فرض خاموش
+                    IsRunning = existingStates.TryGetValue(pump.Id, out var isRunning) && isRunning,
                     AssessmentID = Model.AssessmentID
                 };
                 PumpStates.Add(state);
@@ -294,22 +299,46 @@ namespace WaterAssessment.Models.ViewModel
         [RelayCommand]
         private async Task SubmitFormAsync()
         {
+            if (SelectedLocation == null)
+            {
+                ShowInfo("لطفاً محل اندازه گیری را انتخاب کنید.", InfoBarSeverity.Warning);
+                return;
+            }
+
+            if (SelectedPropeller == null)
+            {
+                ShowInfo("لطفاً پروانه را انتخاب کنید.", InfoBarSeverity.Warning);
+                return;
+            }
+
+            if (SelectedCurrentMeter == null)
+            {
+                ShowInfo("لطفاً مولینه را انتخاب کنید.", InfoBarSeverity.Warning);
+                return;
+            }
+
+            if (!Echelon.HasValue)
+            {
+                ShowInfo("لطفاً مقدار اشل را وارد کنید.", InfoBarSeverity.Warning);
+                return;
+            }
+
+            if (!AssessmentEmployees.Any())
+            {
+                ShowInfo("لطفاً حداقل یک اندازه گیر را انتخاب کنید",InfoBarSeverity.Warning);
+                return;
+            }
+
             if (IsEditMode)
             {
-                // اگر حالت ویرایش است، متد Update را صدا بزن
-                // (که باید آن را پیاده‌سازی کنید یا اگر فعلا ندارید خالی بگذارید)
                 await EditAssessmentAsync();
             }
             else
             {
-                // اگر حالت جدید است، متد Add را صدا بزن
                 await AddAssessmentAsync();
             }
         }
 
-        /// <summary>
-        /// تنها وظیفه این متد، درج یک رکورد کاملاً جدید در دیتابیس است.
-        /// </summary>
         public async Task AddAssessmentAsync()
         {
             // استفاده از IsBusy برای جلوگیری از کلیک تکراری
@@ -357,9 +386,8 @@ namespace WaterAssessment.Models.ViewModel
                 // 4. ذخیره نهایی در دیتابیس
                 await db.SaveChangesAsync();
 
-                ShowInfo("اندازه گیری جدید با موفقیت ثبت شد.", InfoBarSeverity.Success);
-
                 ResetToNewForm();
+                ShowInfo("اندازه گیری جدید با موفقیت ثبت شد.", InfoBarSeverity.Success);
             }
             catch (Exception ex)
             {
@@ -494,7 +522,7 @@ namespace WaterAssessment.Models.ViewModel
 
                 // 6. ذخیره نهایی تغییرات
                 await db.SaveChangesAsync();
-
+                ResetToNewForm();
                 ShowInfo("ویرایش با موفقیت انجام شد.", InfoBarSeverity.Success);
             }
             catch (Exception ex)
@@ -624,10 +652,15 @@ namespace WaterAssessment.Models.ViewModel
             GateValues.Clear();
             Model.GateOpenings.Clear();
 
-            // 4. ایجاد سطرهای پیش‌فرض (خالی)
+            PumpStates.Clear();
+            Model.PumpStates.Clear();
+            AvailablePumps.Clear();
+            OnPropertyChanged(nameof(HasPumps));
+
+            //  ایجاد سطرهای پیش‌فرض (خالی)
             InitializeDefaultRows(6);
 
-            // 5. اطلاع‌رسانی به UI برای تغییر دکمه‌ها و وضعیت
+            //  اطلاع‌رسانی به UI برای تغییر دکمه‌ها و وضعیت
             OnPropertyChanged(nameof(IsEditMode));
             OnPropertyChanged(nameof(SaveButtonContent));
 

@@ -1,5 +1,4 @@
 ﻿namespace WaterAssessment.Models;
-
 public class Assessment
 {
     public int AssessmentID { get; set; }
@@ -24,4 +23,6 @@ public class Assessment
     public virtual List<Assessment_Employee> AssessmentEmployees { get; set; }=new();
 
     public virtual List<AssessmentGate> GateOpenings { get; set; } = new();
+
+    public virtual List<AssessmentPump> PumpStates { get; set; } = new();
 }

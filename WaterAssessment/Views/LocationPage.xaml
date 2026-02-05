@@ -8,7 +8,6 @@
     xmlns:helpers="using:WaterAssessment.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
-    xmlns:viewModel="using:WaterAssessment.Models.ViewModel"
     FlowDirection="RightToLeft"
     FontFamily="{StaticResource ContentControlThemeFontFamily}"
     mc:Ignorable="d">
@@ -17,19 +16,15 @@
         <TabViewItem Header="ثبت اطلاعات محل های اندازه گیری" IsClosable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.5*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="350" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="0"
@@ -41,7 +36,7 @@
                             <helpers:DoubleFormatter x:Key="Df" />
                         </StackPanel.Resources>
                         <TextBox
-                            Name="locationBox"
+                            Name="LocationBox"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             Header="مکان اندازه گیری"
@@ -49,7 +44,7 @@
                             PlaceholderText="لطفاً نام مکان اندازه گیری را وارد کنید"
                             Text="{x:Bind LocationViewModel.LocationName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <ComboBox
-                            Name="cmbArea"
+                            Name="CmbArea"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             DisplayMemberPath="AreaName"
@@ -57,44 +52,68 @@
                             Header="حوزه اندازه گیری"
                             ItemsSource="{x:Bind LocationViewModel.Areas, Mode=OneWay}"
                             PlaceholderText="لطفاً حوزه مورد نظر را انتخاب کنید"
-                            SelectedItem="{x:Bind LocationViewModel.SelectedAreaForInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            SelectedItem="{x:Bind LocationViewModel.SelectedArea, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <ComboBox
                             HorizontalAlignment="Stretch"
                             DisplayMemberPath="Title"
+                            FontFamily="{StaticResource SamimFD}"
                             Header="نوع مکان"
-                            ItemsSource="{x:Bind LocationViewModel.LocationTypes}"
+                            ItemsSource="{x:Bind LocationViewModel.LocationTypes, Mode=OneWay}"
                             PlaceholderText="انتخاب کنید..."
-                            SelectedItem="{x:Bind LocationViewModel.SelectedLocationType, Mode=TwoWay}" />
+                            SelectedItem="{x:Bind LocationViewModel.SelectedLocationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
+                        <CheckBox Content="دارای دریچه تنظیم" IsChecked="{x:Bind LocationViewModel.HasGate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <aKTools:NumberBoxEx
                             HorizontalAlignment="Left"
-                            Header="تعداد دریچه"
+                            Header="تعداد گشودگی"
                             IsDeleteButtonVisible="False"
                             Minimum="0"
                             NumberFormatter="{StaticResource Df}"
                             NumberHorizontalAlignment="Center"
                             SpinButtonPlacementMode="Inline"
-                            Value="{x:Bind LocationViewModel.GateCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Visibility="{x:Bind LocationViewModel.HasGate, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Value="{x:Bind LocationViewModel.GateCountDouble, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <CheckBox Content="دارای ایستگاه پمپاژ" IsChecked="{x:Bind LocationViewModel.HasPump, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <aKTools:NumberBoxEx
+                            Header="تعداد پمپ"
+                            Visibility="{x:Bind LocationViewModel.HasPump, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Value="{x:Bind LocationViewModel.PumpCountDouble, Mode=TwoWay}" />
+
+                        <ItemsControl Margin="10,0,0,0" ItemsSource="{x:Bind LocationViewModel.TempPumps, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:LocationPump">
+                                    <StackPanel
+                                        Margin="0,5"
+                                        Orientation="Horizontal"
+                                        Spacing="10">
+                                        <TextBlock
+                                            Width="80"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Bind PumpName}" />
+                                        <TextBox
+                                            Width="150"
+                                            PlaceholderText="دبی اسمی"
+                                            Text="{x:Bind NominalFlow, Mode=TwoWay, Converter={StaticResource DoubleToStringConv}}" />
+                                        <TextBlock VerticalAlignment="Center" Text="لیتر" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
 
                     <StackPanel
-                        x:Name="locationInfoPanel"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="1"
+                        x:Name="LocationInfoPanel"
+                        Grid.Row="2"
                         Padding="5,15,5,0"
                         Spacing="10">
                         <InfoBar
-                            x:Name="locationInfoBar"
+                            x:Name="LocationInfoBar"
                             IsClosable="True"
                             IsOpen="{x:Bind LocationViewModel.IsErrorVisible, Mode=TwoWay}"
-                            Message="{x:Bind LocationViewModel.InfoBarMessage, Mode=TwoWay}"
-                            Severity="{x:Bind LocationViewModel.InfoBarSeverity, Mode=TwoWay}" />
-                        <!--<InfoBar
-                            x:Name="cmbAreaInfoBar"
-                            IsClosable="False"
-                            IsOpen="False" />-->
+                            Message="{x:Bind LocationViewModel.InfoBarMessage, Mode=OneWay}"
+                            Severity="{x:Bind LocationViewModel.InfoBarSeverity, Mode=OneWay}" />
                     </StackPanel>
 
                     <StackPanel
@@ -105,14 +124,14 @@
                         Orientation="Horizontal"
                         Spacing="10">
                         <Button
-                            Name="btnAddLocation"
+                            Name="BtnAddLocation"
                             HorizontalAlignment="Left"
-                            Command="{x:Bind LocationViewModel.AddLocationCommand}"
-                            Content="{x:Bind LocationViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Command="{x:Bind LocationViewModel.SaveLocationCommand}"
+                            Content="{x:Bind LocationViewModel.AddEditBtnContent, Mode=OneWay}"
                             IsEnabled="True"
                             Style="{ThemeResource AccentButtonStyle}" />
                         <Button
-                            Name="btnClearLocationBox"
+                            Name="BtnClearLocationBox"
                             HorizontalAlignment="Left"
                             Command="{x:Bind LocationViewModel.ClearFormCommand}"
                             Content="پاک کردن"
@@ -123,8 +142,8 @@
                 </Grid>
                 <Grid
                     Grid.Column="1"
-                    Width="500"
-                    Margin="0,10"
+                    Width="960"
+                    Margin="15,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     DataContext="{x:Bind LocationViewModel}"
@@ -140,14 +159,16 @@
                         Background="{ThemeResource SystemAccentColor}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="52" />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="68" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="68" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             Grid.Row="0"
-                            Padding="0,0,10,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource SystemAltHighColor}"
@@ -178,6 +199,62 @@
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="حوزه اندازه گیری" />
+                        <Rectangle
+                            Grid.Column="2"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="3"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="آخرین ویرایش توسط" />
+                        <Rectangle
+                            Grid.Column="3"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="4"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="زمان ویرایش" />
+                        <Rectangle
+                            Grid.Column="4"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="5"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="ایجاد شده توسط" />
+                        <Rectangle
+                            Grid.Column="5"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="6"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="زمان ایجاد" />
                     </Grid>
                     <ListView
                         Name="locationsListView"
@@ -185,6 +262,7 @@
                         ContainerContentChanging="locationListView_ContainerContentChanging"
                         ItemContainerStyle="{StaticResource HorizontalSwipe}"
                         ItemsSource="{x:Bind LocationViewModel.Locations, Mode=OneWay}"
+                        SelectedItem="{x:Bind LocationViewModel.SelectedLocation, Mode=TwoWay}"
                         SelectionMode="Single">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:Location">
@@ -197,15 +275,17 @@
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="52" />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition Width="68" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
                                                     <ColumnDefinition Width="68" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock
                                                     x:Name="LocationIndexTextBlock"
                                                     Grid.Column="0"
-                                                    Padding="0,0,10,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontSize="12"
@@ -234,19 +314,75 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind Area.AreaName}" />
+                                                <Rectangle
+                                                    Grid.Column="2"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="3"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
+                                                <Rectangle
+                                                    Grid.Column="3"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="4"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                <Rectangle
+                                                    Grid.Column="4"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="5"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
+                                                <Rectangle
+                                                    Grid.Column="5"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="6"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
                                                 <AppBarButton
                                                     x:Name="btnHoverDeleteLocation"
-                                                    Grid.Column="3"
+                                                    Grid.Column="7"
                                                     Width="60"
                                                     Height="60"
                                                     HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=locationsListView, Path=DataContext.DeleteLocationCommand}"
-                                                    CommandParameter="{x:Bind LocationID}"
+                                                    Command="{Binding ElementName=locationsListView, Path=DataContext.RequestDeleteLocationCommand}"
+                                                    CommandParameter="{x:Bind}"
                                                     Icon="Delete"
                                                     IsTabStop="False"
                                                     Label="حذف"
-                                                    Visibility="Collapsed" />
-                                                <AppBarButton
+                                                    Visibility="Collapsed">
+                                                    <AppBarButton.Resources>
+                                                        <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                                    </AppBarButton.Resources>
+                                                </AppBarButton>
+                                                <!--<AppBarButton
                                                     x:Name="btnHoverEditLocation"
                                                     Grid.Column="4"
                                                     Width="60"
@@ -257,7 +393,7 @@
                                                     Icon="Edit"
                                                     IsTabStop="False"
                                                     Label="ویرایش"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed" />-->
                                             </Grid>
                                         </SwipeControl>
 
@@ -267,7 +403,7 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeleteLocation.Visibility" Value="Visible" />
-                                                        <Setter Target="btnHoverEditLocation.Visibility" Value="Visible" />
+                                                        <!--<Setter Target="btnHoverEditLocation.Visibility" Value="Visible" />-->
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>
@@ -284,19 +420,15 @@
         <TabViewItem Header="ثبت حوزه های اندازه گیری" IsClosable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.5*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="350" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="0"
@@ -316,18 +448,16 @@
 
                     <StackPanel
                         x:Name="AreaInfoPanel"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="1"
+                        Grid.Row="2"
                         Padding="5,15,5,0"
                         Spacing="10">
                         <InfoBar
-                            x:Name="AreaNameBoxInfoBar"
+                            x:Name="ShowErrorInfoBar"
                             VerticalAlignment="Top"
-                            IsClosable="True"
-                            IsOpen="{x:Bind AreaViewModel.IsAreaNameErrorVisible, Mode=TwoWay}"
-                            Message="{x:Bind AreaViewModel.InfoBarMessage, Mode=TwoWay}"
-                            Severity="{x:Bind AreaViewModel.InfoBarSeverity, Mode=TwoWay}" />
+                            IsClosable="False"
+                            IsOpen="{x:Bind AreaViewModel.IsErrorVisible, Mode=TwoWay}"
+                            Message="{x:Bind AreaViewModel.InfoBarMessage, Mode=OneWay}"
+                            Severity="{x:Bind AreaViewModel.InfoBarSeverity, Mode=OneWay}" />
                     </StackPanel>
 
                     <StackPanel
@@ -338,14 +468,14 @@
                         Orientation="Horizontal"
                         Spacing="10">
                         <Button
-                            Name="btnAddArea"
+                            Name="BtnAddArea"
                             HorizontalAlignment="Left"
                             Command="{x:Bind AreaViewModel.AddAreaCommand}"
-                            Content="{x:Bind AreaViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Content="{x:Bind AreaViewModel.AddEditBtnContent, Mode=OneWay}"
                             IsEnabled="True"
                             Style="{ThemeResource AccentButtonStyle}" />
                         <Button
-                            Name="btnClearAreaBox"
+                            Name="BtnClearAreaBox"
                             HorizontalAlignment="Left"
                             Command="{x:Bind AreaViewModel.ClearFormCommand}"
                             Content="پاک کردن"
@@ -355,7 +485,7 @@
                 </Grid>
                 <Grid
                     Grid.Column="1"
-                    Width="500"
+                    Width="840"
                     Margin="15,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
@@ -373,13 +503,15 @@
                         Background="{ThemeResource SystemAccentColor}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="52" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="68" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="68" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             Grid.Row="0"
-                            Padding="0,0,10,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource SystemAltHighColor}"
@@ -398,6 +530,62 @@
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="نام حوزه" />
+                        <Rectangle
+                            Grid.Column="1"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="2"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="آخرین ویرایش توسط" />
+                        <Rectangle
+                            Grid.Column="2"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="3"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="زمان ویرایش" />
+                        <Rectangle
+                            Grid.Column="3"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="4"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="ایجاد شده توسط" />
+                        <Rectangle
+                            Grid.Column="4"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="5"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="زمان ایجاد" />
                     </Grid>
 
                     <ListView
@@ -406,6 +594,7 @@
                         ContainerContentChanging="areaListView_ContainerContentChanging"
                         ItemContainerStyle="{StaticResource HorizontalSwipe}"
                         ItemsSource="{x:Bind AreaViewModel.Areas, Mode=OneWay}"
+                        SelectedItem="{x:Bind AreaViewModel.SelectedArea, Mode=TwoWay}"
                         SelectionMode="Single">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:Area">
@@ -418,14 +607,17 @@
                                             <Grid VerticalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="52" />
-                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
                                                     <ColumnDefinition Width="68" />
-                                                    <ColumnDefinition Width="68" />
+                                                    <!--<ColumnDefinition Width="68" />-->
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock
                                                     x:Name="IndexTextBlock"
                                                     Grid.Column="0"
-                                                    Padding="0,0,10,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontSize="12"
@@ -442,7 +634,57 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind AreaName}" />
-                                                <AppBarButton
+                                                <Rectangle
+                                                    Grid.Column="1"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
+                                                <Rectangle
+                                                    Grid.Column="2"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="3"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                <Rectangle
+                                                    Grid.Column="3"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="4"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
+                                                <Rectangle
+                                                    Grid.Column="4"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="5"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                <!--<AppBarButton
                                                     x:Name="btnHoverEditEmployee"
                                                     Grid.Column="3"
                                                     Width="60"
@@ -453,19 +695,25 @@
                                                     Icon="Edit"
                                                     IsTabStop="False"
                                                     Label="ویرایش"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed" />-->
                                                 <AppBarButton
                                                     x:Name="btnHoverDeleteEmployee"
-                                                    Grid.Column="2"
+                                                    Grid.Column="6"
                                                     Width="60"
                                                     Height="60"
                                                     HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=AreaListView, Path=DataContext.DeleteAreaCommand}"
-                                                    CommandParameter="{x:Bind AreaID}"
+                                                    Command="{Binding ElementName=AreaListView, Path=DataContext.RequestDeleteAreaCommand}"
+                                                    CommandParameter="{x:Bind}"
                                                     Icon="Delete"
                                                     IsTabStop="False"
                                                     Label="حذف"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed">
+                                                    <AppBarButton.Resources>
+                                                        <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                                    </AppBarButton.Resources>
+                                                </AppBarButton>
                                             </Grid>
                                         </SwipeControl>
 
@@ -475,7 +723,7 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeleteEmployee.Visibility" Value="Visible" />
-                                                        <Setter Target="btnHoverEditEmployee.Visibility" Value="Visible" />
+                                                        <!--<Setter Target="btnHoverEditEmployee.Visibility" Value="Visible" />-->
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>
@@ -495,26 +743,21 @@
         <TabViewItem Header="ثبت نوع مکان های اندازه گیری" IsClosable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.5*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="350" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="20,10"
                         HorizontalAlignment="Stretch"
-                        Orientation="Vertical"
-                        Spacing="25">
+                        Orientation="Vertical">
                         <TextBox
                             Name="TitleBox"
                             HorizontalAlignment="Stretch"
@@ -527,18 +770,16 @@
 
                     <StackPanel
                         x:Name="LocationTypeInfoPanel"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="1"
+                        Grid.Row="2"
                         Padding="5,15,5,0"
                         Spacing="10">
                         <InfoBar
                             x:Name="TitleBoxInfoBar"
                             VerticalAlignment="Top"
-                            IsClosable="True"
-                            IsOpen="{x:Bind LocationTypeViewModel.IsTitleErrorVisible, Mode=TwoWay}"
-                            Message="{x:Bind LocationTypeViewModel.InfoBarMessage, Mode=TwoWay}"
-                            Severity="{x:Bind LocationTypeViewModel.InfoBarSeverity, Mode=TwoWay}" />
+                            IsClosable="False"
+                            IsOpen="{x:Bind LocationTypeViewModel.IsErrorVisible, Mode=TwoWay}"
+                            Message="{x:Bind LocationTypeViewModel.InfoBarMessage, Mode=OneWay}"
+                            Severity="{x:Bind LocationTypeViewModel.InfoBarSeverity, Mode=OneWay}" />
                     </StackPanel>
 
                     <StackPanel
@@ -552,7 +793,7 @@
                             Name="BtnAddLocationType"
                             HorizontalAlignment="Left"
                             Command="{x:Bind LocationTypeViewModel.AddLocationTypeCommand}"
-                            Content="{x:Bind LocationTypeViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Content="{x:Bind LocationTypeViewModel.AddEditBtnContent, Mode=OneWay}"
                             IsEnabled="True"
                             Style="{ThemeResource AccentButtonStyle}" />
                         <Button
@@ -566,7 +807,7 @@
                 </Grid>
                 <Grid
                     Grid.Column="1"
-                    Width="500"
+                    Width="840"
                     Margin="15,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
@@ -584,13 +825,15 @@
                         Background="{ThemeResource SystemAccentColor}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="52" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="68" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="68" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             Grid.Row="0"
-                            Padding="0,0,10,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource SystemAltHighColor}"
@@ -609,6 +852,62 @@
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="نوع مکان" />
+                        <Rectangle
+                            Grid.Column="1"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="2"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="آخرین ویرایش توسط" />
+                        <Rectangle
+                            Grid.Column="2"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="3"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="زمان ویرایش" />
+                        <Rectangle
+                            Grid.Column="3"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="4"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="ایجاد شده توسط" />
+                        <Rectangle
+                            Grid.Column="4"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="5"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="زمان ایجاد" />
                     </Grid>
 
                     <ListView
@@ -617,6 +916,7 @@
                         ContainerContentChanging="locationTypeListView_ContainerContentChanging"
                         ItemContainerStyle="{StaticResource HorizontalSwipe}"
                         ItemsSource="{x:Bind LocationTypeViewModel.LocationTypes, Mode=OneWay}"
+                        SelectedItem="{x:Bind LocationTypeViewModel.SelectedLocationType, Mode=TwoWay}"
                         SelectionMode="Single">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:LocationType">
@@ -629,14 +929,16 @@
                                             <Grid VerticalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="52" />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition Width="68" />
+                                                    <ColumnDefinition Width="120" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
                                                     <ColumnDefinition Width="68" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock
                                                     x:Name="LocationTypeIndexTextBlock"
                                                     Grid.Column="0"
-                                                    Padding="0,0,10,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontSize="12"
@@ -653,7 +955,57 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind Title}" />
-                                                <AppBarButton
+                                                <Rectangle
+                                                    Grid.Column="1"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
+                                                <Rectangle
+                                                    Grid.Column="2"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="3"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                <Rectangle
+                                                    Grid.Column="3"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="4"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
+                                                <Rectangle
+                                                    Grid.Column="4"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="5"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                <!--<AppBarButton
                                                     x:Name="btnHoverEditLocationType"
                                                     Grid.Column="3"
                                                     Width="60"
@@ -664,19 +1016,25 @@
                                                     Icon="Edit"
                                                     IsTabStop="False"
                                                     Label="ویرایش"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed" />-->
                                                 <AppBarButton
                                                     x:Name="btnHoverDeleteLocationType"
-                                                    Grid.Column="2"
+                                                    Grid.Column="6"
                                                     Width="60"
                                                     Height="60"
                                                     HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=LocationTypeListView, Path=DataContext.DeleteLocationTypeCommand}"
-                                                    CommandParameter="{x:Bind LocationTypeID}"
+                                                    Command="{Binding ElementName=LocationTypeListView, Path=DataContext.RequestDeleteLocationTypeCommand}"
+                                                    CommandParameter="{x:Bind}"
                                                     Icon="Delete"
                                                     IsTabStop="False"
                                                     Label="حذف"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed">
+                                                    <AppBarButton.Resources>
+                                                        <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                                    </AppBarButton.Resources>
+                                                </AppBarButton>
                                             </Grid>
                                         </SwipeControl>
 
@@ -686,7 +1044,7 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeleteLocationType.Visibility" Value="Visible" />
-                                                        <Setter Target="btnHoverEditLocationType.Visibility" Value="Visible" />
+                                                        <!--<Setter Target="btnHoverEditLocationType.Visibility" Value="Visible" />-->
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>

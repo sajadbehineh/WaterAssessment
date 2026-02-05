@@ -6,9 +6,13 @@ public class Location
     public string LocationName { get; set; }
 
     public int LocationTypeID { get; set; }
+
     public LocationType LocationType { get; set; }
 
-    public int GateCount { get; set; } = 1;
+    public int? GateCount { get; set; }
+    public int? PumpCount { get; set; }
+    public bool HasPump { get; set; }
+    public bool HasGate { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public int? CreatedByUserID { get; set; }
@@ -20,5 +24,6 @@ public class Location
     public int AreaID { get; set; }
     public virtual Area Area { get; set; }
 
+    public virtual List<LocationPump> LocationPumps { get; set; } = new();
     public virtual List<Assessment> Assessments { get; set; } = new();
 }

@@ -1,14 +1,16 @@
-﻿using System.Collections.Specialized;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Specialized;
 
 namespace WaterAssessment.Views;
 
 public sealed partial class EmployeePage : Page
 {
-    public EmployeeViewModel ViewModel { get; } = new();
+    public EmployeeViewModel ViewModel { get; }
 
     public EmployeePage()
     {
         this.InitializeComponent();
+        this.ViewModel = App.Services.GetRequiredService<EmployeeViewModel>();
         //DataContext = ViewModel;
         //Loaded += EmployeePage_Loaded;
         ViewModel.Employees.CollectionChanged += Employees_CollectionChanged;
@@ -37,7 +39,7 @@ public sealed partial class EmployeePage : Page
 
             // تلاش برای گرفتن کانتینر (سطر گرافیکی) مربوط به این آیتم
             // اگر آیتم خارج از دید باشد (اسکرول شده باشد)، مقدار null برمی‌گردد که مشکلی نیست
-            var container = employeeListView.ContainerFromItem(item) as DependencyObject;
+            var container = EmployeeListView.ContainerFromItem(item) as DependencyObject;
 
             if (container != null)
             {

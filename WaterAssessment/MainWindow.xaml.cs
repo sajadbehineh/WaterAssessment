@@ -2,8 +2,10 @@
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Windowing;
 using System.Diagnostics.Metrics;
+using Microsoft.Extensions.DependencyInjection;
 using WaterAssessment.Messages;
 using WaterAssessment.Models;
+using WaterAssessment.Services;
 using WaterAssessment.Views;
 using static WaterAssessment.Models.ViewModel.MainViewModel;
 
@@ -38,9 +40,24 @@ public sealed partial class MainWindow : Window
         ShellPage.Instance.Loaded += Instance_Loaded;
     }
 
+    private void SetDialogServiceXamlRoot()
+    {
+        var dialogService = App.Services.GetRequiredService<IDialogService>() as DialogService;
+
+        // 2. تنظیم XamlRoot آن
+        if (dialogService != null)
+        {
+            // 'this.Content' به ریشه UI درخت ویژوال پنجره فعلی اشاره دارد
+            dialogService.XamlRoot = this.Content.XamlRoot;
+        }
+    }
+
     private void Instance_Loaded(object sender, RoutedEventArgs e)
     {
         ShellPage.Instance.Loaded -= Instance_Loaded;
+
+        SetDialogServiceXamlRoot();
+        
         // هدایت اولیه به صفحه لاگین
         if (!ViewModel.IsLoggedIn)
         {

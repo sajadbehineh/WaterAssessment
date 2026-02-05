@@ -32,6 +32,7 @@
             <converters:DateTimeToDateTimeOffsetConverter x:Key="DateToOffsetConv" />
             <converters:DoubleToStringConverter x:Key="DoubleToStringConv" />
             <converters:DateTimeToShamsiDisplayConverter x:Key="DateTimeToShamsiDisplayConv" />
+            <converters:NullableDoubleToDoubleConverter x:Key="NullDoubleConv" />
             <helpers:FlexibleDoubleFormatter x:Key="FlexibleFormatter" />
 
             <helpers:DoubleFormatter x:Key="Df" />

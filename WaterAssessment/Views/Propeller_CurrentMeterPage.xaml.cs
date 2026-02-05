@@ -1,17 +1,20 @@
 ﻿using System.Collections.Specialized;
-using WaterAssessment.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using WaterAssessment.Models.ViewModel;
 
 namespace WaterAssessment.Views;
 
 public sealed partial class Propeller_CurrentMeterPage : Page
 {
-    public PropellerViewModel PropellerViewModel { get; } = new();
-    public CurrentMeterViewModel CurrentMeterViewModel { get; } = new();
+    public PropellerViewModel PropellerViewModel { get; }
+    public CurrentMeterViewModel CurrentMeterViewModel { get; }
 
     public Propeller_CurrentMeterPage()
     {
         this.InitializeComponent();
         DataContext = this;
+        CurrentMeterViewModel = App.Services.GetRequiredService<CurrentMeterViewModel>();
+        PropellerViewModel = App.Services.GetRequiredService<PropellerViewModel>();
         PropellerViewModel.Propellers.CollectionChanged += Propeller_CollectionChanged;
         CurrentMeterViewModel.CurrentMeters.CollectionChanged += CurrentMeter_CollectionChanged;
     }

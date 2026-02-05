@@ -35,6 +35,7 @@ public sealed partial class AssessmentFormPage : Page
                 .Include(a => a.FormValues)          // لود کردن سطرها (فاصله، عمق، دورها)
                 .Include(a => a.AssessmentEmployees).ThenInclude(ae => ae.Employee)
                 .Include(a => a.GateOpenings)        // لود کردن دریچه‌ها
+                .Include(a=>a.PumpStates)
                 .FirstOrDefault(a => a.AssessmentID == receivedAssessment.AssessmentID);
 
             // اگر به هر دلیلی پیدا نشد (مثلا حذف شده)، همان قبلی را استفاده کن

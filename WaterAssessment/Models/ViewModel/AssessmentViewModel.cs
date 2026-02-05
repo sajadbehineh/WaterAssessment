@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using System.ComponentModel;
-using System.Globalization;
-using WinUICommunity;
 
 namespace WaterAssessment.Models.ViewModel
 {
@@ -22,6 +19,12 @@ namespace WaterAssessment.Models.ViewModel
 
         // لیست گشودگی دریچه‌ها (برای بایندینگ در UI)
         public ObservableCollection<AssessmentGate> GateValues { get; } = new();
+
+        // لیست وضعیت پمپ‌ها برای بایندینگ در UI
+        public ObservableCollection<AssessmentPump> PumpStates { get; } = new();
+
+        // لیست مرجع پمپ‌های تعریف شده برای مکان انتخاب شده
+        public ObservableCollection<LocationPump> AvailablePumps { get; } = new();
 
         // لیست ردیف‌های اندازه‌گیری (فرزندان)
         public ObservableCollection<FormValueViewModel> FormValues { get; } = new();
@@ -42,7 +45,9 @@ namespace WaterAssessment.Models.ViewModel
             Model.Location = value;
 
             // مدیریت دریچه‌ها بر اساس تعداد دریچه مکان انتخاب شده
-            UpdateGateOpenings(value.GateCount);
+            UpdateGateOpenings(value.GateCount ?? 0);
+            // مدیریت پمپ‌ها
+            UpdatePumpStates(value);
         }
 
         [ObservableProperty]
@@ -108,6 +113,11 @@ namespace WaterAssessment.Models.ViewModel
         private double _totalFlow;
         public string TotalFlowDisplay => TotalFlow.ToString("N3"); // نمایش با 3 رقم اعشار
 
+        // نمایش وضعیت پمپ‌ها در لیبل نهایی
+        public string PumpStatesDisplay => PumpStates.Any()
+            ? string.Join(" | ", PumpStates.Select(p => $"{p.LocationPump?.PumpName}: {(p.IsRunning ? "روشن" : "خاموش")}"))
+            : "بدون پمپ";
+
         public AssessmentViewModel(Assessment model)
         {
             Model = model;
@@ -130,7 +140,7 @@ namespace WaterAssessment.Models.ViewModel
             if (model.FormValues != null && model.FormValues.Any())
             {
                 // حالت ویرایش: لود کردن سطرهای موجود
-                foreach (var fv in model.FormValues)        
+                foreach (var fv in model.FormValues)
                 {
                     var vm = new FormValueViewModel(fv, SelectedPropeller);
                     SubscribeToChildEvents(vm); // اشتراک در رویدادها
@@ -190,17 +200,19 @@ namespace WaterAssessment.Models.ViewModel
             else if (SelectedLocation != null)
             {
                 // اگر جدید است، بر اساس مکان پیش‌فرض بساز
-                UpdateGateOpenings(SelectedLocation.GateCount);
+                UpdateGateOpenings(SelectedLocation.GateCount ?? 0);
             }
         }
+
+        // ==========================================================
+        // متدهای مدیریت تجهیزات بالادست
+        // ==========================================================
 
         private void UpdateGateOpenings(int count)
         {
             // اگر تعداد فعلی با تعداد درخواستی یکی است، دست نزن (تا مقادیر وارد شده نپرد)
             if (GateValues.Count == count) return;
 
-            // بازسازی لیست دریچه‌ها
-            var currentValues = GateValues.ToList(); // کپی مقادیر فعلی
             GateValues.Clear();
 
             // همگام‌سازی با مدل
@@ -209,14 +221,45 @@ namespace WaterAssessment.Models.ViewModel
 
             for (int i = 1; i <= count; i++)
             {
-                // اگر قبلاً مقداری داشتیم حفظ کن، وگرنه صفر
-                var existing = currentValues.FirstOrDefault(g => g.GateNumber == i);
-                var newVal = existing ?? new AssessmentGate { GateNumber = i, Value = 0, AssessmentID = Model.AssessmentID };
+                var newVal = new AssessmentGate { GateNumber = i, Value = 0, AssessmentID = Model.AssessmentID };
 
                 GateValues.Add(newVal);
                 Model.GateOpenings.Add(newVal);
             }
+            OnPropertyChanged(nameof(HasGates)); // برای مدیریت نمایش در UI
         }
+
+        private async void UpdatePumpStates(Location location)
+        {
+            PumpStates.Clear();
+            AvailablePumps.Clear();
+
+            using var db = new WaterAssessmentContext();
+            // لود کردن پمپ‌هایی که برای این مکان تعریف شده‌اند
+            var pumps = await db.LocationPumps
+                                .Where(p => p.LocationID == location.LocationID)
+                                .ToListAsync();
+
+            foreach (var pump in pumps)
+            {
+                AvailablePumps.Add(pump);
+
+                // ایجاد یک رکورد وضعیت برای این اندازه‌گیری
+                var state = new AssessmentPump
+                {
+                    LocationPumpID = pump.Id,
+                    LocationPump = pump,
+                    IsRunning = false, // پیش‌فرض خاموش
+                    AssessmentID = Model.AssessmentID
+                };
+                PumpStates.Add(state);
+            }
+            OnPropertyChanged(nameof(HasPumps));
+        }
+
+        // پراپرتی‌های کمکی برای کنترل Visibility در XAML
+        public bool HasGates => GateValues.Count > 0;
+        public bool HasPumps => PumpStates.Count > 0;
 
         // ==========================================================
         // پراپرتی‌های نمایشی و اصلی
@@ -301,6 +344,13 @@ namespace WaterAssessment.Models.ViewModel
                 // همگام‌سازی لیست سطرها (مطمئن شویم چیزی که در گرید است ذخیره می‌شود)
                 Model.FormValues = FormValues.Select(vm => vm.Model).ToList();
 
+                // اضافه کردن وضعیت پمپ‌ها به مدل قبل از ذخیره
+                Model.PumpStates = PumpStates.Select(ps => new AssessmentPump
+                {
+                    LocationPumpID = ps.LocationPumpID,
+                    IsRunning = ps.IsRunning
+                }).ToList();
+
                 // 3. درج در کانتکست
                 db.Assessments.Add(Model);
 
@@ -309,7 +359,7 @@ namespace WaterAssessment.Models.ViewModel
 
                 ShowInfo("اندازه گیری جدید با موفقیت ثبت شد.", InfoBarSeverity.Success);
 
-                ResetToNewForm(); 
+                ResetToNewForm();
             }
             catch (Exception ex)
             {
@@ -339,6 +389,7 @@ namespace WaterAssessment.Models.ViewModel
                     .Include(a => a.FormValues)
                     .Include(a => a.AssessmentEmployees)
                     .Include(a => a.GateOpenings)
+                    .Include(a => a.PumpStates)
                     .FirstOrDefaultAsync(a => a.AssessmentID == Model.AssessmentID);
 
                 if (existing == null)
@@ -396,6 +447,18 @@ namespace WaterAssessment.Models.ViewModel
                             // dbRow.VerticalMeanVelocity = vm.VerticalMeanVelocity; // اگر این فیلد را در دیتابیس دارید
                         }
                     }
+                }
+
+                // آپدیت پمپ‌ها (حذف و درج مجدد برای سادگی)
+                db.AssessmentPumps.RemoveRange(existing.PumpStates);
+                foreach (var ps in PumpStates)
+                {
+                    existing.PumpStates.Add(new AssessmentPump
+                    {
+                        AssessmentID = existing.AssessmentID,
+                        LocationPumpID = ps.LocationPumpID,
+                        IsRunning = ps.IsRunning
+                    });
                 }
 
                 // 4. آپدیت تیم اندازه گیری (AssessmentEmployees)

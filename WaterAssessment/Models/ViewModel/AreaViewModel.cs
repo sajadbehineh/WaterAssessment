@@ -1,165 +1,36 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.Messaging;
 using WaterAssessment.Messages;
+using WaterAssessment.Services;
 
 namespace WaterAssessment.Models.ViewModel
 {
     public partial class AreaViewModel : ObservableObject
     {
-        // لیست داده‌ها
+        private readonly IAreaService _areaService;
+        private readonly IDialogService _dialogService;
+
         public ObservableCollection<Area> Areas { get; } = new();
 
-        // ==========================================================
-        // تعریف پراپرتی‌ها با [ObservableProperty]
-        // ==========================================================
-
-        [ObservableProperty]
-        private int _areaId;
-
-        [ObservableProperty]
-        private bool _isAreaNameErrorVisible;
-
-        [ObservableProperty]
-        private InfoBarSeverity _infoBarSeverity;
-
-        [ObservableProperty]
-        private string _infoBarMessage = string.Empty;
-
-        [ObservableProperty]
-        private string _addEditBtnContent = "ذخیره";
-
-        // نام حوزه
-        // وقتی نام تغییر می‌کند، باید بررسی شود که دکمه افزودن فعال باشد یا خیر
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddAreaCommand))]
         private string _areaName = string.Empty;
 
-        // آیتم انتخاب شده
-        // وقتی تغییر می‌کند، باید دکمه افزودن بررسی شود
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddAreaCommand))]
         private Area? _selectedArea;
 
-        // این متد زمانی اجرا می‌شود که SelectedArea تغییر کند (جایگزین لاجیک درون Setter)
-        partial void OnSelectedAreaChanged(Area? value)
-        {
-            if (value != null)
-            {
-                AreaName = value.AreaName;
-                AddEditBtnContent = "ویرایش"; // تغییر متن دکمه هنگام انتخاب
-            }
-            else
-            {
-                // اگر انتخاب برداشته شد، دکمه به حالت ذخیره برگردد
-                AddEditBtnContent = "ذخیره";
-            }
-        }
+        [ObservableProperty] private bool _isErrorVisible;
+        [ObservableProperty] private InfoBarSeverity _infoBarSeverity;
+        [ObservableProperty] private string _infoBarMessage = string.Empty;
+        [ObservableProperty] private string _addEditBtnContent = "ذخیره";
 
-
-        public AreaViewModel()
+        public AreaViewModel(IAreaService areaService, IDialogService dialogService)
         {
-            // لود اولیه (بدون await در سازنده، بهتر است فایر اند فورگت باشد یا در رویداد Loaded صفحه صدا زده شود)
+            _areaService = areaService;
+            _dialogService = dialogService;
             _ = LoadAreasAsync();
-        }
-
-        // ==========================================================
-        // تعریف متدها و کامندها با [RelayCommand]
-        // نام کامندها خودکار ساخته می‌شود: AddAreaAsync -> AddAreaCommand
-        // ==========================================================
-
-        [RelayCommand(CanExecute = nameof(CanAddArea))]
-        private async Task AddAreaAsync()
-        {
-            // ۱. اعتبارسنجی اولیه
-            IsAreaNameErrorVisible = false;
-            InfoBarMessage = string.Empty;
-
-            // نکته: چون CanExecute داریم، شاید نیازی به این شرط نباشد، اما بودنش ضرر ندارد
-            if (string.IsNullOrWhiteSpace(AreaName)) return;
-
-            // ۲. تشخیص حالت (افزودن یا ویرایش)
-            if (SelectedArea == null)
-            {
-                await InsertNewAreaAsync();
-            }
-            else
-            {
-                await UpdateExistingAreaAsync();
-            }
-        }
-
-        private async Task InsertNewAreaAsync()
-        {
-            try
-            {
-                using var db = new WaterAssessmentContext();
-                bool exists = await db.Areas.AnyAsync(e => e.AreaName == AreaName);
-
-                if (exists)
-                {
-                    ShowError("حوزه مورد نظر قبلاً ثبت شده است.");
-                    return;
-                }
-
-                var newArea = new Area { AreaName = AreaName };
-                db.Areas.Add(newArea);
-                await db.SaveChangesAsync();
-
-                Areas.Add(newArea);
-                WeakReferenceMessenger.Default.Send(new AreaAddedMessage(newArea));
-                ResetInputs();
-                ShowSuccess("حوزه جدید با موفقیت ثبت شد.");
-            }
-            catch (Exception ex)
-            {
-                ShowError($"خطا در ثبت: {ex.Message}");
-            }
-        }
-
-        private async Task UpdateExistingAreaAsync()
-        {
-            try
-            {
-                using var db = new WaterAssessmentContext();
-                var areaToEdit = await db.Areas.FindAsync(SelectedArea!.AreaID); // ! چون مطمئنیم null نیست
-
-                if (areaToEdit == null)
-                {
-                    ShowError("این رکورد یافت نشد.");
-                    return;
-                }
-
-                // چک تکراری بودن (به جز خودش)
-                bool isDuplicate = await db.Areas.AnyAsync(a => a.AreaName == AreaName && a.AreaID != SelectedArea.AreaID);
-                if (isDuplicate)
-                {
-                    ShowError("حوزه وارد شده تکراری است.");
-                    return;
-                }
-
-                areaToEdit.AreaName = AreaName;
-                await db.SaveChangesAsync();
-
-                // آپدیت UI
-                SelectedArea.AreaName = AreaName;
-
-                int index = Areas.IndexOf(SelectedArea);
-                if (index != -1) Areas[index] = SelectedArea; // تریگر کردن رفرش لیست
-
-                // ==========================================================
-                // ارسال پیام ویرایش به LocationViewModel
-                // ==========================================================
-                WeakReferenceMessenger.Default.Send(new AreaUpdatedMessage(SelectedArea));
-
-                ResetInputs();
-                ShowSuccess("ویرایش با موفقیت انجام شد.");
-            }
-            catch (Exception ex)
-            {
-                ShowError($"خطا در ویرایش: {ex.Message}");
-            }
         }
 
         private bool CanAddArea()
@@ -167,72 +38,90 @@ namespace WaterAssessment.Models.ViewModel
             return !string.IsNullOrWhiteSpace(AreaName);
         }
 
-        [RelayCommand]
-        private async Task DeleteAreaAsync(int id)
+        [RelayCommand(CanExecute = nameof(CanAddArea))]
+        private async Task AddAreaAsync()
         {
-            if (id <= 0) return;
+            if (!ValidateInput()) return;
 
-            try
+            bool success;
+            if (SelectedArea == null)
             {
-                using var db = new WaterAssessmentContext();
-                var areaToDelete = await db.Areas.FindAsync(id);
-
-                // آیا مکانی وجود دارد که مربوط به این حوزه باشد؟
-                bool hasDependents = await db.Locations.AnyAsync(l => l.AreaID == id);
-
-                if (hasDependents)
+                var result = await _areaService.AddNewAreaAsync(AreaName);
+                if (result != null)
                 {
-                    // اگر زیرمجموعه داشت، خطا بده و خارج شو
-                    ShowWarning("این حوزه دارای مکان‌های ثبت شده است. برای حذف، ابتدا باید مکان‌های مربوطه را حذف کنید.");
-                    return;
-                }
-
-                if (areaToDelete != null)
-                {
-                    db.Areas.Remove(areaToDelete);
-                    await db.SaveChangesAsync();
-
-                    // حذف از لیست UI
-                    var areaInList = Areas.FirstOrDefault(e => e.AreaID == id);
-                    if (areaInList != null)
-                    {
-                        Areas.Remove(areaInList);
-                        WeakReferenceMessenger.Default.Send(new AreaDeletedMessage(areaInList));
-                    }
-
-                    // بازخورد
-                    ShowSuccess("منطقه با موفقیت حذف شد.");
-
-                    // اگر آیتم در حال ویرایش حذف شد، فرم پاک شود
-                    if (SelectedArea != null && SelectedArea.AreaID == id)
-                    {
-                        ClearForm();
-                    }
+                    WeakReferenceMessenger.Default.Send(new AreaAddedMessage(result));
+                    ClearForm();
+                    await LoadAreasAsync(); // Refresh list after operation
+                    await ShowMessageAsync("افزودن حوزه جدید با موفقیت انجام شد.", InfoBarSeverity.Success);
                 }
                 else
                 {
-                    ShowError("این رکورد قبلاً حذف شده یا وجود ندارد.");
+                    await ShowMessageAsync(_areaService.GetLastErrorMessage(), InfoBarSeverity.Error);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                ShowError($"خطا در حذف: {ex.Message}");
+                var result = await _areaService.UpdateAreaAsync(SelectedArea.AreaID, AreaName);
+                if (result != null)
+                {
+                    WeakReferenceMessenger.Default.Send(new AreaUpdatedMessage(result));
+                    ClearForm();
+                    await LoadAreasAsync(); // Refresh list after operation
+                    await ShowMessageAsync("حوزه مورد نظر با موفقیت ویرایش شد.", InfoBarSeverity.Success);
+                }
+                else
+                {
+                    await ShowMessageAsync(_areaService.GetLastErrorMessage(), InfoBarSeverity.Error);
+                }
             }
         }
 
-        // کامند ویرایش (انتخاب آیتم برای ویرایش)
         [RelayCommand]
-        private void PrepareForEdit(int areaId)
+        private async Task RequestDeleteAreaAsync(Area area)
         {
-            var area = Areas.FirstOrDefault(e => e.AreaID == areaId);
-            if (area != null)
-            {
-                // با ست کردن SelectedArea، متد OnSelectedAreaChanged اجرا شده و فیلدها پر می‌شوند
-                SelectedArea = area;
+            if (area == null) return;
 
-                // تمیزکاری خطاها
-                IsAreaNameErrorVisible = false;
-                InfoBarMessage = "";
+            // از سرویس دیالوگ برای نمایش پیغام تایید استفاده کنید
+            bool confirmed = await _dialogService.ShowConfirmationDialogAsync(
+                title: "تأیید عملیات حذف",
+                content: $"آیا از حذف حوزه «{area.AreaName}» اطمینان دارید؟\nاین عملیات غیرقابل بازگشت است.",
+                primaryButtonText: "بله، حذف کن",
+                closeButtonText: "انصراف"
+            );
+
+            // فقط در صورت تایید کاربر، حذف را ادامه دهید
+            if (confirmed)
+            {
+                await DeleteAreaAsync(area);
+            }
+        }
+
+        private async Task DeleteAreaAsync(Area area)
+        {
+            var success = await _areaService.DeleteAreaAsync(area.AreaID);
+            if (success)
+            {
+                WeakReferenceMessenger.Default.Send(new AreaDeletedMessage(area));
+                if (SelectedArea?.AreaID == area.AreaID) ClearForm();
+                await LoadAreasAsync();
+                await ShowMessageAsync("حوزه با موفقیت حذف شد.", InfoBarSeverity.Success);
+            }
+            else
+            {
+                await ShowMessageAsync(_areaService.GetLastErrorMessage(), InfoBarSeverity.Warning);
+            }
+        }
+
+        partial void OnSelectedAreaChanged(Area? value)
+        {
+            if (value != null)
+            {
+                AreaName = value.AreaName;
+                AddEditBtnContent = "ویرایش";
+            }
+            else
+            {
+                AddEditBtnContent = "ذخیره";
             }
         }
 
@@ -241,66 +130,43 @@ namespace WaterAssessment.Models.ViewModel
         {
             SelectedArea = null;
             AreaName = string.Empty;
-            IsAreaNameErrorVisible = false;
+            IsErrorVisible = false;
             InfoBarMessage = string.Empty;
         }
 
-        private void ResetInputs()
-        {
-            SelectedArea = null;
-            AreaName = string.Empty;
-            AddEditBtnContent = "ذخیره";
-        }
-
-        // ==========================================================
-        // متدهای کمکی (Helpers)
-        // ==========================================================
-
         private async Task LoadAreasAsync()
         {
-            try
+            var areas = await _areaService.GetAllAreasAsync();
+            Areas.Clear();
+            foreach (var area in areas)
             {
-                using var db = new WaterAssessmentContext();
-                var list = await db.Areas.AsNoTracking().ToListAsync();
-                Areas.Clear();
-                foreach (var item in list) Areas.Add(item);
-            }
-            catch (Exception ex)
-            {
-                ShowError($"خطا در بارگذاری اطلاعات: {ex.Message}");
+                Areas.Add(area);
             }
         }
 
-
-        // متدهای کمکی برای تمیز شدن کد اصلی
-        private async void ShowError(string message, int durationSeconds = 5)
+        private bool ValidateInput()
         {
-            InfoBarMessage = message;
-            InfoBarSeverity = InfoBarSeverity.Error;
-            IsAreaNameErrorVisible = true;
-            await Task.Delay(durationSeconds * 1000);
-
-            // بستن اینفوبار
-            IsAreaNameErrorVisible = false;
+            if (string.IsNullOrWhiteSpace(AreaName))
+            {
+                _ = ShowMessageAsync("نام حوزه نمی‌توانند خالی باشند.", InfoBarSeverity.Error);
+                return false;
+            }
+            return true;
         }
 
-        private async void ShowSuccess(string message, int durationSeconds = 5)
+        private async Task ShowMessageAsync(string message, InfoBarSeverity severity, int durationSeconds = 4)
         {
             InfoBarMessage = message;
-            InfoBarSeverity = InfoBarSeverity.Success;
-            IsAreaNameErrorVisible = true;
+            InfoBarSeverity = severity;
+            IsErrorVisible = true;
+
             await Task.Delay(durationSeconds * 1000);
 
-            IsAreaNameErrorVisible = false;
-        }
-
-        private async void ShowWarning(string message, int durationSeconds = 5)
-        {
-            InfoBarMessage = message;
-            InfoBarSeverity = InfoBarSeverity.Warning;
-            IsAreaNameErrorVisible = true;
-            await Task.Delay(durationSeconds * 1000);
-            IsAreaNameErrorVisible = false;
+            // فقط اگر پیام فعلی همان پیامی است که نمایش داده بودیم، آن را ببند
+            if (InfoBarMessage == message)
+            {
+                IsErrorVisible = false;
+            }
         }
     }
 }

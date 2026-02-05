@@ -1,114 +1,35 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.EntityFrameworkCore;
-using System.Windows.Input;
-using RelayCommand = WaterAssessment.Core.RelayCommand;
+using CommunityToolkit.Mvvm.Input;
+using WaterAssessment.Services;
 
 namespace WaterAssessment.Models.ViewModel
 {
-    public class EmployeeViewModel : ObservableObject
+    public partial class EmployeeViewModel : ObservableObject
     {
-        public ObservableCollection<Employee> Employees { get; set; } = new();
+        private readonly IEmployeeService _employeeService;
+        public ObservableCollection<Employee> Employees { get; } = new();
 
-        private Employee _selectedEmployee;
-        public Employee? SelectedEmployee
-        {
-            get => _selectedEmployee;
-            set
-            {
-                if (SetProperty(ref _selectedEmployee, value))
-                {
-                    // وقتی ردیف انتخاب شد، نام و فامیل را در TextBoxها پر کن برای ویرایش
-                    if (value != null)
-                    {
-                        FirstName = value.FirstName;
-                        LastName = value.LastName;
-                    }
-                    (AddCommand as RelayCommand)?.RaiseCanExecuteChanged();
-                }
-            }
-        }
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddEmployeeCommand))]
+        private Employee? _selectedEmployee;
 
-        private int _employeeId;
-        public int EmployeeId
-        {
-            get => _employeeId;
-            set => SetProperty(ref _employeeId, value);
-        }
-
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddEmployeeCommand))]
         private string _firstName = string.Empty;
-        public string FirstName
-        {
-            get => _firstName;
-            set
-            {
-                SetProperty(ref _firstName, value); //اگر ورودی مقدارش تکراری بود OnPropertyChanged اجرا نشود
-                ((RelayCommand)AddCommand).RaiseCanExecuteChanged(); // بررسی فعال بودن دکمه
-            }
-        }
 
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddEmployeeCommand))]
         private string _lastName = string.Empty;
-        public string LastName
+
+        [ObservableProperty] private bool _isErrorVisible;
+        [ObservableProperty] private InfoBarSeverity _infoBarSeverity;
+        [ObservableProperty] private string _infoBarMessage = string.Empty;
+        [ObservableProperty] private string _addEditBtnContent = "ذخیره";
+
+        public EmployeeViewModel(IEmployeeService employeeService)
         {
-            get => _lastName;
-            set
-            {
-                SetProperty(ref _lastName, value);
-                ((RelayCommand)AddCommand).RaiseCanExecuteChanged();
-            }
-        }
+            _employeeService = employeeService;
 
-        //  متغیر برای وضعیت اینفوبار نام
-        private bool _isFirstNameErrorVisible;
-        public bool IsFirstNameErrorVisible
-        {
-            get => _isFirstNameErrorVisible;
-            set => SetProperty(ref _isFirstNameErrorVisible, value);
-        }
-
-        // 2. متغیر برای وضعیت اینفوبار نام خانوادگی
-        private bool _isLastNameErrorVisible;
-        public bool IsLastNameErrorVisible
-        {
-            get => _isLastNameErrorVisible;
-            set => SetProperty(ref _isLastNameErrorVisible, value);
-        }
-
-        private InfoBarSeverity _infoBarSeverity;
-
-        public InfoBarSeverity InfoBarSeverity
-        {
-            get => _infoBarSeverity;
-            set => SetProperty(ref _infoBarSeverity, value);
-        }
-
-        private string _infoBarMessage;
-        public string InfoBarMessage
-        {
-            get => _infoBarMessage;
-            set => SetProperty(ref _infoBarMessage, value);
-        }
-
-        private string _addEditBtnContent = "ذخیره";
-        public string AddEditBtnContent
-        {
-            get => _addEditBtnContent;
-            set => SetProperty(ref _addEditBtnContent, value);
-        }
-
-        // ۳. دکمه‌ها (Commands)
-        public ICommand AddCommand { get; }
-        public ICommand DeleteCommand { get; }
-        public ICommand EditCommand { get; }
-        public ICommand ClearCommand { get; }
-
-        public EmployeeViewModel()
-        {
-            AddCommand = new RelayCommand(async (_) => await AddEmployeeAsync(), _ => CanAddEmployee());
-            DeleteCommand = new WinUICommunity.RelayCommand<int>(async (id) => await DeleteEmployeeAsync(id));
-            EditCommand = new WinUICommunity.RelayCommand<int>(PrepareForEdit);
-            ClearCommand = new RelayCommand(_ => ClearForm());
-
-            // بارگذاری اولیه لیست
             _ = LoadEmployeesAsync();
         }
 
@@ -118,276 +39,106 @@ namespace WaterAssessment.Models.ViewModel
             return !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName);
         }
 
-        private async Task LoadEmployeesAsync()
+        [RelayCommand(CanExecute = nameof(CanAddEmployee))]
+        private async Task AddEmployee()
         {
-            using var db = new WaterAssessmentContext();
-            var list = await db.Employees
-                .Include(e=>e.CreatedBy)
-                .Include(e=>e.UpdatedBy)
-                .AsNoTracking().ToListAsync();
+            if (!ValidateInput()) return;
 
-            Employees.Clear();
-
-            foreach (var item in list) Employees.Add(item);
-        }
-
-        private void PrepareForEdit(int employeeId)
-        {
-            // پیدا کردن کارمند از لیست موجود در حافظه
-            var emp = Employees.FirstOrDefault(e => e.EmployeeID == employeeId);
-
-            if (emp != null)
-            {
-                AddEditBtnContent = "ویرایش";
-                // با ست کردن این مقدار، تکست‌باکس‌ها خودکار پر می‌شوند
-                // (چون در Setter پراپرتی SelectedEmployee کد پر کردن FirstName/LastName را نوشته‌اید)
-                SelectedEmployee = emp;
-
-                // مدیریت وضعیت دکمه‌ها (مثلاً دکمه افزودن غیرفعال شود)
-                ((RelayCommand)AddCommand).RaiseCanExecuteChanged();
-
-                // بستن پیام‌های خطا برای شروع تمیز
-                IsFirstNameErrorVisible = false;
-                IsLastNameErrorVisible = false;
-                InfoBarMessage = "";
-            }
-        }
-
-        private async Task DeleteEmployeeAsync(int id)
-        {
-            // اگر ID نامعتبر بود خارج شو
-            if (id <= 0) return;
-
-            try
-            {
-                using var db = new WaterAssessmentContext();
-
-                // 1. پیدا کردن رکورد در دیتابیس
-                var empToDelete = await db.Employees.FindAsync(id);
-
-                bool hasDependents = await db.AssessmentEmployees.AnyAsync(ae => ae.EmployeeID == id);
-
-                if (hasDependents)
-                {
-                    ShowWarning("این کارمند دارای اندازه‌گیری‌های ثبت شده است و قابل حذف نیست.");
-                    return;
-                }
-
-                if (empToDelete != null)
-                {
-                    // 2. حذف از دیتابیس
-                    db.Employees.Remove(empToDelete);
-                    await db.SaveChangesAsync();
-
-                    // 3. حذف از لیست UI (بدون نیاز به لود مجدد کل لیست)
-                    // پیدا کردن آیتم در لیست ObservableCollection
-                    var empInList = Employees.FirstOrDefault(e => e.EmployeeID == id);
-                    if (empInList != null)
-                    {
-                        Employees.Remove(empInList);
-                    }
-
-                    ShowSuccess("همکار با موفقیت حذف شد.");
-
-                    // اگر آیتم حذف شده همان آیتمی بود که در حال ویرایشش بودیم، فرم را خالی کن
-                    if (SelectedEmployee != null && SelectedEmployee.EmployeeID == id)
-                    {
-                        SelectedEmployee = null;
-                        FirstName = LastName = string.Empty;
-                        AddEditBtnContent = "ذخیره";
-                    }
-                }
-                else
-                {
-                    ShowWarning("این رکورد قبلاً حذف شده یا وجود ندارد.");
-                }
-            }
-            catch (Exception ex)
-            {
-                // مدیریت خطا
-                InfoBarSeverity = InfoBarSeverity.Error;
-                InfoBarMessage = $"خطا در حذف اطلاعات: {ex.Message}";
-                IsFirstNameErrorVisible = true;
-            }
-        }
-
-        private void ClearForm()
-        {
-            //خروج از حالت ویرایش 
-            SelectedEmployee = null;
-
-            FirstName = string.Empty;
-            LastName = string.Empty;
-
-            IsFirstNameErrorVisible = false;
-            IsLastNameErrorVisible = false;
-            InfoBarMessage = string.Empty;
-            AddEditBtnContent = "ذخیره";
-
-            // چون در Setter های FirstName/LastName دستور NotifyCanExecuteChanged را برای AddCommand نوشتیم،
-            // دکمه افزودن/ویرایش خود به خود غیرفعال می‌شود.
-        }
-
-        private async Task AddEmployeeAsync()
-        {
-            // ۱. اعتبارسنجی اولیه (مشترک بین افزودن و ویرایش)
-            IsFirstNameErrorVisible = false;
-            IsLastNameErrorVisible = false;
-            InfoBarMessage = string.Empty;
-
-            if (string.IsNullOrWhiteSpace(FirstName))
-            {
-                IsFirstNameErrorVisible = true;
-                InfoBarSeverity = InfoBarSeverity.Error;
-                return; // همینجا خارج شویم بهتر است تا فلگ hasError
-            }
-
-            if (string.IsNullOrWhiteSpace(LastName))
-            {
-                IsLastNameErrorVisible = true;
-                InfoBarSeverity = InfoBarSeverity.Error;
-                return;
-            }
-
-            // ۲. تشخیص حالت افزودن یا ویرایش
-            // به جای چک کردن متن دکمه، از وضعیت آبجکت استفاده می‌کنیم
+            bool success;
             if (SelectedEmployee == null)
             {
-                await InsertNewEmployeeAsync();
+                success = await _employeeService.AddNewEmployeeAsync(FirstName, LastName);
             }
             else
             {
-                await UpdateExistingEmployeeAsync();
+                success = await _employeeService.UpdateEmployeeAsync(SelectedEmployee.EmployeeID, FirstName, LastName);
             }
-        }
 
-        // متد کمکی برای افزودن (Insert)
-        private async Task InsertNewEmployeeAsync()
-        {
-            try
+            if (success)
             {
-                using var db = new WaterAssessmentContext();
-
-                // پرفورمنس: استفاده از AnyAsync بجای FirstOrDefault (بسیار سبک‌تر)
-                // چک می‌کنیم آیا کسی با این نام و فامیل وجود دارد؟
-                bool exists = await db.Employees.AnyAsync(e => e.FirstName == FirstName && e.LastName == LastName);
-
-                if (exists)
-                {
-                    ShowError("همکار مورد نظر قبلاً ثبت شده است.");
-                    return;
-                }
-
-                var newEmp = new Employee
-                {
-                    FirstName = FirstName,
-                    LastName = LastName
-                };
-
-                db.Employees.Add(newEmp);
-                await db.SaveChangesAsync();
-
-                // آپدیت UI
-                Employees.Add(newEmp);
-                ClearForm(); // متد پاکسازی که خودتان داشتید
-
-                ShowSuccess("همکار جدید با موفقیت ثبت شد.");
-            }
-            catch (Exception e)
-            {
-                HandleException(e, "ثبت");
-            }
-        }
-
-        // متد کمکی برای ویرایش (Update)
-        private async Task UpdateExistingEmployeeAsync()
-        {
-            try
-            {
-                using var db = new WaterAssessmentContext();
-
-                // پیدا کردن رکورد
-                var empToEdit = await db.Employees.FindAsync(SelectedEmployee.EmployeeID);
-
-                if (empToEdit == null)
-                {
-                    ShowError("این رکورد یافت نشد (شاید حذف شده است).");
-                    return;
-                }
-
-                // پرفورمنس: چک تکراری بودن هنگام ویرایش (اختیاری ولی توصیه می‌شود)
-                // می‌گوییم: اگر رکوردی هست که نامش این است ولی ID آن، ID من نیست (یعنی شخص دیگری است)
-                bool isDuplicate = await db.Employees.AnyAsync(e =>
-                    e.FirstName == FirstName &&
-                    e.LastName == LastName &&
-                    e.EmployeeID != SelectedEmployee.EmployeeID);
-
-                if (isDuplicate)
-                {
-                    ShowError("نام و نام خانوادگی تکراری است.");
-                    return;
-                }
-
-                // اعمال تغییرات
-                empToEdit.FirstName = FirstName;
-                empToEdit.LastName = LastName;
-
-                await db.SaveChangesAsync();
-
-                // آپدیت لیست UI (تکنیک جایگزینی برای رفرش شدن لیست)
-                SelectedEmployee.FirstName = FirstName;
-                SelectedEmployee.LastName = LastName;
-
-                int index = Employees.IndexOf(SelectedEmployee);
-                if (index != -1) Employees[index] = SelectedEmployee;
-
-                // نمایش پیام موفقیت و پاکسازی
-                ShowSuccess("ویرایش با موفقیت انجام شد.");
-
                 ClearForm();
+                await LoadEmployeesAsync(); // Refresh list after operation
+                await ShowMessageAsync("عملیات با موفقیت انجام شد.", InfoBarSeverity.Success);
             }
-            catch (Exception e)
+            else
             {
-                HandleException(e, "ویرایش");
+                await ShowMessageAsync(_employeeService.GetLastErrorMessage(), InfoBarSeverity.Error);
             }
         }
 
-        // متد کمکی برای مدیریت خطا
-        private void HandleException(Exception ex, string operation)
+        [RelayCommand]
+        private async Task DeleteEmployee(int employeeId)
         {
-            IsFirstNameErrorVisible = true;
-            InfoBarSeverity = InfoBarSeverity.Error; // معمولا خطا Warning نیست، Error است
-            InfoBarMessage = $"خطا در {operation}: {ex.Message}";
+            var success = await _employeeService.DeleteEmployeeAsync(employeeId);
+            if (success)
+            {
+                if (SelectedEmployee?.EmployeeID == employeeId) ClearForm();
+                await LoadEmployeesAsync();
+                await ShowMessageAsync("کارمند با موفقیت حذف شد.", InfoBarSeverity.Success);
+            }
+            else
+            {
+                await ShowMessageAsync(_employeeService.GetLastErrorMessage(), InfoBarSeverity.Warning);
+            }
         }
 
-        private async void ShowError(string message, int durationSeconds = 5)
+        partial void OnSelectedEmployeeChanged(Employee? value)
         {
-            InfoBarMessage = message;
-            InfoBarSeverity = InfoBarSeverity.Error;
-            IsFirstNameErrorVisible = true;
-            await Task.Delay(durationSeconds * 1000);
-
-            // بستن اینفوبار
-            IsFirstNameErrorVisible = false;
+            if (value != null)
+            {
+                FirstName = value.FirstName;
+                LastName = value.LastName;
+                AddEditBtnContent = "ویرایش";
+            }
+            else
+            {
+                AddEditBtnContent = "ذخیره";
+            }
         }
 
-        private async void ShowSuccess(string message, int durationSeconds = 5)
+        [RelayCommand]
+        private void ClearForm()
         {
-            InfoBarMessage = message;
-            InfoBarSeverity = InfoBarSeverity.Success;
-            IsFirstNameErrorVisible = true;
-            await Task.Delay(durationSeconds * 1000);
-
-            IsFirstNameErrorVisible = false;
+            SelectedEmployee = null;
+            FirstName = string.Empty;
+            LastName = string.Empty;
+            IsErrorVisible = false;
+            InfoBarMessage = string.Empty;
         }
 
-        private async void ShowWarning(string message, int durationSeconds = 5)
+        private async Task LoadEmployeesAsync()
+        {
+            var employees = await _employeeService.GetAllEmployeesAsync();
+            Employees.Clear();
+            foreach (var emp in employees)
+            {
+                Employees.Add(emp);
+            }
+        }
+
+        private bool ValidateInput()
+        {
+            if (string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName))
+            {
+                _ = ShowMessageAsync("نام و نام خانوادگی نمی‌توانند خالی باشند.", InfoBarSeverity.Error);
+                return false;
+            }
+            return true;
+        }
+
+        private async Task ShowMessageAsync(string message, InfoBarSeverity severity, int durationSeconds = 4)
         {
             InfoBarMessage = message;
-            InfoBarSeverity = InfoBarSeverity.Warning;
-            IsFirstNameErrorVisible = true;
+            InfoBarSeverity = severity;
+            IsErrorVisible = true;
+
             await Task.Delay(durationSeconds * 1000);
-            IsFirstNameErrorVisible = false;
+
+            // فقط اگر پیام فعلی همان پیامی است که نمایش داده بودیم، آن را ببند
+            if (InfoBarMessage == message)
+            {
+                IsErrorVisible = false;
+            }
         }
     }
 }

@@ -51,26 +51,19 @@
                     </StackPanel>
 
                     <StackPanel
-                        x:Name="employeeInfoPanel"
+                        x:Name="EmployeeInfoPanel"
                         Grid.Row="2"
                         Grid.Column="0"
                         Padding="5,15,5,0"
                         HorizontalAlignment="Stretch"
-                        Spacing="10">
+                        Spacing="25">
                         <InfoBar
-                            x:Name="firstNameBoxInfoBar"
+                            x:Name="ShowErrorInfoBar"
                             VerticalAlignment="Top"
-                            IsClosable="True"
-                            IsOpen="{x:Bind ViewModel.IsFirstNameErrorVisible, Mode=TwoWay}"
-                            Message="{x:Bind ViewModel.InfoBarMessage, Mode=TwoWay}"
-                            Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=TwoWay}" />
-                        <InfoBar
-                            x:Name="lastNameBoxInfoBar"
-                            VerticalAlignment="Top"
-                            IsClosable="True"
-                            IsOpen="{x:Bind ViewModel.IsLastNameErrorVisible, Mode=TwoWay}"
-                            Message="{x:Bind ViewModel.InfoBarMessage, Mode=TwoWay}"
-                            Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=TwoWay}" />
+                            IsClosable="False"
+                            IsOpen="{x:Bind ViewModel.IsErrorVisible, Mode=TwoWay}"
+                            Message="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
+                            Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=OneWay}" />
                     </StackPanel>
 
                     <StackPanel
@@ -81,22 +74,16 @@
                         Orientation="Horizontal"
                         Spacing="10">
                         <Button
-                            Name="btnAddEmployee"
+                            Name="BtnAddEmployee"
                             HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.AddCommand}"
-                            Content="{x:Bind ViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Command="{x:Bind ViewModel.AddEmployeeCommand}"
+                            Content="{x:Bind ViewModel.AddEditBtnContent, Mode=OneWay}"
                             IsEnabled="True"
                             Style="{ThemeResource AccentButtonStyle}" />
-                        <!--<Button
-                            Name="btnEditEmployee"
-                            HorizontalAlignment="Left"
-                            Content="ذخیره"
-                            IsEnabled="True"
-                            Style="{ThemeResource AccentButtonStyle}" />-->
                         <Button
-                            Name="btnClearEmployeeBox"
+                            Name="BtnClearEmployeeBox"
                             HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.ClearCommand}"
+                            Command="{x:Bind ViewModel.ClearFormCommand}"
                             Content="پاک کردن"
                             IsEnabled="True"
                             Style="{ThemeResource AccentButtonStyle}" />
@@ -225,11 +212,12 @@
                     </Grid>
 
                     <ListView
-                        Name="employeeListView"
+                        Name="EmployeeListView"
                         Grid.Row="1"
                         ContainerContentChanging="employeeListView_ContainerContentChanging"
                         ItemContainerStyle="{StaticResource HorizontalSwipe}"
                         ItemsSource="{x:Bind ViewModel.Employees, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedEmployee, Mode=TwoWay}"
                         SelectionMode="Single">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:Employee">
@@ -332,25 +320,25 @@
                                                     VerticalAlignment="Center"
                                                     FontSize="11"
                                                     Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                <AppBarButton
+                                                <!--<AppBarButton
                                                     x:Name="btnHoverEditEmployee"
                                                     Grid.Column="7"
                                                     Width="60"
                                                     Height="60"
                                                     HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=employeeListView, Path=DataContext.EditCommand}"
+                                                    Command="{Binding ElementName=EmployeeListView, Path=DataContext.AddEmployeeCommand}"
                                                     CommandParameter="{x:Bind EmployeeID}"
                                                     Icon="Edit"
                                                     IsTabStop="False"
                                                     Label="ویرایش"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed" />-->
                                                 <AppBarButton
                                                     x:Name="btnHoverDeleteEmployee"
                                                     Grid.Column="8"
                                                     Width="60"
                                                     Height="60"
                                                     HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=employeeListView, Path=DataContext.DeleteCommand}"
+                                                    Command="{Binding ElementName=EmployeeListView, Path=DataContext.DeleteEmployeeCommand}"
                                                     CommandParameter="{x:Bind EmployeeID}"
                                                     Icon="Delete"
                                                     IsTabStop="False"
@@ -365,7 +353,7 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeleteEmployee.Visibility" Value="Visible" />
-                                                        <Setter Target="btnHoverEditEmployee.Visibility" Value="Visible" />
+                                                        <!--<Setter Target="btnHoverEditEmployee.Visibility" Value="Visible" />-->
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>

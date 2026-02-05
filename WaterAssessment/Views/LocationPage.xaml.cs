@@ -1,17 +1,21 @@
 ﻿using System.Collections.Specialized;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WaterAssessment.Views;
 
 public sealed partial class LocationPage : Page
 {
-    public AreaViewModel AreaViewModel { get; } = new();
-    public LocationViewModel LocationViewModel { get; } = new();
+    public AreaViewModel AreaViewModel { get; }
+    public LocationViewModel LocationViewModel { get; }
 
-    public LocationTypeViewModel LocationTypeViewModel { get; } = new();
+    public LocationTypeViewModel LocationTypeViewModel { get; }
 
     public LocationPage()
     {
         this.InitializeComponent();
+        this.LocationViewModel = App.Services.GetRequiredService<LocationViewModel>();
+        this.AreaViewModel = App.Services.GetRequiredService<AreaViewModel>();
+        this.LocationTypeViewModel = App.Services.GetRequiredService<LocationTypeViewModel>();
         AreaViewModel.Areas.CollectionChanged += Areas_CollectionChanged;
         LocationViewModel.Locations.CollectionChanged += Locations_CollectionChanged;
         LocationTypeViewModel.LocationTypes.CollectionChanged += LocationTypes_CollectionChanged;

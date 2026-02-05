@@ -1,22 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WaterAssessment.Messages;
+using WaterAssessment.Services;
+using Windows.Networking;
 
 namespace WaterAssessment.Models.ViewModel
 {
     public partial class CurrentMeterViewModel : ObservableObject
     {
-        // لیست داده‌ها
+        private readonly ICurrentMeterService _currentMeterService;
+        private readonly IDialogService _dialogService;
         public ObservableCollection<CurrentMeter> CurrentMeters { get; } = new();
 
-        [ObservableProperty] private int _currentMeterId;
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddCurrentMeterCommand))]
+        private CurrentMeter? _selectedCurrentMeter;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddCurrentMeterCommand))]
+        private string _currentMeterName = string.Empty;
 
         [ObservableProperty] private bool _isErrorVisible;
 
@@ -26,130 +28,11 @@ namespace WaterAssessment.Models.ViewModel
 
         [ObservableProperty] private string _addEditBtnContent = "ذخیره";
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(AddCurrentMeterCommand))]
-        private string _currentMeterName = string.Empty;
-
-        // آیتم انتخاب شده
-        // وقتی تغییر می‌کند، باید دکمه افزودن بررسی شود
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(AddCurrentMeterCommand))]
-        private CurrentMeter? _selectedCurrentMeter;
-
-
-        partial void OnSelectedCurrentMeterChanged(CurrentMeter? value)
+        public CurrentMeterViewModel(ICurrentMeterService currentMeterService, IDialogService dialogService)
         {
-            if (value != null)
-            {
-                CurrentMeterName = value.CurrentMeterName;
-                AddEditBtnContent = "ویرایش"; // تغییر متن دکمه هنگام انتخاب
-            }
-            else
-            {
-                // اگر انتخاب برداشته شد، دکمه به حالت ذخیره برگردد
-                AddEditBtnContent = "ذخیره";
-            }
-        }
-
-
-        public CurrentMeterViewModel()
-        {
-            // لود اولیه (بدون await در سازنده، بهتر است فایر اند فورگت باشد یا در رویداد Loaded صفحه صدا زده شود)
+            _currentMeterService = currentMeterService;
+            _dialogService = dialogService;
             _ = LoadCurrentMetersAsync();
-        }
-
-
-        [RelayCommand(CanExecute = nameof(CanAddCurrentMeter))]
-        private async Task AddCurrentMeterAsync()
-        {
-            // ۱. اعتبارسنجی اولیه
-            IsErrorVisible = false;
-            InfoBarMessage = string.Empty;
-
-            // نکته: چون CanExecute داریم، شاید نیازی به این شرط نباشد، اما بودنش ضرر ندارد
-            if (string.IsNullOrWhiteSpace(CurrentMeterName)) return;
-
-            // ۲. تشخیص حالت (افزودن یا ویرایش)
-            if (SelectedCurrentMeter == null)
-            {
-                await InsertNewCurrentMeterAsync();
-            }
-            else
-            {
-                await UpdateExistingCurrentMeterAsync();
-            }
-        }
-
-        private async Task InsertNewCurrentMeterAsync()
-        {
-            try
-            {
-                using var db = new WaterAssessmentContext();
-                bool exists = await db.CurrentMeters.AnyAsync(e => e.CurrentMeterName == CurrentMeterName);
-
-                if (exists)
-                {
-                    ShowError("مولینه مورد نظر قبلاً ثبت شده است.");
-                    return;
-                }
-
-                var newCurrentMeter = new CurrentMeter { CurrentMeterName = CurrentMeterName };
-                db.CurrentMeters.Add(newCurrentMeter);
-                await db.SaveChangesAsync();
-
-                CurrentMeters.Add(newCurrentMeter);
-                ResetInputs();
-                ShowSuccess("مولینه جدید با موفقیت ثبت شد.");
-            }
-            catch (Exception ex)
-            {
-                ShowError($"خطا در ثبت: {ex.Message}");
-            }
-        }
-
-        private async Task UpdateExistingCurrentMeterAsync()
-        {
-            try
-            {
-                using var db = new WaterAssessmentContext();
-                var CurrentMeterToEdit = await db.CurrentMeters.FindAsync(SelectedCurrentMeter!.CurrentMeterID); // ! چون مطمئنیم null نیست
-
-                if (CurrentMeterToEdit == null)
-                {
-                    ShowError("این رکورد یافت نشد.");
-                    return;
-                }
-
-                // چک تکراری بودن (به جز خودش)
-                bool isDuplicate = await db.CurrentMeters
-                    .AnyAsync(a => a.CurrentMeterName == CurrentMeterName && a.CurrentMeterID != SelectedCurrentMeter.CurrentMeterID);
-
-                if (isDuplicate)
-                {
-                    ShowError("مولینه وارد شده تکراری است.");
-                    return;
-                }
-
-                CurrentMeterToEdit.CurrentMeterName = CurrentMeterName;
-                await db.SaveChangesAsync();
-
-                // آپدیت UI
-                SelectedCurrentMeter.CurrentMeterName = CurrentMeterName;
-
-                int index = CurrentMeters.IndexOf(SelectedCurrentMeter);
-                if (index != -1) CurrentMeters[index] = SelectedCurrentMeter; // تریگر کردن رفرش لیست
-
-                // ==========================================================
-                // ارسال پیام ویرایش به LocationViewModel
-                // ==========================================================
-
-                ResetInputs();
-                ShowSuccess("ویرایش با موفقیت انجام شد.");
-            }
-            catch (Exception ex)
-            {
-                ShowError($"خطا در ویرایش: {ex.Message}");
-            }
         }
 
         private bool CanAddCurrentMeter()
@@ -157,72 +40,80 @@ namespace WaterAssessment.Models.ViewModel
             return !string.IsNullOrWhiteSpace(CurrentMeterName);
         }
 
-        [RelayCommand]
-        private async Task DeleteCurrentMeterAsync(int id)
+        [RelayCommand(CanExecute = nameof(CanAddCurrentMeter))]
+        private async Task AddCurrentMeterAsync()
         {
-            if (id <= 0) return;
+            if (!ValidateInput()) return;
+            bool success;
 
-            try
+            if (SelectedCurrentMeter == null)
             {
-                using var db = new WaterAssessmentContext();
-                var CurrentMeterToDelete = await db.CurrentMeters.FindAsync(id);
-
-                // آیا مکانی وجود دارد که مربوط به این حوزه باشد؟
-                bool hasDependents = await db.Assessments.AnyAsync(l => l.CurrentMeterID == id);
-
-                if (hasDependents)
-                {
-                    // اگر زیرمجموعه داشت، خطا بده و خارج شو
-                    ShowError("این مولینه دارای اندازه گیری ‌های ثبت شده است. برای حذف، ابتدا باید اندازه گیری‌های مربوطه را حذف کنید.");
-                    return;
-                }
-
-                if (CurrentMeterToDelete != null)
-                {
-                    db.CurrentMeters.Remove(CurrentMeterToDelete);
-                    await db.SaveChangesAsync();
-
-                    // حذف از لیست UI
-                    var currentMeterInList = CurrentMeters.FirstOrDefault(e => e.CurrentMeterID == id);
-                    if (currentMeterInList != null)
-                    {
-                        CurrentMeters.Remove(currentMeterInList);
-                    }
-
-                    // بازخورد
-                    ShowSuccess("مولینه با موفقیت حذف شد.");
-
-                    // اگر آیتم در حال ویرایش حذف شد، فرم پاک شود
-                    if (SelectedCurrentMeter != null && SelectedCurrentMeter.CurrentMeterID == id)
-                    {
-                        ClearForm();
-                        ShowSuccess("مولینه با موفقیت حذف شد.");
-                    }
-                }
-                else
-                {
-                    ShowError("این رکورد قبلاً حذف شده یا وجود ندارد.");
-                }
+                success = await _currentMeterService.AddNewCurrentMeterAsync(CurrentMeterName);
             }
-            catch (Exception ex)
+            else
             {
-                ShowError($"خطا در حذف: {ex.Message}");
+                success = await _currentMeterService.UpdateCurrentMeterAsync(SelectedCurrentMeter.CurrentMeterID,
+                    CurrentMeterName);
+            }
+
+            if (success)
+            {
+                ClearForm();
+                await LoadCurrentMetersAsync();
+                await ShowMessageAsync("عملیات با موفقیت انجام شد.", InfoBarSeverity.Success);
+            }
+            else
+            {
+                await ShowMessageAsync("عملیات با موفقیت انجام شد.", InfoBarSeverity.Success);
             }
         }
 
-        // کامند ویرایش (انتخاب آیتم برای ویرایش)
         [RelayCommand]
-        private void PrepareForEdit(int currentMeterId)
+        private async Task RequestDeleteCurrentMeterAsync(CurrentMeter currentMeter)
         {
-            var CurrentMeter = CurrentMeters.FirstOrDefault(e => e.CurrentMeterID == currentMeterId);
-            if (CurrentMeter != null)
-            {
-                // با ست کردن SelectedArea، متد OnSelectedAreaChanged اجرا شده و فیلدها پر می‌شوند
-                SelectedCurrentMeter = CurrentMeter;
+            if (currentMeter == null) return;
 
-                // تمیزکاری خطاها
-                IsErrorVisible = false;
-                InfoBarMessage = "";
+            // از سرویس دیالوگ برای نمایش پیغام تایید استفاده کنید
+            bool confirmed = await _dialogService.ShowConfirmationDialogAsync(
+                title: "تأیید عملیات حذف",
+                content: $"آیا از حذف مولینه «{currentMeter.CurrentMeterName}» اطمینان دارید؟\nاین عملیات غیرقابل بازگشت است.",
+                primaryButtonText: "بله، حذف کن",
+                closeButtonText: "انصراف"
+            );
+
+            // فقط در صورت تایید کاربر، حذف را ادامه دهید
+            if (confirmed)
+            {
+                await DeleteCurrentMeterAsync(currentMeter.CurrentMeterID);
+            }
+        }
+
+        private async Task DeleteCurrentMeterAsync(int currentMeterId)
+        {
+            var success = await _currentMeterService.DeleteCurrentMeterAsync(currentMeterId);
+            if (success)
+            {
+                if (SelectedCurrentMeter?.CurrentMeterID == currentMeterId) ClearForm();
+                await LoadCurrentMetersAsync();
+                await ShowMessageAsync("مولینه با موفقیت حذف شد.", InfoBarSeverity.Success);
+            }
+            else
+            {
+                await ShowMessageAsync(_currentMeterService.GetLastErrorMessage(), InfoBarSeverity.Warning);
+            }
+        }
+
+        partial void OnSelectedCurrentMeterChanged(CurrentMeter? value)
+        {
+            if (value != null)
+            {
+                CurrentMeterName = value.CurrentMeterName;
+                AddEditBtnContent = "ویرایش";
+            }
+            else
+            {
+                // اگر انتخاب برداشته شد، دکمه به حالت ذخیره برگردد
+                AddEditBtnContent = "ذخیره";
             }
         }
 
@@ -235,46 +126,39 @@ namespace WaterAssessment.Models.ViewModel
             InfoBarMessage = string.Empty;
         }
 
-        private void ResetInputs()
-        {
-            SelectedCurrentMeter = null;
-            CurrentMeterName = string.Empty;
-            AddEditBtnContent = "ذخیره";
-        }
-
-        // ==========================================================
-        // متدهای کمکی (Helpers)
-        // ==========================================================
-
         private async Task LoadCurrentMetersAsync()
         {
-            try
+            var currentMeters = await _currentMeterService.GetAllCurrentMetersAsync();
+            CurrentMeters.Clear();
+            foreach (var currentMeter in currentMeters)
             {
-                using var db = new WaterAssessmentContext();
-                var list = await db.CurrentMeters.AsNoTracking().ToListAsync();
-                CurrentMeters.Clear();
-                foreach (var item in list) CurrentMeters.Add(item);
-            }
-            catch (Exception ex)
-            {
-                ShowError($"خطا در بارگذاری اطلاعات: {ex.Message}");
+                CurrentMeters.Add(currentMeter);
             }
         }
 
-
-        // متدهای کمکی برای تمیز شدن کد اصلی
-        private void ShowError(string message)
+        private bool ValidateInput()
         {
-            InfoBarMessage = message;
-            InfoBarSeverity = InfoBarSeverity.Error;
-            IsErrorVisible = true;
+            if (string.IsNullOrWhiteSpace(CurrentMeterName))
+            {
+                _ = ShowMessageAsync("نام مولینه نمی‌توانند خالی باشند.", InfoBarSeverity.Error);
+                return false;
+            }
+            return true;
         }
 
-        private void ShowSuccess(string message)
+        private async Task ShowMessageAsync(string message, InfoBarSeverity severity, int durationSeconds = 4)
         {
             InfoBarMessage = message;
-            InfoBarSeverity = InfoBarSeverity.Success;
+            InfoBarSeverity = severity;
             IsErrorVisible = true;
+
+            await Task.Delay(durationSeconds * 1000);
+
+            // فقط اگر پیام فعلی همان پیامی است که نمایش داده بودیم، آن را ببند
+            if (InfoBarMessage == message)
+            {
+                IsErrorVisible = false;
+            }
         }
     }
 }

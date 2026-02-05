@@ -18,7 +18,6 @@
     FontFamily="{StaticResource ContentControlThemeFontFamily}"
     mc:Ignorable="d">
     <Page.Resources>
-        <converters:NullableDoubleToDoubleConverter x:Key="NullDoubleConv" />
         <Style TargetType="akTools:NumberBoxEx">
             <Setter Property="IsDeleteButtonVisible" Value="False" />
             <Setter Property="NumberHorizontalAlignment" Value="Center" />

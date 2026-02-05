@@ -25,24 +25,35 @@
 
     <TabView IsAddTabButtonVisible="False" SelectedIndex="0">
         <TabViewItem
-            x:Name="propellerTab"
+            x:Name="PropellerTab"
             Header="ثبت اطلاعات پروانه ها"
             IsClosable="False">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="2*" />
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="220" />
+                    <RowDefinition Height="110" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid
+                    Grid.Row="0"
+                    Margin="10,10,10,0"
+                    Padding="10,10,10,0"
+                    BorderBrush="LightGray"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="170" />
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="0"
-                        Margin="20,10"
-                        HorizontalAlignment="Left"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        BorderBrush="Black"
+                        BorderThickness="0"
                         Orientation="Vertical"
                         Spacing="10">
                         <StackPanel.Resources>
@@ -63,122 +74,213 @@
                             Header="نوع معادله"
                             ItemsSource="{x:Bind PropellerViewModel.CalibrationOptions}"
                             SelectedItem="{x:Bind PropellerViewModel.SelectedOption, Mode=TwoWay}" />
-                        <TextBlock FontWeight="Bold" Text="معادله اول (n &lt; N1)" />
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <akTools:NumberBoxEx Header="ضریب A" Value="{x:Bind PropellerViewModel.A1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
-                                <NumberBox.NumberFormatter>
-                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
-                                </NumberBox.NumberFormatter>
-                            </akTools:NumberBoxEx>
-
-                            <akTools:NumberBoxEx Header="ضریب B" Value="{x:Bind PropellerViewModel.B1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
-                                <NumberBox.NumberFormatter>
-                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
-                                </NumberBox.NumberFormatter>
-                            </akTools:NumberBoxEx>
-                        </StackPanel>
-
-                        <StackPanel Visibility="{x:Bind PropellerViewModel.IsSection2Visible, Mode=OneWay, Converter={StaticResource BoolToVis}}">
-                            <akTools:NumberBoxEx
-                                Width="200"
-                                HorizontalAlignment="Left"
-                                Header="نقطه شکست اول (N1)"
-                                Value="{x:Bind PropellerViewModel.TransitionPoint1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
-                                <NumberBox.NumberFormatter>
-                                    <helpers:FlexibleDoubleFormatter Decimals="3" />
-                                </NumberBox.NumberFormatter>
-                            </akTools:NumberBoxEx>
-
-                            <TextBlock
-                                Margin="0,10,0,0"
-                                FontWeight="Bold"
-                                Text="معادله دوم (N1 &lt; n &lt; N2)" />
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <akTools:NumberBoxEx Header="ضریب A" Value="{x:Bind PropellerViewModel.A2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
-                                    <NumberBox.NumberFormatter>
-                                        <helpers:FlexibleDoubleFormatter Decimals="4" />
-                                    </NumberBox.NumberFormatter>
-                                </akTools:NumberBoxEx>
-                                <akTools:NumberBoxEx Header="ضریب B" Value="{x:Bind PropellerViewModel.B2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
-                                    <NumberBox.NumberFormatter>
-                                        <helpers:FlexibleDoubleFormatter Decimals="4" />
-                                    </NumberBox.NumberFormatter>
-                                </akTools:NumberBoxEx>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <StackPanel Visibility="{x:Bind PropellerViewModel.IsSection3Visible, Mode=OneWay, Converter={StaticResource BoolToVis}}">
-                            <akTools:NumberBoxEx
-                                Width="200"
-                                HorizontalAlignment="Left"
-                                Header="نقطه شکست دوم (N2)"
-                                Value="{x:Bind PropellerViewModel.TransitionPoint2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
-                                <NumberBox.NumberFormatter>
-                                    <helpers:FlexibleDoubleFormatter Decimals="3" />
-                                </NumberBox.NumberFormatter>
-                            </akTools:NumberBoxEx>
-
-                            <TextBlock
-                                Margin="0,10,0,0"
-                                FontWeight="Bold"
-                                Text="معادله سوم (n &gt; N2)" />
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <akTools:NumberBoxEx Header="ضریب A" Value="{x:Bind PropellerViewModel.A3, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
-                                    <NumberBox.NumberFormatter>
-                                        <helpers:FlexibleDoubleFormatter Decimals="4" />
-                                    </NumberBox.NumberFormatter>
-                                </akTools:NumberBoxEx>
-                                <akTools:NumberBoxEx Header="ضریب B" Value="{x:Bind PropellerViewModel.B3, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
-                                    <NumberBox.NumberFormatter>
-                                        <helpers:FlexibleDoubleFormatter Decimals="4" />
-                                    </NumberBox.NumberFormatter>
-                                </akTools:NumberBoxEx>
-                            </StackPanel>
-                        </StackPanel>
                     </StackPanel>
-
                     <StackPanel
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="20,10"
+                        Grid.Column="1"
+                        Padding="0,71,0,0"
                         HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        BorderBrush="Black"
+                        BorderThickness="0"
                         Orientation="Vertical"
                         Spacing="10">
-                        <StackPanel Orientation="Horizontal">
-                            <Button
-                                Name="btnAddPropeller"
-                                HorizontalAlignment="Left"
-                                Command="{x:Bind PropellerViewModel.SavePropellerCommand}"
-                                Content="{x:Bind PropellerViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                IsEnabled="True"
-                                Style="{ThemeResource AccentButtonStyle}" />
-                            <Button
-                                Name="btnClearPropellerBox"
-                                HorizontalAlignment="Left"
-                                Command="{x:Bind PropellerViewModel.ClearFormCommand}"
-                                Content="پاک کردن"
-                                IsEnabled="True"
-                                Style="{ThemeResource AccentButtonStyle}" />
+                        <TextBlock FontWeight="Bold" Text="معادله اول" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <akTools:NumberBoxEx
+                                Width="70"
+                                Header="ضریب A"
+                                Value="{x:Bind PropellerViewModel.A1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
+
+                            <akTools:NumberBoxEx
+                                Width="70"
+                                Header="ضریب B"
+                                Value="{x:Bind PropellerViewModel.B1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
                         </StackPanel>
-                        <StackPanel>
-                            <StackPanel
-                                x:Name="propellerInfoPanel"
-                                Padding="5,15,5,0"
-                                Spacing="10">
-                                <InfoBar
-                                    VerticalAlignment="Top"
-                                    IsClosable="True"
-                                    IsOpen="{x:Bind PropellerViewModel.IsErrorVisible, Mode=TwoWay}"
-                                    Message="{x:Bind PropellerViewModel.InfoBarMessage, Mode=TwoWay}"
-                                    Severity="{x:Bind PropellerViewModel.InfoBarSeverity, Mode=TwoWay}" />
-                            </StackPanel>
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Column="2"
+                        Width="200"
+                        HorizontalAlignment="Left"
+                        BorderBrush="Black"
+                        BorderThickness="0"
+                        Spacing="10"
+                        Visibility="{x:Bind PropellerViewModel.IsSection2Visible, Mode=OneWay, Converter={StaticResource BoolToVis}}">
+                        <akTools:NumberBoxEx
+                            Width="140"
+                            HorizontalAlignment="Left"
+                            Header="نقطه شکست اول (N1)"
+                            Value="{x:Bind PropellerViewModel.TransitionPoint1, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                            <NumberBox.NumberFormatter>
+                                <helpers:FlexibleDoubleFormatter Decimals="3" />
+                            </NumberBox.NumberFormatter>
+                        </akTools:NumberBoxEx>
+
+                        <TextBlock
+                            Margin="0,10,0,0"
+                            FontWeight="Bold"
+                            Text="معادله دوم (N1 &lt; n &lt; N2)" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <akTools:NumberBoxEx
+                                Width="70"
+                                Header="ضریب A"
+                                Value="{x:Bind PropellerViewModel.A2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
+                            <akTools:NumberBoxEx
+                                Width="70"
+                                Header="ضریب B"
+                                Value="{x:Bind PropellerViewModel.B2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Column="3"
+                        BorderBrush="Black"
+                        BorderThickness="0"
+                        Spacing="10"
+                        Visibility="{x:Bind PropellerViewModel.IsSection3Visible, Mode=OneWay, Converter={StaticResource BoolToVis}}">
+                        <akTools:NumberBoxEx
+                            Width="140"
+                            HorizontalAlignment="Left"
+                            Header="نقطه شکست دوم (N2)"
+                            Value="{x:Bind PropellerViewModel.TransitionPoint2, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                            <NumberBox.NumberFormatter>
+                                <helpers:FlexibleDoubleFormatter Decimals="3" />
+                            </NumberBox.NumberFormatter>
+                        </akTools:NumberBoxEx>
+
+                        <TextBlock
+                            Margin="0,10,0,0"
+                            FontWeight="Bold"
+                            Text="معادله سوم (n &gt; N2)" />
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <akTools:NumberBoxEx
+                                Width="70"
+                                Header="ضریب A"
+                                Value="{x:Bind PropellerViewModel.A3, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
+                            <akTools:NumberBoxEx
+                                Width="70"
+                                Header="ضریب B"
+                                Value="{x:Bind PropellerViewModel.B3, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}">
+                                <NumberBox.NumberFormatter>
+                                    <helpers:FlexibleDoubleFormatter Decimals="4" />
+                                </NumberBox.NumberFormatter>
+                            </akTools:NumberBoxEx>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
+                <StackPanel
+                    Grid.Row="1"
+                    Margin="10,10"
+                    Padding="10,10,10,10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    BorderBrush="LightGray"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <Button
+                        Name="btnAddPropeller"
+                        Width="80"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind PropellerViewModel.SavePropellerCommand}"
+                        Content="{x:Bind PropellerViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        IsEnabled="True"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                    <Button
+                        Name="btnClearPropellerBox"
+                        Width="80"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind PropellerViewModel.ClearFormCommand}"
+                        Content="پاک کردن"
+                        IsEnabled="True"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                    <StackPanel Width="350" VerticalAlignment="Center">
+                        <InfoBar
+                            IsClosable="False"
+                            IsOpen="{x:Bind PropellerViewModel.IsErrorVisible, Mode=TwoWay}"
+                            Message="{x:Bind PropellerViewModel.InfoBarMessage, Mode=OneWay}"
+                            Severity="{x:Bind PropellerViewModel.InfoBarSeverity, Mode=OneWay}" />
+                    </StackPanel>
+                    <StackPanel
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="100">
+                        <StackPanel
+                            Width="250"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Text="ویرایش شده توسط:" />
+                                <TextBlock Text="{x:Bind PropellerViewModel.SelectedPropeller.UpdatedBy.FullName, Mode=OneWay, FallbackValue='-'}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Text="زمان ویرایش: " />
+                                <TextBlock Text="{x:Bind PropellerViewModel.SelectedPropeller.UpdatedAt, FallbackValue='-', Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel
+                            Width="250"
+                            Orientation="Vertical"
+                            Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Text="ایجاد شده توسط:" />
+                                <TextBlock Text="{x:Bind PropellerViewModel.SelectedPropeller.CreatedBy.FullName, Mode=OneWay, FallbackValue='-'}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Text="زمان ایجاد:" />
+                                <TextBlock Text="{x:Bind PropellerViewModel.SelectedPropeller.CreatedAt, FallbackValue='-', Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!--<StackPanel
+                    x:Name="propellerInfoPanel"
+                    Grid.Row="2"
+                    Padding="15"
+                    Spacing="10">
+
+                </StackPanel>-->
+
                 <Grid
-                    Grid.Column="1"
-                    Width="Auto"
-                    Margin="20,10"
+                    Grid.Row="2"
+                    Width="960"
+                    Margin="10,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     DataContext="{x:Bind PropellerViewModel}"
@@ -194,24 +296,23 @@
                         Background="{ThemeResource SystemAccentColor}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="52" />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="68" />
                             <ColumnDefinition Width="68" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             Grid.Column="0"
-                            Padding="0,0,10,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="ردیف" />
                         <Rectangle
@@ -225,7 +326,7 @@
                             Grid.Column="1"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="نام پروانه" />
                         <Rectangle
@@ -239,7 +340,7 @@
                             Grid.Column="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="ضریب A1" />
                         <Rectangle
@@ -253,7 +354,7 @@
                             Grid.Column="3"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="B1" />
                         <Rectangle
@@ -267,7 +368,7 @@
                             Grid.Column="4"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="10"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="ضریب شکست 1" />
                         <Rectangle
@@ -281,7 +382,7 @@
                             Grid.Column="5"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="ضریب A2" />
                         <Rectangle
@@ -295,7 +396,7 @@
                             Grid.Column="6"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="B2" />
                         <Rectangle
@@ -309,7 +410,7 @@
                             Grid.Column="7"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="10"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="ضریب شکست 2" />
                         <Rectangle
@@ -323,7 +424,7 @@
                             Grid.Column="8"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="A3" />
                         <Rectangle
@@ -337,7 +438,7 @@
                             Grid.Column="9"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            FontSize="12"
+                            FontSize="14"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="B3" />
                     </Grid>
@@ -348,6 +449,7 @@
                         ContainerContentChanging="PropellerListView_ContainerContentChanging"
                         ItemContainerStyle="{StaticResource HorizontalSwipe}"
                         ItemsSource="{x:Bind PropellerViewModel.Propellers, Mode=OneWay}"
+                        SelectedItem="{x:Bind PropellerViewModel.SelectedPropeller, Mode=TwoWay}"
                         SelectionMode="Single">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:Propeller">
@@ -360,22 +462,21 @@
                                             <Grid VerticalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="52" />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="80" />
+                                                    <ColumnDefinition Width="80" />
+                                                    <ColumnDefinition Width="80" />
+                                                    <ColumnDefinition Width="110" />
+                                                    <ColumnDefinition Width="80" />
+                                                    <ColumnDefinition Width="80" />
+                                                    <ColumnDefinition Width="110" />
+                                                    <ColumnDefinition Width="80" />
+                                                    <ColumnDefinition Width="80" />
                                                     <ColumnDefinition Width="68" />
                                                     <ColumnDefinition Width="68" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock
                                                     x:Name="PropellerIndexTextBlock"
                                                     Grid.Column="0"
-                                                    Padding="0,0,10,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontSize="12"
@@ -490,7 +591,7 @@
                                                     Text="{x:Bind B3}" />
                                                 <AppBarButton
                                                     x:Name="btnHoverDeletePropeller"
-                                                    Grid.Column="10"
+                                                    Grid.Column="11"
                                                     Width="60"
                                                     Height="60"
                                                     HorizontalAlignment="Left"
@@ -499,8 +600,15 @@
                                                     Icon="Delete"
                                                     IsTabStop="False"
                                                     Label="حذف"
-                                                    Visibility="Collapsed" />
-                                                <AppBarButton
+                                                    Visibility="Collapsed">
+                                                    <AppBarButton.Resources>
+                                                        <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                                    </AppBarButton.Resources>
+                                                </AppBarButton>
+
+                                                <!--<AppBarButton
                                                     x:Name="btnHoverEditPropeller"
                                                     Grid.Column="11"
                                                     Width="60"
@@ -511,7 +619,8 @@
                                                     Icon="Edit"
                                                     IsTabStop="False"
                                                     Label="ویرایش"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed" />-->
+
                                             </Grid>
                                         </SwipeControl>
 
@@ -521,7 +630,9 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeletePropeller.Visibility" Value="Visible" />
-                                                        <Setter Target="btnHoverEditPropeller.Visibility" Value="Visible" />
+
+                                                        <!--<Setter Target="btnHoverEditPropeller.Visibility" Value="Visible" />-->
+
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>
@@ -530,11 +641,11 @@
                                 </UserControl>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                        <!--<ListView.HeaderTemplate>
-                            <DataTemplate>
 
-                            </DataTemplate>
-                        </ListView.HeaderTemplate>-->
+                        <ListView.HeaderTemplate>
+                            <DataTemplate />
+                        </ListView.HeaderTemplate>
+
                     </ListView>
                 </Grid>
             </Grid>
@@ -543,26 +654,21 @@
         <TabViewItem Header="ثبت مولینه ها" IsClosable="False">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.5*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="350" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="20,10"
                         HorizontalAlignment="Stretch"
-                        Orientation="Vertical"
-                        Spacing="25">
+                        Orientation="Vertical">
                         <TextBox
                             Name="AreaNameBox"
                             HorizontalAlignment="Stretch"
@@ -575,18 +681,16 @@
 
                     <StackPanel
                         x:Name="CurrentMeterInfoPanel"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        Grid.Column="1"
+                        Grid.Row="2"
                         Padding="5,15,5,0"
                         Spacing="10">
                         <InfoBar
-                            x:Name="CurrentMeterNameBoxInfoBar"
+                            x:Name="ShowErrorInfoBar"
                             VerticalAlignment="Top"
-                            IsClosable="True"
+                            IsClosable="False"
                             IsOpen="{x:Bind CurrentMeterViewModel.IsErrorVisible, Mode=TwoWay}"
-                            Message="{x:Bind CurrentMeterViewModel.InfoBarMessage, Mode=TwoWay}"
-                            Severity="{x:Bind CurrentMeterViewModel.InfoBarSeverity, Mode=TwoWay}" />
+                            Message="{x:Bind CurrentMeterViewModel.InfoBarMessage, Mode=OneWay}"
+                            Severity="{x:Bind CurrentMeterViewModel.InfoBarSeverity, Mode=OneWay}" />
                     </StackPanel>
 
                     <StackPanel
@@ -597,14 +701,14 @@
                         Orientation="Horizontal"
                         Spacing="10">
                         <Button
-                            Name="btnAddCurrentMeter"
+                            Name="BtnAddCurrentMeter"
                             HorizontalAlignment="Left"
                             Command="{x:Bind CurrentMeterViewModel.AddCurrentMeterCommand}"
-                            Content="{x:Bind CurrentMeterViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Content="{x:Bind CurrentMeterViewModel.AddEditBtnContent, Mode=OneWay}"
                             IsEnabled="True"
                             Style="{ThemeResource AccentButtonStyle}" />
                         <Button
-                            Name="btnClearCurrentMeterBox"
+                            Name="BtnClearCurrentMeterBox"
                             HorizontalAlignment="Left"
                             Command="{x:Bind CurrentMeterViewModel.ClearFormCommand}"
                             Content="پاک کردن"
@@ -614,7 +718,7 @@
                 </Grid>
                 <Grid
                     Grid.Column="1"
-                    Width="500"
+                    Width="820"
                     Margin="15,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
@@ -632,13 +736,16 @@
                         Background="{ThemeResource SystemAccentColor}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="52" />
-                            <ColumnDefinition />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="68" />
                             <ColumnDefinition Width="68" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             Grid.Row="0"
-                            Padding="0,0,10,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource SystemAltHighColor}"
@@ -657,6 +764,62 @@
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource SystemAltHighColor}"
                             Text="نام مولینه" />
+                        <Rectangle
+                            Grid.Column="1"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="2"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="آخرین ویرایش توسط" />
+                        <Rectangle
+                            Grid.Column="2"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="3"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="زمان ویرایش" />
+                        <Rectangle
+                            Grid.Column="3"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="4"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="ایجاد شده توسط" />
+                        <Rectangle
+                            Grid.Column="4"
+                            Width="1"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Stretch"
+                            Fill="{ThemeResource SystemBaseLowColor}"
+                            Opacity="0.5" />
+                        <TextBlock
+                            Grid.Column="5"
+                            Margin="5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="{ThemeResource SystemAltHighColor}"
+                            Text="زمان ایجاد" />
                     </Grid>
 
                     <ListView
@@ -665,6 +828,7 @@
                         ContainerContentChanging="CurrentMeterListView_ContainerContentChanging"
                         ItemContainerStyle="{StaticResource HorizontalSwipe}"
                         ItemsSource="{x:Bind CurrentMeterViewModel.CurrentMeters, Mode=OneWay}"
+                        SelectedItem="{x:Bind CurrentMeterViewModel.SelectedCurrentMeter, Mode=TwoWay}"
                         SelectionMode="Single">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:CurrentMeter">
@@ -677,14 +841,17 @@
                                             <Grid VerticalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="52" />
-                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="100" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
+                                                    <ColumnDefinition Width="150" />
                                                     <ColumnDefinition Width="68" />
-                                                    <ColumnDefinition Width="68" />
+                                                    <!--<ColumnDefinition Width="68" />-->
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock
                                                     x:Name="CurrentMeterIndexTextBlock"
                                                     Grid.Column="0"
-                                                    Padding="0,0,10,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontSize="12"
@@ -701,9 +868,59 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind CurrentMeterName}" />
-                                                <AppBarButton
-                                                    x:Name="btnHoverEditCurrentMeter"
+                                                <Rectangle
+                                                    Grid.Column="1"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
+                                                <Rectangle
+                                                    Grid.Column="2"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
                                                     Grid.Column="3"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                <Rectangle
+                                                    Grid.Column="3"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="4"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
+                                                <Rectangle
+                                                    Grid.Column="4"
+                                                    Width="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                <TextBlock
+                                                    Grid.Column="5"
+                                                    Margin="5,0,0,0"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="11"
+                                                    Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                <!--<AppBarButton
+                                                    x:Name="btnHoverEditCurrentMeter"
+                                                    Grid.Column="6"
                                                     Width="60"
                                                     Height="60"
                                                     HorizontalAlignment="Left"
@@ -712,19 +929,25 @@
                                                     Icon="Edit"
                                                     IsTabStop="False"
                                                     Label="ویرایش"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed" />-->
                                                 <AppBarButton
                                                     x:Name="btnHoverDeleteCurrentMeter"
-                                                    Grid.Column="2"
+                                                    Grid.Column="6"
                                                     Width="60"
                                                     Height="60"
                                                     HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=CurrentMeterListView, Path=DataContext.DeleteCurrentMeterCommand}"
-                                                    CommandParameter="{x:Bind CurrentMeterID}"
+                                                    Command="{Binding ElementName=CurrentMeterListView, Path=DataContext.RequestDeleteCurrentMeterCommand}"
+                                                    CommandParameter="{x:Bind}"
                                                     Icon="Delete"
                                                     IsTabStop="False"
                                                     Label="حذف"
-                                                    Visibility="Collapsed" />
+                                                    Visibility="Collapsed">
+                                                    <AppBarButton.Resources>
+                                                        <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                                    </AppBarButton.Resources>
+                                                </AppBarButton>
                                             </Grid>
                                         </SwipeControl>
 
@@ -734,7 +957,7 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeleteCurrentMeter.Visibility" Value="Visible" />
-                                                        <Setter Target="btnHoverEditCurrentMeter.Visibility" Value="Visible" />
+                                                        <!--<Setter Target="btnHoverEditCurrentMeter.Visibility" Value="Visible" />-->
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>

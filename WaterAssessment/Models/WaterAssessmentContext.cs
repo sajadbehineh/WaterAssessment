@@ -75,6 +75,42 @@ public class WaterAssessmentContext : DbContext
             new LocationType { LocationTypeID = 1, Title = "کانال" },
             new LocationType { LocationTypeID = 2, Title = "زهکش" }
         );
+
+        modelBuilder.Entity<AssessmentPump>()
+            .HasOne(ap => ap.Assessment)
+            .WithMany(a => a.PumpStates)
+            .HasForeignKey(ap => ap.AssessmentID)
+            .OnDelete(DeleteBehavior.Cascade); // حذف اندازه گیری منجر به حذف وضعیت پمپ‌ها می‌شود
+
+        modelBuilder.Entity<AssessmentPump>()
+            .HasOne(ap => ap.LocationPump)
+            .WithMany() // یا اگر در مدل LocationPump لیستی دارید، نام آن را اینجا بگذارید
+            .HasForeignKey(ap => ap.LocationPumpID)
+            .OnDelete(DeleteBehavior.NoAction); // از حذف آبشاری موازی جلوگیری می‌کند
+
+        modelBuilder.Entity<AssessmentGate>()
+            .HasOne(ag => ag.Assessment)
+            .WithMany(a => a.GateOpenings)
+            .HasForeignKey(ag => ag.AssessmentID)
+            .OnDelete(DeleteBehavior.Cascade); // حذف اندازه گیری منجر به حذف ردیف‌های دریچه می‌شود
+
+        modelBuilder.Entity<Location>()
+            .HasMany(l => l.LocationPumps)        // یک Location می‌تواند چندین LocationPump داشته باشد
+            .WithOne(p => p.Location)             // هر LocationPump به یک Location تعلق دارد
+            .HasForeignKey(p => p.LocationID)  // کلید خارجی در جدول LocationPump
+            .OnDelete(DeleteBehavior.Cascade);
+
+        //modelBuilder.Entity<Location>()
+        //    .HasOne(l => l.CreatedBy)
+        //    .WithMany()
+        //    .HasForeignKey(l => l.CreatedByUserID)
+        //    .OnDelete(DeleteBehavior.Restrict);
+
+        //modelBuilder.Entity<Location>()
+        //    .HasOne(l => l.UpdatedBy)
+        //    .WithMany()
+        //    .HasForeignKey(l => l.UpdatedByUserID)
+        //    .OnDelete(DeleteBehavior.Restrict);
     }
 
     public DbSet<Assessment> Assessments { get; set; }
@@ -87,5 +123,7 @@ public class WaterAssessmentContext : DbContext
     public DbSet<LocationType> LocationTypes { get; set; }
     public DbSet<Propeller> Propellers { get; set; }
     public DbSet<AssessmentGate> AssessmentGates { get; set; }
+    public DbSet<LocationPump> LocationPumps { get; set; }
+    public DbSet<AssessmentPump> AssessmentPumps { get; set; }
     public DbSet<User> Users { get; set; }
 }

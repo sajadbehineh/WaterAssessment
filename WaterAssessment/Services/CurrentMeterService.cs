@@ -6,12 +6,19 @@ namespace WaterAssessment.Services
 {
     public class CurrentMeterService : ICurrentMeterService
     {
+        private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
+
+        public CurrentMeterService(IDbContextFactory<WaterAssessmentContext> dbFactory)
+        {
+            _dbFactory = dbFactory;
+        }
+
         public async Task<IEnumerable<CurrentMeter>> GetAllCurrentMetersAsync()
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.CurrentMeters
                     .Include(e => e.CreatedBy)
                     .Include(e => e.UpdatedBy)
@@ -29,7 +36,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 bool exists = await db.CurrentMeters.AnyAsync(e => e.CurrentMeterName == currentMeterName);
                 if (exists)
                 {
@@ -53,7 +60,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var currentMeterToEdit = await db.CurrentMeters.FindAsync(currentMeterId);
                 if (currentMeterToEdit == null)
                 {
@@ -83,7 +90,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var currentMeterToDelete = await db.CurrentMeters.FindAsync(currentMeterId);
                 if (currentMeterToDelete == null)
                 {

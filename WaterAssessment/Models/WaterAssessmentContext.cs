@@ -8,6 +8,15 @@ namespace WaterAssessment.Models;
 
 public class WaterAssessmentContext : DbContext
 {
+    public WaterAssessmentContext()
+    {
+    }
+
+    public WaterAssessmentContext(DbContextOptions<WaterAssessmentContext> options)
+        : base(options)
+    {
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)

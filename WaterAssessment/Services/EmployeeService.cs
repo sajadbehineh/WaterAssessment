@@ -4,13 +4,19 @@ namespace WaterAssessment.Services
 {
     public class EmployeeService : IEmployeeService
     {
+        private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
+
+        public EmployeeService(IDbContextFactory<WaterAssessmentContext> dbFactory)
+        {
+            _dbFactory = dbFactory;
+        }
 
         public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Employees
                     .Include(e => e.CreatedBy)
                     .Include(e => e.UpdatedBy)
@@ -28,7 +34,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 bool exists = await db.Employees.AnyAsync(e => e.FirstName == firstName && e.LastName == lastName);
                 if (exists)
                 {
@@ -52,7 +58,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var empToEdit = await db.Employees.FindAsync(employeeId);
                 if (empToEdit == null)
                 {
@@ -84,7 +90,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var empToDelete = await db.Employees.FindAsync(employeeId);
                 if (empToDelete == null)
                 {

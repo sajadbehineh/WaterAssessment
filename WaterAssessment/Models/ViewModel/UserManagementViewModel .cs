@@ -37,7 +37,6 @@ namespace WaterAssessment.Models.ViewModel
 
         public UserManagementViewModel()
         {
-            //_dialogService = dialogService;
             _ = LoadUsersAsync();
         }
 

@@ -9,13 +9,19 @@ namespace WaterAssessment.Services
 {
     public class LocationService : ILocationService
     {
+        private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
+
+        public LocationService(IDbContextFactory<WaterAssessmentContext> dbFactory)
+        {
+            _dbFactory = dbFactory;
+        }
 
         public async Task<IEnumerable<Location>> GetAllLocationsAsync()
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Locations
                     .Include(l => l.LocationPumps)
                     .Include(l => l.Area)
@@ -35,7 +41,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Areas.AsNoTracking().ToListAsync();
             }
             catch (Exception e)
@@ -49,7 +55,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.LocationTypes.AsNoTracking().ToListAsync();
             }
             catch (Exception e)
@@ -63,7 +69,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 bool exists = await db.Locations.AnyAsync(l => l.LocationName == location.LocationName && l.AreaID == location.AreaID);
                 if (exists)
                 {
@@ -90,7 +96,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var locationToEdit = await db.Locations
                     .Include(l => l.LocationPumps) // <-- بسیار مهم
                     .FirstOrDefaultAsync(l => l.LocationID == locationId);
@@ -167,7 +173,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var locationToDelete = await db.Locations.FindAsync(locationId);
                 if (locationToDelete == null)
                 {

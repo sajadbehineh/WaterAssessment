@@ -4,12 +4,19 @@ namespace WaterAssessment.Services
 {
     public class LocationTypeService : ILocationTypeService
     {
+        private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
+
+        public LocationTypeService(IDbContextFactory<WaterAssessmentContext> dbFactory)
+        {
+            _dbFactory = dbFactory;
+        }
+
         public async Task<IEnumerable<LocationType>> GetAllLocationTypesAsync()
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.LocationTypes
                     .Include(lt => lt.CreatedBy)
                     .Include(lt => lt.UpdatedBy)
@@ -26,7 +33,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 bool exists = await db.LocationTypes.AnyAsync(lt => lt.Title == title);
                 if (exists)
                 {
@@ -49,7 +56,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var locTypeToEdit = await db.LocationTypes.FindAsync(locationTypeID);
                 if (locTypeToEdit == null)
                 {
@@ -79,7 +86,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var locTypeToDelete = await db.LocationTypes.FindAsync(locationTypeID);
                 if (locTypeToDelete == null)
                 {

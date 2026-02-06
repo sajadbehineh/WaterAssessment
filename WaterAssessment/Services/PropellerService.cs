@@ -4,14 +4,21 @@ namespace WaterAssessment.Services
 {
     public class PropellerService : IPropellerService
     {
+        private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
+
+        public PropellerService(IDbContextFactory<WaterAssessmentContext> dbFactory)
+        {
+            _dbFactory = dbFactory;
+        }
+
         public string GetLastErrorMessage() => _lastErrorMessage;
 
         public async Task<IEnumerable<Propeller>> GetAllPropellersAsync()
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Propellers
                     .Include(e => e.CreatedBy)
                     .Include(e => e.UpdatedBy)
@@ -32,7 +39,7 @@ namespace WaterAssessment.Services
             {
                 if (!ValidatePropeller(propeller)) return false;
 
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
 
                 // بررسی تکراری بودن نام
                 bool exists = await db.Propellers.AnyAsync(p => p.PropellerName == propeller.PropellerName);
@@ -59,7 +66,7 @@ namespace WaterAssessment.Services
             {
                 if (!ValidatePropeller(propeller)) return false;
 
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
 
                 var propToEdit = await db.Propellers.FindAsync(propeller.PropellerID);
                 if (propToEdit == null)
@@ -107,7 +114,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
 
                 var propToDelete = await db.Propellers.FindAsync(propellerId);
                 if (propToDelete == null)

@@ -4,13 +4,19 @@ namespace WaterAssessment.Services
 {
     public class AssessmentService : IAssessmentService
     {
+        private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
+
+        public AssessmentService(IDbContextFactory<WaterAssessmentContext> dbFactory)
+        {
+            _dbFactory = dbFactory;
+        }
 
         public async Task<AssessmentReferenceData> GetReferenceDataAsync()
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return new AssessmentReferenceData
                 {
                     Locations = await db.Locations.AsNoTracking().ToListAsync(),
@@ -30,7 +36,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Locations.AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
@@ -44,7 +50,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Propellers.AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
@@ -58,7 +64,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.CurrentMeters.AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
@@ -72,7 +78,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Employees.AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
@@ -86,7 +92,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.LocationPumps
                     .Where(p => p.LocationID == locationId)
                     .AsNoTracking()
@@ -103,7 +109,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Assessments
                     .AsNoTracking()
                     .Include(a => a.FormValues)
@@ -127,7 +133,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
 
                 model.Location = null;
                 model.Propeller = null;
@@ -166,7 +172,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
 
                 var existing = await db.Assessments
                     .Include(a => a.FormValues)

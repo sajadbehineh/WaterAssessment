@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using WaterAssessment.Services;
 
 namespace WaterAssessment
 {
     public partial class App : Application
     {
+        private const string ConnectionString = @"Server=(local);Database=WaterAssessmentDB;Trusted_Connection=True;Encrypt=False;";
         public static IServiceProvider Services { get; private set; }
         public IThemeService themeService { get; set; }
         public new static App Current => (App)Application.Current;
@@ -41,9 +43,8 @@ namespace WaterAssessment
             services.AddTransient<AreaViewModel>();
             services.AddTransient<LocationViewModel>();
             services.AddTransient<LocationTypeViewModel>();
-            //services.AddTransient<AssessmentViewModel>();
-
-            // services.AddDbContext<WaterAssessmentContext>(...);
+            services.AddDbContextFactory<WaterAssessmentContext>(options =>
+                options.UseSqlServer(ConnectionString));
 
             // ۴. ساخت ServiceProvider
             Services = services.BuildServiceProvider();

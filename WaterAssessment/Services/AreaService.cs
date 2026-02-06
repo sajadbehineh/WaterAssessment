@@ -6,14 +6,21 @@ namespace WaterAssessment.Services
 {
     public class AreaService : IAreaService
     {
+        private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
+
+        public AreaService(IDbContextFactory<WaterAssessmentContext> dbFactory)
+        {
+            _dbFactory = dbFactory;
+        }
+
         public string GetLastErrorMessage() => _lastErrorMessage;
 
         public async Task<IEnumerable<Area>> GetAllAreasAsync()
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 return await db.Areas
                     .Include(a => a.CreatedBy)
                     .Include(a => a.UpdatedBy)
@@ -30,7 +37,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 bool exists = await db.Areas.AnyAsync(a => a.AreaName == areaName);
                 if (exists)
                 {
@@ -53,7 +60,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var areaToEdit = await db.Areas.FindAsync(areaID);
                 if (areaToEdit == null)
                 {
@@ -83,7 +90,7 @@ namespace WaterAssessment.Services
         {
             try
             {
-                using var db = new WaterAssessmentContext();
+                using var db = _dbFactory.CreateDbContext();
                 var areaToDelete = await db.Areas.FindAsync(areaID);
                 if (areaToDelete == null)
                 {

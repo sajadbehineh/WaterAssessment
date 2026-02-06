@@ -30,7 +30,7 @@ public sealed partial class MainWindow : Window
         {
             // وقتی پیام لاگین رسید، به صفحه اصلی بروید
             // چون روی ترد UI هستیم مستقیم نویگیت میکنیم
-            ShellPage.Instance.Navigate(typeof(ChannelsReportPage)); // یا هر صفحه پیش‌فرض دیگر
+            ShellPage.Instance.Navigate(typeof(AssessmentReportPage)); // یا هر صفحه پیش‌فرض دیگر
         });
         // مدیریت خروج از حساب
         WeakReferenceMessenger.Default.Register<LogoutMessage>(this, (r, m) =>
@@ -93,7 +93,7 @@ public sealed partial class MainWindow : Window
                     ShellPage.Instance.Navigate(typeof(SettingsPage));
                     break;
                 case "ChannelsReportPage":
-                    ShellPage.Instance.Navigate(typeof(ChannelsReportPage));
+                    ShellPage.Instance.Navigate(typeof(AssessmentReportPage));
                     break;
                 case "UserManagement":
                     ShellPage.Instance.Navigate(typeof(UserManagementPage));

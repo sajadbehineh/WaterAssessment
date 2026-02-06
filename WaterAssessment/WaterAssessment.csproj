@@ -37,7 +37,6 @@
 	  <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
 	  <None Remove="Assets\propeller.png" />
 	  <None Remove="Views\AssessmentFormPage.xaml" />
-	  <None Remove="Views\ChannelsReportPage.xaml" />
 	  <None Remove="Views\CreateAssessmentDialog.xaml" />
 	  <None Remove="Views\EmployeePage.xaml" />
 	  <None Remove="Views\LocationPage.xaml" />
@@ -149,7 +148,7 @@
 	  </Page>
 	</ItemGroup>
 	<ItemGroup>
-	  <Page Update="Views\ChannelsReportPage.xaml">
+	  <Page Update="Views\AssessmentReportPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

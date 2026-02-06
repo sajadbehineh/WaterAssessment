@@ -1,18 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml.Controls;
-using System.Collections.ObjectModel;
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
-using WaterAssessment.Models;
+using WaterAssessment.Services;
 using WaterAssessment.Views;
-using WinRT.Interop;
 
 namespace WaterAssessment.Models.ViewModel
 {
-    public partial class ChannelsReportViewModel : ObservableObject
+    public partial class AssessmentReportViewModel : ObservableObject
     {
+        private readonly IAssessmentReportService _assessmentReportService;
         // لیست اصلی که در گرید نمایش داده می‌شود
         public ObservableCollection<Assessment> Assessments { get; } = new();
 
@@ -32,86 +28,55 @@ namespace WaterAssessment.Models.ViewModel
         // =======================
         // سازنده
         // =======================
-        public ChannelsReportViewModel()
+        public AssessmentReportViewModel(IAssessmentReportService assessmentReportService)
         {
-            LoadData();
+            _assessmentReportService = assessmentReportService;
+            _ = LoadDataAsync();
         }
 
-        public void LoadData()
+        public async Task LoadDataAsync()
         {
-            using var db = new WaterAssessmentContext();
 
             // 1. پر کردن لیست مکان‌ها (فقط کانال‌ها) برای کمبوباکس فیلتر
             Locations.Clear();
-            var locs = db.Locations.ToList();
-            foreach (var l in locs) Locations.Add(l);
+            var locs = await _assessmentReportService.GetLocationsAsync();
+            foreach (var l in locs)
+            {
+                Locations.Add(l);
+            }
 
             LocationTypes.Clear();
-            var locTypes = db.LocationTypes.ToList();
-            foreach (var locType in locTypes) LocationTypes.Add(locType);
+            var locTypes = await _assessmentReportService.GetLocationTypesAsync();
+            foreach (var locType in locTypes)
+            {
+                LocationTypes.Add(locType);
+            }
 
             // 2. اعمال فیلترها و جستجو
-            ApplyFilters();
+            await ApplyFiltersAsync();
         }
 
         [RelayCommand]
-        private void ApplyFilters()
+        private async Task ApplyFiltersAsync()
         {
-            using var db = new WaterAssessmentContext();
-
-            // شروع کوئری: فقط رکوردها مربوط به کانال‌ها را بیاور
-            // Include کردن Location برای نمایش نام مکان ضروری است
-            var query = db.Assessments
-                .Include(a => a.Propeller)
-                .Include(a => a.AssessmentEmployees)
-                .Include(a => a.Location)
-                .ThenInclude(l => l.LocationType)
-                .Include(a => a.GateOpenings)
-                .Include(a => a.FormValues)
-                .AsQueryable();
-
-            // فیلتر مکان
-            if (FilterLocation != null)
-            {
-                query = query.Where(a => a.LocationID == FilterLocation.LocationID);
-            }
-
-            if (FilterLocationType != null)
-            {
-                query = query.Where(a => a.Location.LocationTypeID == FilterLocationType.LocationTypeID);
-            }
-
-            // فیلتر تاریخ شروع
-            if (FilterStartDate.HasValue)
-            {
-                var dt = FilterStartDate.Value.DateTime.Date;
-                query = query.Where(a => a.Date >= dt);
-            }
-
-            // فیلتر تاریخ پایان
-            if (FilterEndDate.HasValue)
-            {
-                var dt = FilterEndDate.Value.DateTime.Date;
-                var nextDay = FilterEndDate.Value.DateTime.Date.AddDays(1);
-                // تا آخر آن روز
-                query = query.Where(a => a.Date < nextDay);
-            }
-
-            // مرتب‌سازی بر اساس تاریخ (نزولی)
-            var result = query.OrderByDescending(a => a.Date).ToList();
+            var result = await _assessmentReportService.GetAssessmentsAsync(
+                FilterLocation?.LocationID,
+                FilterLocationType?.LocationTypeID,
+                FilterStartDate?.DateTime.Date,
+                FilterEndDate?.DateTime.Date);
 
             Assessments.Clear();
             foreach (var item in result) Assessments.Add(item);
         }
 
         [RelayCommand]
-        private void ClearFilters()
+        private async Task ClearFilters()
         {
             FilterLocation = null;
             FilterLocationType = null;
             FilterStartDate = null;
             FilterEndDate = null;
-            ApplyFilters();
+            await ApplyFiltersAsync();
         }
 
         // =======================
@@ -146,17 +111,15 @@ namespace WaterAssessment.Models.ViewModel
 
             if (result == ContentDialogResult.Primary)
             {
-                try
-                {
-                    using var db = new WaterAssessmentContext();
-                    db.Assessments.Remove(item); // EF به صورت Cascade فرزندان را پاک می‌کند
-                    await db.SaveChangesAsync();
 
-                    Assessments.Remove(item); // حذف از لیست UI
-                }
-                catch (Exception ex)
+                var success = await _assessmentReportService.DeleteAssessmentAsync(item.AssessmentID);
+                if (success)
                 {
-                    // نمایش خطا (می‌توانید از InfoBar استفاده کنید)
+                    Assessments.Remove(item);
+                }
+                else
+                {
+                    // پیغام مورد نظر یافت نشد
                 }
             }
         }

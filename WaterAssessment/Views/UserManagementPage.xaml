@@ -1,63 +1,320 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="WaterAssessment.Views.UserManagementPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:models="using:WaterAssessment.Models"
     xmlns:viewModel="using:WaterAssessment.Models.ViewModel"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    x:Name="UserManagementPageRoot"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+    mc:Ignorable="d">
+    <Grid
+        x:Name="UserManagementGrid"
+        Padding="15"
+        FlowDirection="RightToLeft">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
 
-    <Page.DataContext>
-        <viewModel:UserManagementViewModel />
-    </Page.DataContext>
-
-    <Grid FlowDirection="RightToLeft" Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <!-- فرم افزودن کاربر جدید -->
-        <StackPanel Grid.Row="0" Spacing="10" Margin="0,0,0,20" MaxWidth="400">
-            <TextBlock Text="افزودن کاربر جدید" Style="{ThemeResource TitleTextBlockStyle}"/>
-            <TextBox Header="نام کاربری" Text="{Binding NewUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <PasswordBox x:Name="NewUserPasswordBox" Header="رمز عبور"/>
-            <TextBox Header="نام کامل" Text="{Binding NewFullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <ComboBox Header="نقش" SelectedItem="{Binding SelectedRole, Mode=TwoWay}">
-                <x:String>Admin</x:String>
-                <x:String>User</x:String>
-            </ComboBox>
-            <Button Content="افزودن کاربر" Command="{Binding AddUserCommand}" CommandParameter="{x:Bind NewUserPasswordBox}" HorizontalAlignment="Stretch"/>
+        <!--  فرم افزودن کاربر جدید  -->
+        <StackPanel
+            Grid.Row="0"
+            MaxWidth="600"
+            Margin="0,0,0,30"
+            Spacing="10">
+            <TextBlock
+                FontSize="25"
+                FontWeight="Bold"
+                Text="افزودن کاربر جدید" />
+            <TextBox Header="نام کاربری" Text="{x:Bind ViewModel.NewUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <PasswordBox
+                x:Name="NewUserPasswordBox"
+                Header="رمز عبور"
+                PasswordChanged="OnPasswordChanged" />
+            <TextBox Header="نام کامل" Text="{x:Bind ViewModel.NewFullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ComboBox
+                Header="نقش"
+                ItemsSource="{x:Bind ViewModel.Roles}"
+                SelectedItem="{x:Bind ViewModel.SelectedRole, Mode=TwoWay}" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Button
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.AddUserCommand}"
+                    CommandParameter="{x:Bind NewUserPasswordBox}"
+                    Content="{x:Bind ViewModel.AddEditButtonContent, Mode=OneWay}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+                <Button
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModel.ClearFormCommand}"
+                    CommandParameter="{x:Bind NewUserPasswordBox}"
+                    Content="پاک کردن"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+            <InfoBar
+                IsClosable="False"
+                IsOpen="{x:Bind ViewModel.IsInfoBarOpen, Mode=TwoWay}"
+                Message="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
+                Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=OneWay}" />
         </StackPanel>
+        <Grid
+            Grid.Column="1"
+            Width="520"
+            Margin="40,10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            DataContext="{x:Bind ViewModel}"
+            Style="{ThemeResource GridPanel}"
+            Translation="0 0 48">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid
+                Grid.Row="0"
+                MinHeight="48"
+                Background="{ThemeResource SystemAccentColor}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="52" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="68" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource SystemAltHighColor}"
+                    Text="ردیف" />
+                <Rectangle
+                    Grid.Column="0"
+                    Width="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Fill="{ThemeResource SystemBaseLowColor}"
+                    Opacity="0.5" />
+                <TextBlock
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource SystemAltHighColor}"
+                    Text="نام کاربری" />
+                <Rectangle
+                    Grid.Column="1"
+                    Width="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Fill="{ThemeResource SystemBaseLowColor}"
+                    Opacity="0.5" />
+                <TextBlock
+                    Grid.Column="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource SystemAltHighColor}"
+                    Text="نام" />
+                <Rectangle
+                    Grid.Column="2"
+                    Width="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Fill="{ThemeResource SystemBaseLowColor}"
+                    Opacity="0.5" />
+                <TextBlock
+                    Grid.Column="3"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource SystemAltHighColor}"
+                    Text="نقش" />
+                <Rectangle
+                    Grid.Column="3"
+                    Width="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Fill="{ThemeResource SystemBaseLowColor}"
+                    Opacity="0.5" />
+                <TextBlock
+                    Grid.Column="4"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource SystemAltHighColor}"
+                    Text="عملیات" />
 
-        <!-- لیست کاربران -->
-        <controls:DataGrid
+            </Grid>
+            <ListView
+                Name="UserListView"
+                Grid.Row="1"
+                ContainerContentChanging="UserListView_ContainerContentChanging"
+                ItemContainerStyle="{StaticResource HorizontalSwipe}"
+                ItemsSource="{x:Bind ViewModel.Users, Mode=OneWay}"
+                SelectedItem="{x:Bind ViewModel.SelectedUser, Mode=TwoWay}"
+                SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:User">
+                        <UserControl
+                            FontFamily="{StaticResource SamimFD}"
+                            PointerEntered="UserSwipeContainer_PointerEntered"
+                            PointerExited="UserSwipeContainer_PointerExited">
+                            <Grid Height="Auto">
+                                <SwipeControl Height="Auto">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="52" />
+                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="68" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            x:Name="IndexTextBlock"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Foreground="{ThemeResource SystemBaseHighColor}" />
+                                        <Rectangle
+                                            Grid.Column="0"
+                                            Width="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Fill="{ThemeResource SystemBaseLowColor}"
+                                            Opacity="0.5" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Bind Username}" />
+                                        <Rectangle
+                                            Grid.Column="1"
+                                            Width="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Fill="{ThemeResource SystemBaseLowColor}"
+                                            Opacity="0.5" />
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Bind FullName}" />
+                                        <Rectangle
+                                            Grid.Column="2"
+                                            Width="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Fill="{ThemeResource SystemBaseLowColor}" />
+                                        <TextBlock
+                                            Grid.Column="3"
+                                            Margin="5,0,0,0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Bind Role}" />
+                                        <Rectangle
+                                            Grid.Column="3"
+                                            Width="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Fill="{ThemeResource SystemBaseLowColor}" />
+                                        <AppBarButton
+                                            x:Name="btnHoverDeleteLocation"
+                                            Grid.Column="4"
+                                            Width="60"
+                                            Height="60"
+                                            HorizontalAlignment="Right"
+                                            Command="{Binding ElementName=UserListView, Path=DataContext.DeleteUserCommand}"
+                                            CommandParameter="{x:Bind}"
+                                            Icon="Delete"
+                                            IsTabStop="False"
+                                            Label="حذف"
+                                            Visibility="Collapsed">
+                                            <AppBarButton.Resources>
+                                                <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                            </AppBarButton.Resources>
+                                        </AppBarButton>
+                                        <!--<AppBarButton
+                                    x:Name="btnHoverEditLocation"
+                                    Grid.Column="4"
+                                    Width="60"
+                                    Height="60"
+                                    HorizontalAlignment="Left"
+                                    Command="{Binding ElementName=locationsListView, Path=DataContext.PrepareForEditCommand}"
+                                    CommandParameter="{x:Bind LocationID}"
+                                    Icon="Edit"
+                                    IsTabStop="False"
+                                    Label="ویرایش"
+                                    Visibility="Collapsed" />-->
+                                    </Grid>
+                                </SwipeControl>
+
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="HoveringStates">
+                                        <VisualState x:Name="HoverButtonsHidden" />
+                                        <VisualState x:Name="HoverButtonsShown">
+                                            <VisualState.Setters>
+                                                <Setter Target="btnHoverDeleteLocation.Visibility" Value="Visible" />
+                                                <!--<Setter Target="btnHoverEditLocation.Visibility" Value="Visible" />-->
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                        </UserControl>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+        <!--  لیست کاربران  -->
+        <!--<controls:DataGrid
+            x:Name="DataGridList"
             Grid.Row="1"
-            ItemsSource="{Binding Users}"
             AutoGenerateColumns="False"
             CanUserSortColumns="True"
-            IsReadOnly="True">
+            DataContext="{Binding ElementName=UserManagementPageRoot, Path=ViewModel}"
+            IsReadOnly="True"
+            ItemsSource="{x:Bind ViewModel.Users}"
+            SelectionMode="Single">
             <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Header="نام کاربری" Binding="{Binding Username}" Width="*"/>
-                <controls:DataGridTextColumn Header="نام کامل" Binding="{Binding FullName}" Width="*"/>
-                <controls:DataGridTextColumn Header="نقش" Binding="{Binding Role}" Width="SizeToCells"/>
-                <controls:DataGridTemplateColumn Header="عملیات">
+                <controls:DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Username}"
+                    Header="نام کاربری" />
+                <controls:DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding FullName}"
+                    Header="نام کامل" />
+                <controls:DataGridTextColumn
+                    Width="100"
+                    Binding="{Binding Role}"
+                    Header="نقش" />
+                <controls:DataGridTemplateColumn Width="180" Header="عملیات">
                     <controls:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="حذف" 
-                                    Command="{Binding DataContext.DeleteUserCommand, ElementName=UserManagementGrid}"
+                        <DataTemplate x:DataType="models:User">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Button
+                                    Command="{Binding ElementName=DataGridList, Path=DataContext.EditUserCommand}"
                                     CommandParameter="{Binding}"
-                                    Style="{ThemeResource AccentButtonStyle}"/>
+                                    Content="ویرایش"
+                                    FontSize="12" />
+
+                                <Button
+                                    Background="DarkRed"
+                                    Command="{Binding ElementName=UserManagementPageRoot, Path=DeleteUserCommand}"
+                                    CommandParameter="{Binding}"
+                                    Content="حذف"
+                                    FontSize="12"
+                                    Foreground="White" />
+                            </StackPanel>
                         </DataTemplate>
                     </controls:DataGridTemplateColumn.CellTemplate>
                 </controls:DataGridTemplateColumn>
             </controls:DataGrid.Columns>
-        </controls:DataGrid>
-
-        <!-- یک نام به گرید اصلی بدهید تا بتوانید به ViewModel آن از داخل DataTemplate دسترسی پیدا کنید -->
-        <Grid x:Name="UserManagementGrid" />
+        </controls:DataGrid>-->
     </Grid>
 </Page>

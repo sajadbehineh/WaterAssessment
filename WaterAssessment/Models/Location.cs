@@ -7,7 +7,7 @@ public class Location
 
     public int LocationTypeID { get; set; }
 
-    public LocationType LocationType { get; set; }
+    public virtual LocationType LocationType { get; set; }
 
     public int? GateCount { get; set; }
     public int? PumpCount { get; set; }

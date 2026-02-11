@@ -44,6 +44,7 @@ namespace WaterAssessment
             services.AddTransient<IAssessmentService, AssessmentService>();
             services.AddTransient<IAssessmentReportService, AssessmentReportService>();
             services.AddTransient<IFormValueService, FormValueService>();
+            services.AddTransient<IUserManagementService, UserManagementService>();
             services.AddTransient<IFormValueViewModelFactory, FormValueViewModelFactory>();
 
             // ثبت EmployeeViewModel به صورت Transient
@@ -54,6 +55,7 @@ namespace WaterAssessment
             services.AddTransient<LocationViewModel>();
             services.AddTransient<LocationTypeViewModel>();
             services.AddTransient<AssessmentReportViewModel>();
+            services.AddTransient<UserManagementViewModel>();
             services.AddDbContextFactory<WaterAssessmentContext>(options =>
                 options.UseSqlServer(ConnectionString));
 

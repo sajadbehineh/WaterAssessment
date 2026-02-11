@@ -7,6 +7,7 @@
     xmlns:converters="using:WaterAssessment.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:WaterAssessment.Helpers"
+    xmlns:localControls="using:WaterAssessment.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
     FlowDirection="RightToLeft"
@@ -28,6 +29,13 @@
             x:Name="PropellerTab"
             Header="ثبت اطلاعات پروانه ها"
             IsClosable="False">
+            <TabViewItem.Resources>
+                <converters:RowIndexConverter
+                    x:Key="RowIndexConverter"
+                    CurrentPage="{x:Bind PropellerViewModel.CurrentPage, Mode=OneWay}"
+                    ItemsSource="{x:Bind PropellerViewModel.Propellers, Mode=OneWay}"
+                    PageSize="10" />
+            </TabViewItem.Resources>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="220" />
@@ -268,15 +276,6 @@
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
-
-                <!--<StackPanel
-                    x:Name="propellerInfoPanel"
-                    Grid.Row="2"
-                    Padding="15"
-                    Spacing="10">
-
-                </StackPanel>-->
-
                 <Grid
                     Grid.Row="2"
                     Width="960"
@@ -289,6 +288,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid
                         Grid.Row="0"
@@ -446,7 +446,6 @@
                         Name="PropellerListView"
                         Grid.Row="1"
                         BorderThickness="0"
-                        ContainerContentChanging="PropellerListView_ContainerContentChanging"
                         ItemContainerStyle="{StaticResource HorizontalSwipe}"
                         ItemsSource="{x:Bind PropellerViewModel.Propellers, Mode=OneWay}"
                         SelectedItem="{x:Bind PropellerViewModel.SelectedPropeller, Mode=TwoWay}"
@@ -480,110 +479,48 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontSize="12"
-                                                    Foreground="{ThemeResource SystemBaseHighColor}" />
-                                                <Rectangle
-                                                    Grid.Column="0"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
+                                                    Foreground="{ThemeResource SystemBaseHighColor}"
+                                                    Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
                                                 <TextBlock
                                                     Grid.Column="1"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind PropellerName}" />
-                                                <Rectangle
-                                                    Grid.Column="1"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
                                                 <TextBlock
                                                     Grid.Column="2"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind A1}" />
-                                                <Rectangle
-                                                    Grid.Column="2"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
                                                 <TextBlock
                                                     Grid.Column="3"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind B1}" />
-                                                <Rectangle
-                                                    Grid.Column="3"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
                                                 <TextBlock
                                                     Grid.Column="4"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind TransitionPoint1}" />
-                                                <Rectangle
-                                                    Grid.Column="4"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
                                                 <TextBlock
                                                     Grid.Column="5"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind A2}" />
-                                                <Rectangle
-                                                    Grid.Column="5"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
                                                 <TextBlock
                                                     Grid.Column="6"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind B2}" />
-                                                <Rectangle
-                                                    Grid.Column="6"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
                                                 <TextBlock
                                                     Grid.Column="7"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind TransitionPoint2}" />
-                                                <Rectangle
-                                                    Grid.Column="7"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
                                                 <TextBlock
                                                     Grid.Column="8"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind A3}" />
-                                                <Rectangle
-                                                    Grid.Column="8"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}"
-                                                    Opacity="0.5" />
                                                 <TextBlock
                                                     Grid.Column="9"
                                                     HorizontalAlignment="Center"
@@ -607,20 +544,6 @@
                                                         <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
                                                     </AppBarButton.Resources>
                                                 </AppBarButton>
-
-                                                <!--<AppBarButton
-                                                    x:Name="btnHoverEditPropeller"
-                                                    Grid.Column="11"
-                                                    Width="60"
-                                                    Height="60"
-                                                    HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=PropellerListView, Path=DataContext.PrepareForEditCommand}"
-                                                    CommandParameter="{x:Bind PropellerID}"
-                                                    Icon="Edit"
-                                                    IsTabStop="False"
-                                                    Label="ویرایش"
-                                                    Visibility="Collapsed" />-->
-
                                             </Grid>
                                         </SwipeControl>
 
@@ -630,9 +553,6 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeletePropeller.Visibility" Value="Visible" />
-
-                                                        <!--<Setter Target="btnHoverEditPropeller.Visibility" Value="Visible" />-->
-
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>
@@ -641,17 +561,27 @@
                                 </UserControl>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-
-                        <ListView.HeaderTemplate>
-                            <DataTemplate />
-                        </ListView.HeaderTemplate>
-
                     </ListView>
+                    <localControls:PaginationControl
+                        Grid.Row="2"
+                        HorizontalAlignment="Center"
+                        CurrentPage="{x:Bind PropellerViewModel.CurrentPage, Mode=TwoWay}"
+                        FlowDirection="LeftToRight"
+                        PageChangedCommand="{x:Bind PropellerViewModel.PageChangedCommand}"
+                        PageSize="10"
+                        TotalItemCount="{x:Bind PropellerViewModel.TotalPropellers, Mode=OneWay}" />
                 </Grid>
             </Grid>
         </TabViewItem>
 
         <TabViewItem Header="ثبت مولینه ها" IsClosable="False">
+            <TabViewItem.Resources>
+                <converters:RowIndexConverter
+                    x:Key="RowIndexConverter"
+                    CurrentPage="{x:Bind CurrentMeterViewModel.CurrentPage, Mode=OneWay}"
+                    ItemsSource="{x:Bind CurrentMeterViewModel.CurrentMeters, Mode=OneWay}"
+                    PageSize="10" />
+            </TabViewItem.Resources>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="350" />
@@ -702,6 +632,7 @@
                         Spacing="10">
                         <Button
                             Name="BtnAddCurrentMeter"
+                            Width="80"
                             HorizontalAlignment="Left"
                             Command="{x:Bind CurrentMeterViewModel.AddCurrentMeterCommand}"
                             Content="{x:Bind CurrentMeterViewModel.AddEditBtnContent, Mode=OneWay}"
@@ -709,6 +640,7 @@
                             Style="{ThemeResource AccentButtonStyle}" />
                         <Button
                             Name="BtnClearCurrentMeterBox"
+                            Width="80"
                             HorizontalAlignment="Left"
                             Command="{x:Bind CurrentMeterViewModel.ClearFormCommand}"
                             Content="پاک کردن"
@@ -728,6 +660,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Grid
@@ -735,7 +668,7 @@
                         MinHeight="48"
                         Background="{ThemeResource SystemAccentColor}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="52" />
+                            <ColumnDefinition Width="Auto" MinWidth="52" />
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="150" />
                             <ColumnDefinition Width="150" />
@@ -825,7 +758,6 @@
                     <ListView
                         Name="CurrentMeterListView"
                         Grid.Row="1"
-                        ContainerContentChanging="CurrentMeterListView_ContainerContentChanging"
                         ItemContainerStyle="{StaticResource HorizontalSwipe}"
                         ItemsSource="{x:Bind CurrentMeterViewModel.CurrentMeters, Mode=OneWay}"
                         SelectedItem="{x:Bind CurrentMeterViewModel.SelectedCurrentMeter, Mode=TwoWay}"
@@ -840,7 +772,7 @@
                                         <SwipeControl>
                                             <Grid VerticalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="52" />
+                                                    <ColumnDefinition Width="Auto" MinWidth="52" />
                                                     <ColumnDefinition Width="100" />
                                                     <ColumnDefinition Width="150" />
                                                     <ColumnDefinition Width="150" />
@@ -855,37 +787,20 @@
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     FontSize="12"
-                                                    Foreground="{ThemeResource SystemBaseHighColor}" />
-                                                <Rectangle
-                                                    Grid.Column="0"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />
+                                                    Foreground="{ThemeResource SystemBaseHighColor}"
+                                                    Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
                                                 <TextBlock
                                                     Grid.Column="1"
                                                     Margin="5,0,0,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind CurrentMeterName}" />
-                                                <Rectangle
-                                                    Grid.Column="1"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />
                                                 <TextBlock
                                                     Grid.Column="2"
                                                     Margin="5,0,0,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
-                                                <Rectangle
-                                                    Grid.Column="2"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />
                                                 <TextBlock
                                                     Grid.Column="3"
                                                     Margin="5,0,0,0"
@@ -893,24 +808,12 @@
                                                     VerticalAlignment="Center"
                                                     FontSize="11"
                                                     Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                <Rectangle
-                                                    Grid.Column="3"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />
                                                 <TextBlock
                                                     Grid.Column="4"
                                                     Margin="5,0,0,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
-                                                <Rectangle
-                                                    Grid.Column="4"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />
                                                 <TextBlock
                                                     Grid.Column="5"
                                                     Margin="5,0,0,0"
@@ -918,18 +821,6 @@
                                                     VerticalAlignment="Center"
                                                     FontSize="11"
                                                     Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                <!--<AppBarButton
-                                                    x:Name="btnHoverEditCurrentMeter"
-                                                    Grid.Column="6"
-                                                    Width="60"
-                                                    Height="60"
-                                                    HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=CurrentMeterListView, Path=DataContext.PrepareForEditCommand}"
-                                                    CommandParameter="{x:Bind CurrentMeterID}"
-                                                    Icon="Edit"
-                                                    IsTabStop="False"
-                                                    Label="ویرایش"
-                                                    Visibility="Collapsed" />-->
                                                 <AppBarButton
                                                     x:Name="btnHoverDeleteCurrentMeter"
                                                     Grid.Column="6"
@@ -957,7 +848,6 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeleteCurrentMeter.Visibility" Value="Visible" />
-                                                        <!--<Setter Target="btnHoverEditCurrentMeter.Visibility" Value="Visible" />-->
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>
@@ -967,6 +857,14 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+                    <localControls:PaginationControl
+                        Grid.Row="2"
+                        HorizontalAlignment="Center"
+                        CurrentPage="{x:Bind CurrentMeterViewModel.CurrentPage, Mode=TwoWay}"
+                        FlowDirection="LeftToRight"
+                        PageChangedCommand="{x:Bind CurrentMeterViewModel.PageChangedCommand}"
+                        PageSize="10"
+                        TotalItemCount="{x:Bind CurrentMeterViewModel.TotalCurrentMeters, Mode=OneWay}" />
                 </Grid>
             </Grid>
         </TabViewItem>

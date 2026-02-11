@@ -6,12 +6,13 @@ using WaterAssessment.Services;
 
 namespace WaterAssessment.ViewModel
 {
-    public partial class AreaViewModel : ObservableObject
+    public partial class AreaViewModel : PagedViewModelBase<Area>
     {
         private readonly IAreaService _areaService;
         private readonly IDialogService _dialogService;
 
-        public ObservableCollection<Area> Areas { get; } = new();
+        public ObservableCollection<Area> Areas => PagedItems;
+        public int TotalAreas => TotalItems;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddAreaCommand))]
@@ -26,7 +27,7 @@ namespace WaterAssessment.ViewModel
         [ObservableProperty] private string _infoBarMessage = string.Empty;
         [ObservableProperty] private string _addEditBtnContent = "ذخیره";
 
-        public AreaViewModel(IAreaService areaService, IDialogService dialogService)
+        public AreaViewModel(IAreaService areaService, IDialogService dialogService) : base(pageSize: 10)
         {
             _areaService = areaService;
             _dialogService = dialogService;
@@ -136,12 +137,9 @@ namespace WaterAssessment.ViewModel
 
         private async Task LoadAreasAsync()
         {
-            var areas = await _areaService.GetAllAreasAsync();
-            Areas.Clear();
-            foreach (var area in areas)
-            {
-                Areas.Add(area);
-            }
+            var areasResult = await _areaService.GetAllAreasAsync();
+            SetItems(areasResult);
+            OnPropertyChanged(nameof(TotalAreas));
         }
 
         private bool ValidateInput()

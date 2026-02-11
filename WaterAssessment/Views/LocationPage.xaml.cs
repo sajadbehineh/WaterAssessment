@@ -16,9 +16,9 @@ public sealed partial class LocationPage : Page
         this.LocationViewModel = App.Services.GetRequiredService<LocationViewModel>();
         this.AreaViewModel = App.Services.GetRequiredService<AreaViewModel>();
         this.LocationTypeViewModel = App.Services.GetRequiredService<LocationTypeViewModel>();
-        AreaViewModel.Areas.CollectionChanged += Areas_CollectionChanged;
-        LocationViewModel.Locations.CollectionChanged += Locations_CollectionChanged;
-        LocationTypeViewModel.LocationTypes.CollectionChanged += LocationTypes_CollectionChanged;
+        //AreaViewModel.Areas.CollectionChanged += Areas_CollectionChanged;
+        //LocationViewModel.Locations.CollectionChanged += Locations_CollectionChanged;
+        //LocationTypeViewModel.LocationTypes.CollectionChanged += LocationTypes_CollectionChanged;
     }
 
     private void LocationTypes_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

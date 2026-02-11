@@ -14,8 +14,8 @@ public sealed partial class Propeller_CurrentMeterPage : Page
         DataContext = this;
         CurrentMeterViewModel = App.Services.GetRequiredService<CurrentMeterViewModel>();
         PropellerViewModel = App.Services.GetRequiredService<PropellerViewModel>();
-        PropellerViewModel.Propellers.CollectionChanged += Propeller_CollectionChanged;
-        CurrentMeterViewModel.CurrentMeters.CollectionChanged += CurrentMeter_CollectionChanged;
+        //PropellerViewModel.Propellers.CollectionChanged += Propeller_CollectionChanged;
+        //CurrentMeterViewModel.CurrentMeters.CollectionChanged += CurrentMeter_CollectionChanged;
     }
 
     private void Propeller_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

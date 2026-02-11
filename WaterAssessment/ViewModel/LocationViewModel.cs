@@ -6,12 +6,13 @@ using WaterAssessment.Services;
 
 namespace WaterAssessment.ViewModel
 {
-    public partial class LocationViewModel : ObservableObject
+    public partial class LocationViewModel : PagedViewModelBase<Location>
     {
         private readonly ILocationService _locationService;
         private readonly IDialogService _dialogService;
 
-        public ObservableCollection<Location> Locations { get; } = new();
+        public ObservableCollection<Location> Locations => PagedItems;
+        public int TotalLocations => TotalItems;
 
         public ObservableCollection<LocationType> LocationTypes { get; } = new();
 
@@ -166,7 +167,7 @@ namespace WaterAssessment.ViewModel
         // ==========================================================
         // Constructor
         // ==========================================================
-        public LocationViewModel(ILocationService locationService, IDialogService dialogService)
+        public LocationViewModel(ILocationService locationService, IDialogService dialogService) : base(pageSize: 10)
         {
             _locationService = locationService;
             _dialogService = dialogService;
@@ -256,19 +257,6 @@ namespace WaterAssessment.ViewModel
             }
         }
 
-        //// دکمه مداد در لیست
-        //[RelayCommand]
-        //private void PrepareForEdit(int id)
-        //{
-        //    var loc = Locations.FirstOrDefault(l => l.LocationID == id);
-        //    if (loc != null)
-        //    {
-        //        SelectedLocation = loc; // تریگر کردن OnSelectedLocationChanged
-        //        SelectedLocationType = LocationTypes.FirstOrDefault(t => t.LocationTypeID == loc.LocationTypeID);
-        //        IsErrorVisible = false;
-        //    }
-        //}
-
         // دکمه انصراف
         [RelayCommand]
         private void ClearForm()
@@ -293,140 +281,11 @@ namespace WaterAssessment.ViewModel
             await LoadLocationTypesAsync();
         }
 
-        //private async Task InsertNewLocationAsync()
-        //{
-        //    if (string.IsNullOrWhiteSpace(LocationName))
-        //    {
-        //        ShowError("لطفاً نام مکان را وارد کنید.");
-        //        return;
-        //    }
-
-        //    if (SelectedAreaForInput == null)
-        //    {
-        //        ShowError("لطفاً حوزه آبریز را انتخاب کنید.");
-        //        return;
-        //    }
-
-        //    if (SelectedLocationType == null)
-        //    {
-        //        ShowError("لطفاً نوع مکان (کانال/زهکش و...) را انتخاب کنید.");
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        using var db = new WaterAssessmentContext();
-
-        //        // چک تکراری بودن (نام مکان در همان حوزه نباید تکراری باشد)
-        //        bool exists = await db.Locations.AnyAsync(l =>
-        //            l.LocationName == LocationName &&
-        //            l.AreaID == SelectedAreaForInput!.AreaID);
-
-        //        if (exists)
-        //        {
-        //            ShowError("این مکان قبلاً در این حوزه ثبت شده است.");
-        //            return;
-        //        }
-
-        //        var newLocation = new Location
-        //        {
-        //            LocationName = LocationName,
-        //            AreaID = SelectedAreaForInput.AreaID, // آی‌دی را از کمبوباکس می‌گیریم
-        //                                                  // نکته: Area = ... را ست نمی‌کنیم، فقط ID کافیست.
-        //                                                  // اما برای نمایش درست در UI، باید آبجکت Area را هم داشته باشیم
-        //            LocationTypeID = SelectedLocationType.LocationTypeID,
-        //            GateCount = GateCount
-        //        };
-
-        //        db.Locations.Add(newLocation);
-        //        await db.SaveChangesAsync();
-
-        //        // برای اینکه در لیست UI نام حوزه درست نمایش داده شود، آبجکت Area را دستی ست می‌کنیم
-        //        newLocation.Area = SelectedAreaForInput;
-        //        newLocation.LocationType = SelectedLocationType;
-
-        //        Locations.Add(newLocation);
-
-        //        ResetInputs();
-        //        ShowSuccess("مکان جدید با موفقیت ثبت شد.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ShowError($"خطا در ثبت: {ex.Message}");
-        //    }
-        //}
-
-        //private async Task UpdateExistingLocationAsync()
-        //{
-        //    if (SelectedLocation == null) return;
-
-        //    if (SelectedLocationType == null)
-        //    {
-        //        ShowError("لطفاً نوع مکان را انتخاب کنید.");
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        using var db = new WaterAssessmentContext();
-        //        var locToEdit = await db.Locations.FindAsync(SelectedLocation!.LocationID);
-
-        //        if (locToEdit == null)
-        //        {
-        //            ShowError("رکورد پیدا نشد.");
-        //            return;
-        //        }
-
-        //        // چک تکراری هنگام ویرایش
-        //        bool isDuplicate = await db.Locations.AnyAsync(l =>
-        //            l.LocationName == LocationName &&
-        //            l.AreaID == SelectedAreaForInput!.AreaID &&
-        //            l.LocationID != SelectedLocation.LocationID);
-
-        //        if (isDuplicate)
-        //        {
-        //            ShowError("نام مکان تکراری است.");
-        //            return;
-        //        }
-
-        //        // اعمال تغییرات
-        //        locToEdit.LocationName = LocationName;
-        //        locToEdit.AreaID = SelectedAreaForInput!.AreaID;
-        //        locToEdit.LocationTypeID = SelectedLocationType.LocationTypeID;
-        //        locToEdit.GateCount = GateCount;
-
-        //        await db.SaveChangesAsync();
-
-        //        // آپدیت UI
-        //        SelectedLocation.LocationName = LocationName;
-        //        SelectedLocation.AreaID = SelectedAreaForInput.AreaID;
-        //        SelectedLocation.Area = SelectedAreaForInput; // آپدیت نویگیشن پراپرتی برای نمایش
-        //        SelectedLocation.LocationTypeID = SelectedLocationType.LocationTypeID;
-        //        SelectedLocation.LocationType = SelectedLocationType;
-
-        //        SelectedLocation.GateCount = GateCount;
-
-        //        // رفرش لیست
-        //        int index = Locations.IndexOf(SelectedLocation);
-        //        if (index != -1) Locations[index] = SelectedLocation;
-
-        //        ResetInputs();
-        //        ShowSuccess("ویرایش انجام شد.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ShowError($"خطا در ویرایش: {ex.Message}");
-        //    }
-        //}
-
         private async Task LoadLocationsAsync()
         {
-            var locations = await _locationService.GetAllLocationsAsync();
-            Locations.Clear();
-            foreach (var location in locations)
-            {
-                Locations.Add(location);
-            }
+            var locationsResult = await _locationService.GetAllLocationsAsync();
+            SetItems(locationsResult);
+            OnPropertyChanged(nameof(TotalLocations));
         }
 
         private async Task LoadAreasAsync()
@@ -448,30 +307,6 @@ namespace WaterAssessment.ViewModel
                 LocationTypes.Add(type);
             }
         }
-
-        //private void ResetInputs()
-        //{
-        //    SelectedLocation = null;
-        //    LocationName = string.Empty;
-        //    SelectedLocationType = null;
-        //    SelectedAreaForInput = null; // کمبوباکس را خالی کن
-        //    AddEditBtnContent = "ذخیره";
-        //    GateCount = 1;
-        //}
-
-        //private void ShowError(string message)
-        //{
-        //    InfoBarMessage = message;
-        //    InfoBarSeverity = InfoBarSeverity.Error;
-        //    IsErrorVisible = true;
-        //}
-
-        //private void ShowSuccess(string message)
-        //{
-        //    InfoBarMessage = message;
-        //    InfoBarSeverity = InfoBarSeverity.Success;
-        //    IsErrorVisible = true;
-        //}
 
         private async Task ShowMessageAsync(string message, InfoBarSeverity severity, int durationSeconds = 4)
         {

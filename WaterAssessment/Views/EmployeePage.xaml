@@ -16,7 +16,7 @@
         <converters:RowIndexConverter
             x:Key="RowIndexConverter"
             CurrentPage="{x:Bind ViewModel.CurrentPage, Mode=OneWay}"
-            EmployeesSource="{x:Bind ViewModel.Employees, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.Employees, Mode=OneWay}"
             PageSize="10" />
     </Page.Resources>
 
@@ -247,48 +247,24 @@
                                                     FontSize="12"
                                                     Foreground="{ThemeResource SystemBaseHighColor}"
                                                     Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
-                                                <!--<Rectangle
-                                                    Grid.Column="0"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />-->
                                                 <TextBlock
                                                     Grid.Column="1"
                                                     Margin="5,0,0,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind FirstName}" />
-                                                <!--<Rectangle
-                                                    Grid.Column="1"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />-->
                                                 <TextBlock
                                                     Grid.Column="2"
                                                     Margin="5,0,0,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind LastName}" />
-                                                <!--<Rectangle
-                                                    Grid.Column="2"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />-->
                                                 <TextBlock
                                                     Grid.Column="3"
                                                     Margin="5,0,0,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
-                                                <!--<Rectangle
-                                                    Grid.Column="3"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />-->
                                                 <TextBlock
                                                     Grid.Column="4"
                                                     Margin="5,0,0,0"
@@ -296,24 +272,12 @@
                                                     VerticalAlignment="Center"
                                                     FontSize="11"
                                                     Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                <!--<Rectangle
-                                                    Grid.Column="4"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />-->
                                                 <TextBlock
                                                     Grid.Column="5"
                                                     Margin="5,0,0,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
-                                                <!--<Rectangle
-                                                    Grid.Column="5"
-                                                    Width="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Stretch"
-                                                    Fill="{ThemeResource SystemBaseLowColor}" />-->
                                                 <TextBlock
                                                     Grid.Column="6"
                                                     Margin="5,0,0,0"
@@ -321,20 +285,6 @@
                                                     VerticalAlignment="Center"
                                                     FontSize="11"
                                                     Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-
-                                                <AppBarButton
-                                                    x:Name="btnHoverEditEmployee"
-                                                    Grid.Column="7"
-                                                    Width="60"
-                                                    Height="60"
-                                                    HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=EmployeeListView, Path=DataContext.AddEmployeeCommand}"
-                                                    CommandParameter="{x:Bind EmployeeID}"
-                                                    Icon="Edit"
-                                                    IsTabStop="False"
-                                                    Label="ویرایش"
-                                                    Visibility="Collapsed" />
-
                                                 <AppBarButton
                                                     x:Name="btnHoverDeleteEmployee"
                                                     Grid.Column="8"
@@ -362,9 +312,6 @@
                                                 <VisualState x:Name="HoverButtonsShown">
                                                     <VisualState.Setters>
                                                         <Setter Target="btnHoverDeleteEmployee.Visibility" Value="Visible" />
-
-                                                        <!--<Setter Target="btnHoverEditEmployee.Visibility" Value="Visible" />-->
-
                                                     </VisualState.Setters>
                                                 </VisualState>
                                             </VisualStateGroup>

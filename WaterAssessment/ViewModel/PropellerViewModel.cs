@@ -6,10 +6,11 @@ using WaterAssessment.Services;
 
 namespace WaterAssessment.ViewModel;
 
-public partial class PropellerViewModel : ObservableObject
+public partial class PropellerViewModel : PagedViewModelBase<Propeller>
 {
     private readonly IPropellerService _propellerService;
-    public ObservableCollection<Propeller> Propellers { get; } = new();
+    public ObservableCollection<Propeller> Propellers => PagedItems;
+    public int TotalPropellers => TotalItems;
 
     // لیست گزینه‌ها برای ComboBox انتخاب نوع کالیبراسیون
     public List<CalibrationMode> CalibrationModes { get; } = Enum.GetValues(typeof(CalibrationMode)).Cast<CalibrationMode>().ToList();
@@ -72,7 +73,7 @@ public partial class PropellerViewModel : ObservableObject
     [ObservableProperty] private InfoBarSeverity _infoBarSeverity;
     [ObservableProperty] private string _infoBarMessage = string.Empty;
 
-    public PropellerViewModel(IPropellerService propellerService)
+    public PropellerViewModel(IPropellerService propellerService) : base(pageSize: 10)
     {
         _propellerService = propellerService;
         SelectedOption = CalibrationOptions.First();
@@ -139,122 +140,7 @@ public partial class PropellerViewModel : ObservableObject
         {
             _ = ShowError(_propellerService.GetLastErrorMessage());
         }
-        //if (string.IsNullOrWhiteSpace(PropellerName)) return;
-
-        //// اعتبارسنجی نقاط شکست (T1 باید کوچکتر از T2 باشد)
-        //if (SelectedMode == CalibrationMode.ThreeEquations &&
-        //    TransitionPoint1.HasValue && TransitionPoint2.HasValue &&
-        //    TransitionPoint1 >= TransitionPoint2)
-        //{
-        //    ShowError("نقطه شکست اول باید کوچکتر از نقطه شکست دوم باشد.");
-        //    return;
-        //}
-
-        //try
-        //{
-        //    using var db = new WaterAssessmentContext();
-        //    var modeToSave = SelectedOption.Mode;
-        //    if (SelectedPropeller == null)
-        //    {
-        //        // افزودن جدید
-        //        var newProp = new Propeller
-        //        {
-        //            PropellerName = PropellerName,
-        //            Mode = modeToSave,
-        //            A1 = A1,
-        //            B1 = B1,
-        //            // فقط اگر مد مربوطه فعال باشد مقادیر را ذخیره می‌کنیم
-        //            TransitionPoint1 = IsSection2Visible ? TransitionPoint1 : null,
-        //            A2 = IsSection2Visible ? A2 : null,
-        //            B2 = IsSection2Visible ? B2 : null,
-        //            TransitionPoint2 = IsSection3Visible ? TransitionPoint2 : null,
-        //            A3 = IsSection3Visible ? A3 : null,
-        //            B3 = IsSection3Visible ? B3 : null
-        //        };
-        //        db.Propellers.Add(newProp);
-        //        await db.SaveChangesAsync();
-        //        Propellers.Add(newProp);
-
-        //        ResetInputs();
-        //        ShowSuccess("پروانه مورد نظر با موفقیت ثبت شد.");
-        //    }
-        //    else
-        //    {
-        //        // ویرایش
-        //        var propellerToEdit = await db.Propellers.FindAsync(SelectedPropeller.PropellerID);
-        //        if (propellerToEdit == null)
-        //        {
-        //            ShowError("این رکورد یافت نشد");
-        //            return;
-        //        }
-
-        //        bool isDuplicate = await db.Propellers
-        //            .AnyAsync(a => a.PropellerName == PropellerName && a.PropellerID != SelectedPropeller.PropellerID);
-        //        if (isDuplicate)
-        //        {
-        //            ShowError("پروانه وارد شده تکراری است.");
-        //            return;
-        //        }
-
-        //        propellerToEdit.PropellerName = PropellerName;
-        //        propellerToEdit.Mode = SelectedMode;
-        //        propellerToEdit.A1 = A1; propellerToEdit.B1 = B1;
-
-        //        propellerToEdit.TransitionPoint1 = IsSection2Visible ? TransitionPoint1 : null;
-        //        propellerToEdit.A2 = IsSection2Visible ? A2 : null;
-        //        propellerToEdit.B2 = IsSection2Visible ? B2 : null;
-
-        //        propellerToEdit.TransitionPoint2 = IsSection3Visible ? TransitionPoint2 : null;
-        //        propellerToEdit.A3 = IsSection3Visible ? A3 : null;
-        //        propellerToEdit.B3 = IsSection3Visible ? B3 : null;
-
-        //        await db.SaveChangesAsync();
-
-        //        var updatedUiModel = new Propeller
-        //        {
-        //            PropellerID = SelectedPropeller.PropellerID,
-        //            PropellerName = PropellerName,              // نام جدید
-        //            Mode = SelectedMode,                        // مد جدید
-        //            A1 = A1,
-        //            B1 = B1,
-        //            TransitionPoint1 = IsSection2Visible ? TransitionPoint1 : null,
-        //            A2 = IsSection2Visible ? A2 : null,
-        //            B2 = IsSection2Visible ? B2 : null,
-        //            TransitionPoint2 = IsSection3Visible ? TransitionPoint2 : null,
-        //            A3 = IsSection3Visible ? A3 : null,
-        //            B3 = IsSection3Visible ? B3 : null,
-        //        };
-
-        //        // پیدا کردن جایگاه آیتم در لیست
-        //        int index = Propellers.IndexOf(SelectedPropeller);
-
-        //        if (index != -1)
-        //        {
-        //            // جایگزینی با شیء جدید -> این خط باعث آپدیت آنی در ListView می‌شود
-        //            Propellers[index] = updatedUiModel;
-        //        }
-
-        //        ResetInputs();
-        //        ShowSuccess("ویرایش با موفقیت انجام شد.");
-        //    }
-        //}
-        //catch (Exception ex)
-        //{
-        //    ShowError($"خطا در ثبت: {ex.Message}");
-        //}
     }
-
-    // دکمه مداد در لیست
-    //[RelayCommand]
-    //private void PrepareForEdit(int id)
-    //{
-    //    var propeller = Propellers.FirstOrDefault(p => p.PropellerID == id);
-    //    if (propeller != null)
-    //    {
-    //        SelectedPropeller = propeller; // تریگر کردن OnSelectedLocationChanged
-    //        IsErrorVisible = false;
-    //    }
-    //}
 
     [RelayCommand]
     private void ClearForm()
@@ -270,18 +156,6 @@ public partial class PropellerViewModel : ObservableObject
         AddEditBtnContent = "ذخیره";
         IsErrorVisible = false;
     }
-
-    //private void ResetInputs()
-    //{
-    //    SelectedPropeller = null;
-    //    PropellerName = string.Empty;
-    //    SelectedOption = CalibrationOptions.First();
-    //    A1 = 0; B1 = 0;
-    //    TransitionPoint1 = null; A2 = null; B2 = null;
-    //    TransitionPoint2 = null; A3 = null; B3 = null;
-    //    AddEditBtnContent = "ذخیره";
-    //    IsErrorVisible = false;
-    //}
 
     [RelayCommand]
     private async Task DeletePropellerAsync(int id)
@@ -301,9 +175,9 @@ public partial class PropellerViewModel : ObservableObject
 
     private async Task LoadPropellersAsync()
     {
-        var list = await _propellerService.GetAllPropellersAsync();
-        Propellers.Clear();
-        foreach (var propeller in list) Propellers.Add(propeller);
+        var propellersResult = await _propellerService.GetAllPropellersAsync();
+        SetItems(propellersResult);
+        OnPropertyChanged(nameof(TotalPropellers));
     }
 
     private async Task ShowError(string msg, int durationSeconds = 4)

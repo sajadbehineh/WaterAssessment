@@ -1,15 +1,17 @@
-﻿using System.Collections.Specialized;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Specialized;
 
 namespace WaterAssessment.Views
 {
     public sealed partial class UserManagementPage : Page
     {
-        public UserManagementViewModel ViewModel { get; } = new();
+        public UserManagementViewModel ViewModel { get; }
         public UserManagementPage()
         {
             InitializeComponent();
-            ViewModel.Users.CollectionChanged += Users_CollectionChanged;
-            this.DataContext = ViewModel;
+            ViewModel = App.Services.GetRequiredService<UserManagementViewModel>();
+            //ViewModel.Users.CollectionChanged += Users_CollectionChanged;
+            DataContext = ViewModel;
         }
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)

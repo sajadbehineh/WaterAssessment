@@ -4,11 +4,12 @@ using WaterAssessment.Services;
 
 namespace WaterAssessment.ViewModel
 {
-    public partial class CurrentMeterViewModel : ObservableObject
+    public partial class CurrentMeterViewModel : PagedViewModelBase<CurrentMeter>
     {
         private readonly ICurrentMeterService _currentMeterService;
         private readonly IDialogService _dialogService;
-        public ObservableCollection<CurrentMeter> CurrentMeters { get; } = new();
+        public ObservableCollection<CurrentMeter> CurrentMeters => PagedItems;
+        public int TotalCurrentMeters => TotalItems;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddCurrentMeterCommand))]
@@ -26,7 +27,7 @@ namespace WaterAssessment.ViewModel
 
         [ObservableProperty] private string _addEditBtnContent = "ذخیره";
 
-        public CurrentMeterViewModel(ICurrentMeterService currentMeterService, IDialogService dialogService)
+        public CurrentMeterViewModel(ICurrentMeterService currentMeterService, IDialogService dialogService) : base(pageSize: 10)
         {
             _currentMeterService = currentMeterService;
             _dialogService = dialogService;
@@ -126,12 +127,9 @@ namespace WaterAssessment.ViewModel
 
         private async Task LoadCurrentMetersAsync()
         {
-            var currentMeters = await _currentMeterService.GetAllCurrentMetersAsync();
-            CurrentMeters.Clear();
-            foreach (var currentMeter in currentMeters)
-            {
-                CurrentMeters.Add(currentMeter);
-            }
+            var currentMetersResult = await _currentMeterService.GetAllCurrentMetersAsync();
+            SetItems(currentMetersResult);
+            OnPropertyChanged(nameof(TotalCurrentMeters));
         }
 
         private bool ValidateInput()

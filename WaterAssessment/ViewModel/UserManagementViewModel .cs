@@ -7,11 +7,13 @@ using User = WaterAssessment.Models.User;
 
 namespace WaterAssessment.ViewModel
 {
-    public partial class UserManagementViewModel : ObservableObject
+    public partial class UserManagementViewModel : PagedViewModelBase<User>
     {
+        private readonly IUserManagementService _userManagementService;
         private readonly IDialogService _dialogService;
 
-        public ObservableCollection<User> Users { get; } = new();
+        public ObservableCollection<User> Users => PagedItems;
+        public int TotalUsers => TotalItems;
 
         public ObservableCollection<string> Roles { get; } = ["Admin", "User"];
 
@@ -25,7 +27,7 @@ namespace WaterAssessment.ViewModel
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddUserCommand))]
-        private string _selectedRole = "User"; // مقدار پیش‌فرض
+        private string _selectedRole = "User";
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddUserCommand))]
@@ -36,33 +38,33 @@ namespace WaterAssessment.ViewModel
         [ObservableProperty] private string _infoBarMessage = string.Empty;
         [ObservableProperty] private string _addEditButtonContent = "افزودن کاربر";
 
-        public UserManagementViewModel()
+        public UserManagementViewModel(IUserManagementService userManagementService, IDialogService dialogService) : base(pageSize: 10)
         {
+            _userManagementService = userManagementService;
+            _dialogService = dialogService;
             _ = LoadUsersAsync();
         }
 
         [RelayCommand]
         private async Task LoadUsersAsync()
         {
-            try
+            var userList = await _userManagementService.GetAllUsersAsync();
+            SetItems(userList);
+            OnPropertyChanged(nameof(TotalUsers));
+
+            if (!userList.Any())
             {
-                using var db = new WaterAssessmentContext();
-                var userList = await db.Users.AsNoTracking().ToListAsync();
-                Users.Clear();
-                foreach (var user in userList)
+                var error = _userManagementService.GetLastErrorMessage();
+                if (!string.IsNullOrWhiteSpace(error))
                 {
-                    Users.Add(user);
+                    await ShowMessageAsync(error, InfoBarSeverity.Error);
                 }
-            }
-            catch (Exception ex)
-            {
-                await ShowMessageAsync($"خطا در بارگذاری: {ex.Message}", InfoBarSeverity.Error);
             }
         }
 
         private bool CanAddUser(object? passwordBoxParam)
         {
-            var passwordBox = passwordBoxParam as Microsoft.UI.Xaml.Controls.PasswordBox;
+            var passwordBox = passwordBoxParam as PasswordBox;
             var password = passwordBox?.Password;
 
             return !string.IsNullOrWhiteSpace(NewUsername)
@@ -83,88 +85,50 @@ namespace WaterAssessment.ViewModel
                 return;
             }
 
-            using var db = new WaterAssessmentContext();
-
-            // بررسی تکراری بودن نام کاربری
-            var normalizedUsername = NewUsername.Trim().ToLower();
-            var duplicateUsername = await db.Users.AnyAsync(u =>
-                u.Username.ToLower() == normalizedUsername &&
-                (SelectedUser == null || u.UserID != SelectedUser.UserID));
-
-            if (duplicateUsername)
-            {
-                await ShowMessageAsync("این نام کاربری قبلاً توسط شخص دیگری انتخاب شده است.", InfoBarSeverity.Error);
-                return;
-            }
-
-            // ۲. بررسی تکراری بودن نام کامل (برای جلوگیری از ثبت دو اکانت برای یک نفر)
-            var normalizedFullName = NewFullName.Trim().ToLower();
-            var duplicateFullName = await db.Users.AnyAsync(u =>
-                u.FullName.ToLower() == normalizedFullName &&
-                (SelectedUser == null || u.UserID != SelectedUser.UserID));
-
-            if (duplicateFullName)
-            {
-                await ShowMessageAsync("کاربری با این نام و نام خانوادگی قبلاً در سیستم ثبت شده است.", InfoBarSeverity.Warning);
-                return;
-            }
-
             if (SelectedUser == null)
             {
-                // --- حالت افزودن ---
-                var newUser = new User
+                if (string.IsNullOrWhiteSpace(password))
                 {
-                    Username = NewUsername,
-                    FullName = NewFullName,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                    Role = SelectedRole
-                };
-
-                db.Users.Add(newUser);
-                await db.SaveChangesAsync();
-
-                // به جای لود مجدد کل لیست، فقط آیتم جدید را اضافه می‌کنیم
+                    await ShowMessageAsync("رمز عبور برای کاربر جدید الزامی است.", InfoBarSeverity.Warning);
+                    return;
+                }
+                var newUser = await _userManagementService.AddUserAsync(NewUsername, NewFullName, SelectedRole, password);
+                if (newUser == null)
+                {
+                    await ShowMessageAsync(_userManagementService.GetLastErrorMessage(), InfoBarSeverity.Error);
+                    return;
+                }
                 Users.Add(newUser);
                 ClearForm(passwordBox);
                 await ShowMessageAsync("کاربر با موفقیت اضافه شد.", InfoBarSeverity.Success);
+                return;
+            }
+
+            var updatedUser = await _userManagementService.UpdateUserAsync(
+                SelectedUser.UserID,
+                NewUsername,
+                NewFullName,
+                SelectedRole,
+                password);
+
+            if (updatedUser == null)
+            {
+                await ShowMessageAsync(_userManagementService.GetLastErrorMessage(), InfoBarSeverity.Error);
+                return;
+            }
+            var index = Users.IndexOf(SelectedUser);
+            if (index != -1)
+            {
+                Users.RemoveAt(index);
+                Users.Insert(index, updatedUser);
             }
             else
             {
-                // --- حالت ویرایش ---
-                var userToUpdate = await db.Users.FirstOrDefaultAsync(u => u.UserID == SelectedUser.UserID);
-                if (userToUpdate == null) return;
-
-                userToUpdate.Username = NewUsername;
-                userToUpdate.FullName = NewFullName;
-                userToUpdate.Role = SelectedRole;
-
-                if (!string.IsNullOrWhiteSpace(password))
-                {
-                    userToUpdate.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
-                }
-
-                await db.SaveChangesAsync();
-
-                // *** اصلاح خطای NotSupportedException ***
-                var index = Users.IndexOf(SelectedUser);
-                if (index != -1)
-                {
-                    // دیتاگرید از عملیات Replace (Users[i] = ...) پشتیبانی نمی‌کند.
-                    // راه حل: حذف و درج مجدد در همان مکان
-                    Users.RemoveAt(index);
-                    Users.Insert(index, userToUpdate);
-
-                    // انتخاب مجدد (اختیاری، برای جلوگیری از پرش انتخاب)
-                    // SelectedUser = userToUpdate; 
-                }
-                else
-                {
-                    // اگر ایندکس پیدا نشد (مثلاً فیلتر فعال است)، فقط رفرش کامل انجام بده
-                    await LoadUsersAsync();
-                }
-                ClearForm(passwordBox);
-                await ShowMessageAsync("کاربر با موفقیت ویرایش شد.", InfoBarSeverity.Success);
+                await LoadUsersAsync();
             }
+
+            ClearForm(passwordBox);
+            await ShowMessageAsync("کاربر با موفقیت ویرایش شد.", InfoBarSeverity.Success);
         }
 
         [RelayCommand]
@@ -172,53 +136,32 @@ namespace WaterAssessment.ViewModel
         {
             if (userToDelete == null) return;
 
-            // 1. نمایش دیالوگ تایید (UI Improvement)
-            ContentDialog deleteDialog = new ContentDialog
-            {
-                Title = "حذف کاربر",
-                Content = $"آیا از حذف کاربر «{userToDelete.Username}» اطمینان دارید؟",
-                PrimaryButtonText = "بله، حذف کن",
-                CloseButtonText = "انصراف",
-                DefaultButton = ContentDialogButton.Close,
-                FlowDirection = FlowDirection.RightToLeft,
-                XamlRoot = App.Current.themeService.CurrentWindow.Content.XamlRoot // دسترسی به XamlRoot اصلی
-            };
+            bool confirmed = await _dialogService.ShowConfirmationDialogAsync(
+                title: "حذف کاربر",
+                content: $"آیا از حذف کاربر «{userToDelete.Username}» اطمینان دارید؟",
+                primaryButtonText: "بله، حذف کن",
+                closeButtonText: "انصراف");
 
-            var result = await deleteDialog.ShowAsync();
-            if (result != ContentDialogResult.Primary) return;
+            if (!confirmed) return;
 
-            if (userToDelete.UserID == AppSession.CurrentUser?.UserID)
+            var success = await _userManagementService.DeleteUserAsync(
+                userToDelete.UserID,
+                AppSession.CurrentUser?.UserID);
+
+            if (!success)
             {
-                await ShowMessageAsync("امکان حذف کاربر جاری وجود ندارد.", InfoBarSeverity.Warning);
+                await ShowMessageAsync(_userManagementService.GetLastErrorMessage(), InfoBarSeverity.Warning);
                 return;
             }
 
-            try
+            Users.Remove(userToDelete);
+
+            if (SelectedUser?.UserID == userToDelete.UserID)
             {
-                using var db = new WaterAssessmentContext();
-
-                // 2. رفع باگ حذف: استفاده از Stub برای جلوگیری از خطای Tracking
-                // این روش بدون نیاز به Select کردن، مستقیماً دستور Delete را صادر می‌کند
-                var userStub = new User { UserID = userToDelete.UserID };
-                db.Entry(userStub).State = EntityState.Deleted;
-
-                await db.SaveChangesAsync();
-
-                // 3. حذف از لیست UI
-                Users.Remove(userToDelete);
-
-                // اگر کاربری که حذف شد در حالت ویرایش بود، فرم را پاک کن
-                if (SelectedUser?.UserID == userToDelete.UserID)
-                {
-                    ClearForm();
-                }
-
-                await ShowMessageAsync("کاربر حذف شد.", InfoBarSeverity.Success);
+                ClearForm();
             }
-            catch (Exception ex)
-            {
-                await ShowMessageAsync($"خطا در حذف: {ex.Message}", InfoBarSeverity.Error);
-            }
+
+            await ShowMessageAsync("کاربر حذف شد.", InfoBarSeverity.Success);
         }
 
         [RelayCommand]
@@ -238,7 +181,7 @@ namespace WaterAssessment.ViewModel
             IsInfoBarOpen = false;
             InfoBarMessage = string.Empty;
 
-            if (passwordBoxParam is Microsoft.UI.Xaml.Controls.PasswordBox passwordBox)
+            if (passwordBoxParam is PasswordBox passwordBox)
             {
                 passwordBox.Password = string.Empty;
             }

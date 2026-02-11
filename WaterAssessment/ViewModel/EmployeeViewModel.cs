@@ -4,12 +4,13 @@ using WaterAssessment.Services;
 
 namespace WaterAssessment.ViewModel
 {
-    public partial class EmployeeViewModel : ObservableObject
+    public partial class EmployeeViewModel : PagedViewModelBase<Employee>
     {
         private readonly IEmployeeService _employeeService;
         private readonly IDialogService _dialogService;
 
-        public ObservableCollection<Employee> Employees { get; } = new();
+        public ObservableCollection<Employee> Employees => PagedItems;
+        public int TotalEmployees => TotalItems;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddEmployeeCommand))]
@@ -23,60 +24,12 @@ namespace WaterAssessment.ViewModel
         [NotifyCanExecuteChangedFor(nameof(AddEmployeeCommand))]
         private string _lastName = string.Empty;
 
-        //================ Paging ====================
-
-        private List<Employee> _allEmployees = new();
-
-        [ObservableProperty]
-        private int _totalEmployees;
-
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(CanGoNext))]
-        [NotifyPropertyChangedFor(nameof(CanGoPrevious))]
-        private int _totalPages;
-
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(CanGoNext))]
-        [NotifyPropertyChangedFor(nameof(CanGoPrevious))]
-        private int _currentPage = 1;
-
-        private readonly int _pageSize = 10;
-
-        public bool CanGoPrevious => CurrentPage > 1;
-        public bool CanGoNext => CurrentPage < TotalPages;
-
-
-        [RelayCommand]
-        private void PageChanged(int newPage)
-        {
-            if (newPage > 0 && newPage <= TotalPages)
-            {
-                CurrentPage = newPage;
-                UpdatePagedData();
-            }
-        }
-
-        private void UpdatePagedData()
-        {
-            if (_allEmployees == null) return;
-
-            // با استفاده از LINQ، آیتم‌های صفحه فعلی را از لیست کامل استخراج می‌کنیم
-            var pagedData = _allEmployees.Skip((CurrentPage - 1) * _pageSize).Take(_pageSize);
-
-            Employees.Clear();
-            foreach (var emp in pagedData)
-            {
-                Employees.Add(emp);
-            }
-        }
-
-
         [ObservableProperty] private bool _isErrorVisible;
         [ObservableProperty] private InfoBarSeverity _infoBarSeverity;
         [ObservableProperty] private string _infoBarMessage = string.Empty;
         [ObservableProperty] private string _addEditBtnContent = "ذخیره";
 
-        public EmployeeViewModel(IEmployeeService employeeService, IDialogService dialogService)
+        public EmployeeViewModel(IEmployeeService employeeService, IDialogService dialogService) : base(pageSize: 10)
         {
             _employeeService = employeeService;
             _dialogService = dialogService;
@@ -179,17 +132,8 @@ namespace WaterAssessment.ViewModel
         private async Task LoadEmployeesAsync()
         {
             var employeesResult = await _employeeService.GetAllEmployeesAsync();
-            _allEmployees = employeesResult.ToList();
-            TotalEmployees = _allEmployees.Count;
-            TotalPages = (int)Math.Ceiling(TotalEmployees / (double)_pageSize);
-            if (TotalPages == 0) TotalPages = 1;
-
-            if (CurrentPage > TotalPages)
-            {
-                CurrentPage = TotalPages;
-            }
-
-            UpdatePagedData();
+            SetItems(employeesResult);
+            OnPropertyChanged(nameof(TotalEmployees));
         }
 
         private bool ValidateInput()

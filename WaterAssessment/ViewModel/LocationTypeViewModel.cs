@@ -6,11 +6,12 @@ using WaterAssessment.Services;
 
 namespace WaterAssessment.ViewModel
 {
-    public partial class LocationTypeViewModel : ObservableObject
+    public partial class LocationTypeViewModel : PagedViewModelBase<LocationType>
     {
         private readonly ILocationTypeService _locationTypeService;
         private readonly IDialogService _dialogService;
-        public ObservableCollection<LocationType> LocationTypes { get; } = new();
+        public ObservableCollection<LocationType> LocationTypes => PagedItems;
+        public int TotalLocationTypes => TotalItems;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddLocationTypeCommand))]
@@ -140,12 +141,9 @@ namespace WaterAssessment.ViewModel
 
         private async Task LoadLocationTypesAsync()
         {
-            var locTypes = await _locationTypeService.GetAllLocationTypesAsync();
-            LocationTypes.Clear();
-            foreach (var locType in locTypes)
-            {
-                LocationTypes.Add(locType);
-            }
+            var locTypesResult = await _locationTypeService.GetAllLocationTypesAsync();
+            SetItems(locTypesResult);
+            OnPropertyChanged(nameof(TotalLocationTypes));
         }
 
         private bool ValidateInput()

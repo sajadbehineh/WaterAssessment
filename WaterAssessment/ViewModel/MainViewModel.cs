@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using WaterAssessment.Core;
 using WaterAssessment.Messages;
 
-namespace WaterAssessment.Models.ViewModel
+namespace WaterAssessment.ViewModel
 {
     public partial class MainViewModel : ObservableObject, IRecipient<LoginSuccessMessage>
     {

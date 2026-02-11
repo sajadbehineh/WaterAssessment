@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using WaterAssessment.Messages;
 using WaterAssessment.Services;
 
-namespace WaterAssessment.Models.ViewModel
+namespace WaterAssessment.ViewModel
 {
     public partial class AreaViewModel : ObservableObject
     {

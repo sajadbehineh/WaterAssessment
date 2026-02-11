@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.ComponentModel;
 using WaterAssessment.Services;
 
-namespace WaterAssessment.Models.ViewModel
+namespace WaterAssessment.ViewModel
 {
     public partial class AssessmentViewModel : ObservableObject
     {

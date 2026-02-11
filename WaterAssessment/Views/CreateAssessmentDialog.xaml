@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:models="using:WaterAssessment.Models"
-    xmlns:viewModel="using:WaterAssessment.Models.ViewModel"
+    xmlns:viewModel="using:WaterAssessment.ViewModel"
     xmlns:wct="using:CommunityToolkit.WinUI.Controls"
     Title="شروع اندازه گیری جدید"
     CloseButtonText="انصراف"

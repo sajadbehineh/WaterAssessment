@@ -1,13 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace WaterAssessment.Models.ViewModel
+namespace WaterAssessment.ViewModel
 {
     // کلاس کمکی برای نگهداری مقادیر ورودی هر دریچه در UI
     public partial class GateInputViewModel : ObservableObject

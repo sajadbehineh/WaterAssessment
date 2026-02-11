@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using WaterAssessment.Services;
 
-namespace WaterAssessment.Models.ViewModel
+namespace WaterAssessment.ViewModel
 {
     public partial class FormValueViewModel : ObservableObject
     {

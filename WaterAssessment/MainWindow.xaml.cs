@@ -7,7 +7,7 @@ using WaterAssessment.Messages;
 using WaterAssessment.Models;
 using WaterAssessment.Services;
 using WaterAssessment.Views;
-using static WaterAssessment.Models.ViewModel.MainViewModel;
+using static WaterAssessment.ViewModel.MainViewModel;
 
 namespace WaterAssessment;
 

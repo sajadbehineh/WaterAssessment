@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using WaterAssessment.Services;
 
-namespace WaterAssessment.Models.ViewModel
+namespace WaterAssessment.ViewModel
 {
     public partial class EmployeeViewModel : ObservableObject
     {

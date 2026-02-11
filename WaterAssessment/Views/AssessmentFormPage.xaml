@@ -10,7 +10,7 @@
     xmlns:helpers="using:WaterAssessment.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
-    xmlns:viewmodels="using:WaterAssessment.Models.ViewModel"
+    xmlns:viewmodels="using:WaterAssessment.ViewModel"
     xmlns:wct="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:wuc="using:WinUICommunity"
     x:Name="MyPage"

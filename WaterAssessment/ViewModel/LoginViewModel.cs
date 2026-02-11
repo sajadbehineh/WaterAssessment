@@ -2,13 +2,11 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.UI.Xaml.Controls; // برای InfoBarSeverity
 using WaterAssessment.Core;
 using WaterAssessment.Messages;
-using WaterAssessment.Models;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using User = WaterAssessment.Models.User;
 
-namespace WaterAssessment.Models.ViewModel
+namespace WaterAssessment.ViewModel
 {
     public partial class LoginViewModel : ObservableObject
     {

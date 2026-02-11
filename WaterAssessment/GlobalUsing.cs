@@ -13,5 +13,5 @@ global using Microsoft.UI.Xaml.Input;
 global using Microsoft.UI.Xaml.Controls;
 global using WaterAssessment.Models;
 global using WaterAssessment.Helpers;
-global using WaterAssessment.Models.ViewModel;
+global using WaterAssessment.ViewModel;
 global using WinUICommunity;

@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Specialized;
+using System.Globalization;
+using Telerik.Data.Core;
 
 namespace WaterAssessment.Views;
 
 public sealed partial class EmployeePage : Page
 {
+    private Employee _lastHoveredItem;
     public EmployeeViewModel ViewModel { get; }
 
     public EmployeePage()
@@ -13,10 +16,12 @@ public sealed partial class EmployeePage : Page
         this.ViewModel = App.Services.GetRequiredService<EmployeeViewModel>();
         //DataContext = ViewModel;
         //Loaded += EmployeePage_Loaded;
-        ViewModel.Employees.CollectionChanged += Employees_CollectionChanged;
+        //ViewModel.Employees.CollectionChanged += Employees_CollectionChanged;
     }
 
-    // رویداد تغییر لیست (حذف/اضافه)
+
+
+    //رویداد تغییر لیست(حذف/اضافه)
     private void Employees_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         // فقط اگر چیزی اضافه، حذف یا لیست ریست شد، شماره‌ها را آپدیت کن
@@ -29,7 +34,7 @@ public sealed partial class EmployeePage : Page
         }
     }
 
-    // این متد فقط شماره سطرهایی که الان دیده می‌شوند را اصلاح می‌کند
+    //این متد فقط شماره سطرهایی که الان دیده می‌شوند را اصلاح می‌کند
     private void UpdateVisibleIndices()
     {
         // حلقه روی تمام آیتم‌های موجود در لیست
@@ -111,4 +116,62 @@ public sealed partial class EmployeePage : Page
         VisualStateManager.GoToState(
             sender as Control, "HoverButtonsHidden", true);
     }
+
+    private void BtnHoverDeleteEmployee_OnClick(object sender, RoutedEventArgs e)
+    {
+        var button = sender as FrameworkElement;
+        if (button == null) return;
+
+        var employeeToDelete = button.DataContext as Employee;
+        if (employeeToDelete == null) return;
+
+        if (this.ViewModel != null && this.ViewModel.RequestDeleteEmployeeCommand.CanExecute(employeeToDelete))
+        {
+            this.ViewModel.RequestDeleteEmployeeCommand.Execute(employeeToDelete);
+        }
+    }
+
+    //private void DataGrid_OnPointerMoved(object sender, PointerRoutedEventArgs e)
+    //{
+    //    // دریافت موقعیت موس نسبت به گرید
+    //    var point = e.GetCurrentPoint(dataGrid).Position;
+
+    //    // استفاده از سرویس HitTest تلریک برای پیدا کردن سطر زیر موس
+    //    var hitInfo = dataGrid.HitTestService.CellInfoFromPoint(point);
+
+    //    if (hitInfo != null && hitInfo.Item is Employee currentHoveredItem)
+    //    {
+    //        // اگر موس روی همان سطر قبلی است، کاری نکن
+    //        if (_lastHoveredItem == currentHoveredItem) return;
+
+    //        // غیرفعال کردن سطر قبلی
+    //        if (_lastHoveredItem != null)
+    //        {
+    //            _lastHoveredItem.IsHovered = false;
+    //        }
+
+    //        // فعال کردن سطر جدید
+    //        currentHoveredItem.IsHovered = true;
+    //        _lastHoveredItem = currentHoveredItem;
+    //    }
+    //    else
+    //    {
+    //        // اگر موس روی هیچ سطری نیست (مثلاً روی هدر یا فضای خالی)
+    //        ClearHover();
+    //    }
+    //}
+
+    //private void DataGrid_OnPointerExited(object sender, PointerRoutedEventArgs e)
+    //{
+    //    ClearHover();
+    //}
+
+    //private void ClearHover()
+    //{
+    //    if (_lastHoveredItem != null)
+    //    {
+    //        _lastHoveredItem.IsHovered = false;
+    //        _lastHoveredItem = null;
+    //    }
+    //}
 }

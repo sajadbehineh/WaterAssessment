@@ -69,11 +69,14 @@
                             Header="تعداد گشودگی"
                             IsDeleteButtonVisible="False"
                             Minimum="0"
-                            NumberFormatter="{StaticResource Df}"
                             NumberHorizontalAlignment="Center"
                             SpinButtonPlacementMode="Inline"
                             Visibility="{x:Bind LocationViewModel.HasGate, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                            Value="{x:Bind LocationViewModel.GateCountDouble, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Value="{x:Bind LocationViewModel.GateCountDouble, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <aKTools:NumberBoxEx.NumberFormatter>
+                                <helpers:FlexibleDoubleFormatter Decimals="0" />
+                            </aKTools:NumberBoxEx.NumberFormatter>
+                        </aKTools:NumberBoxEx>
 
                         <CheckBox Content="دارای ایستگاه پمپاژ" IsChecked="{x:Bind LocationViewModel.HasPump, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <aKTools:NumberBoxEx

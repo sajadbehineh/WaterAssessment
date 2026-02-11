@@ -7,6 +7,8 @@ namespace WaterAssessment.Models.ViewModel
     public partial class EmployeeViewModel : ObservableObject
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IDialogService _dialogService;
+
         public ObservableCollection<Employee> Employees { get; } = new();
 
         [ObservableProperty]
@@ -21,14 +23,63 @@ namespace WaterAssessment.Models.ViewModel
         [NotifyCanExecuteChangedFor(nameof(AddEmployeeCommand))]
         private string _lastName = string.Empty;
 
+        //================ Paging ====================
+
+        private List<Employee> _allEmployees = new();
+
+        [ObservableProperty]
+        private int _totalEmployees;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanGoNext))]
+        [NotifyPropertyChangedFor(nameof(CanGoPrevious))]
+        private int _totalPages;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanGoNext))]
+        [NotifyPropertyChangedFor(nameof(CanGoPrevious))]
+        private int _currentPage = 1;
+
+        private readonly int _pageSize = 10;
+
+        public bool CanGoPrevious => CurrentPage > 1;
+        public bool CanGoNext => CurrentPage < TotalPages;
+
+
+        [RelayCommand]
+        private void PageChanged(int newPage)
+        {
+            if (newPage > 0 && newPage <= TotalPages)
+            {
+                CurrentPage = newPage;
+                UpdatePagedData();
+            }
+        }
+
+        private void UpdatePagedData()
+        {
+            if (_allEmployees == null) return;
+
+            // با استفاده از LINQ، آیتم‌های صفحه فعلی را از لیست کامل استخراج می‌کنیم
+            var pagedData = _allEmployees.Skip((CurrentPage - 1) * _pageSize).Take(_pageSize);
+
+            Employees.Clear();
+            foreach (var emp in pagedData)
+            {
+                Employees.Add(emp);
+            }
+        }
+
+
         [ObservableProperty] private bool _isErrorVisible;
         [ObservableProperty] private InfoBarSeverity _infoBarSeverity;
         [ObservableProperty] private string _infoBarMessage = string.Empty;
         [ObservableProperty] private string _addEditBtnContent = "ذخیره";
 
-        public EmployeeViewModel(IEmployeeService employeeService)
+        public EmployeeViewModel(IEmployeeService employeeService, IDialogService dialogService)
         {
             _employeeService = employeeService;
+            _dialogService = dialogService;
 
             _ = LoadEmployeesAsync();
         }
@@ -67,12 +118,31 @@ namespace WaterAssessment.Models.ViewModel
         }
 
         [RelayCommand]
-        private async Task DeleteEmployee(int employeeId)
+        private async Task RequestDeleteEmployeeAsync(Employee employee)
         {
-            var success = await _employeeService.DeleteEmployeeAsync(employeeId);
+            if (employee == null) return;
+
+            // از سرویس دیالوگ برای نمایش پیغام تایید استفاده کنید
+            bool confirmed = await _dialogService.ShowConfirmationDialogAsync(
+                title: "تأیید عملیات حذف",
+                content: $"آیا از حذف کارمند «{employee.LastName}» اطمینان دارید؟\nاین عملیات غیرقابل بازگشت است.",
+                primaryButtonText: "بله، حذف کن",
+                closeButtonText: "انصراف"
+            );
+
+            // فقط در صورت تایید کاربر، حذف را ادامه دهید
+            if (confirmed)
+            {
+                await DeleteEmployee(employee);
+            }
+        }
+
+        private async Task DeleteEmployee(Employee employee)
+        {
+            var success = await _employeeService.DeleteEmployeeAsync(employee.EmployeeID);
             if (success)
             {
-                if (SelectedEmployee?.EmployeeID == employeeId) ClearForm();
+                if (SelectedEmployee?.EmployeeID == employee.EmployeeID) ClearForm();
                 await LoadEmployeesAsync();
                 await ShowMessageAsync("کارمند با موفقیت حذف شد.", InfoBarSeverity.Success);
             }
@@ -108,12 +178,18 @@ namespace WaterAssessment.Models.ViewModel
 
         private async Task LoadEmployeesAsync()
         {
-            var employees = await _employeeService.GetAllEmployeesAsync();
-            Employees.Clear();
-            foreach (var emp in employees)
+            var employeesResult = await _employeeService.GetAllEmployeesAsync();
+            _allEmployees = employeesResult.ToList();
+            TotalEmployees = _allEmployees.Count;
+            TotalPages = (int)Math.Ceiling(TotalEmployees / (double)_pageSize);
+            if (TotalPages == 0) TotalPages = 1;
+
+            if (CurrentPage > TotalPages)
             {
-                Employees.Add(emp);
+                CurrentPage = TotalPages;
             }
+
+            UpdatePagedData();
         }
 
         private bool ValidateInput()

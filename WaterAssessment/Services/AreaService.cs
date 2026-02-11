@@ -88,33 +88,12 @@ namespace WaterAssessment.Services
 
         public async Task<bool> DeleteAreaAsync(int areaID)
         {
-            try
-            {
-                using var db = _dbFactory.CreateDbContext();
-                var areaToDelete = await db.Areas.FindAsync(areaID);
-                if (areaToDelete == null)
-                {
-                    _lastErrorMessage = "حوزه مورد نظر برای حذف یافت نشد.";
-                    return false;
-                }
 
-                // بررسی وابستگی‌ها
-                bool hasDependents = await db.Locations.AnyAsync(l => l.AreaID == areaID);
-                if (hasDependents)
-                {
-                    _lastErrorMessage = "این حوزه دارای مکان‌های ثبت شده است. برای حذف، ابتدا باید مکان‌های مربوطه را حذف کنید.";
-                    return false;
-                }
+            using var db = _dbFactory.CreateDbContext();
 
-                db.Areas.Remove(areaToDelete);
-                await db.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _lastErrorMessage = $"خطا در حذف حوزه: {ex.Message}";
-                return false;
-            }
+            db.Areas.Remove(new Area() { AreaID = areaID });
+            await db.SaveChangesAsync();
+            return true;
         }
     }
 }

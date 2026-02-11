@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using WaterAssessment.Services;
+using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace WaterAssessment
 {
@@ -15,7 +16,13 @@ namespace WaterAssessment
         {
             this.InitializeComponent();
             ConfigureServices();
+            //UnhandledException += App_UnhandledException;
         }
+
+        //private void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         private void ConfigureServices()
         {
@@ -36,6 +43,8 @@ namespace WaterAssessment
             services.AddTransient<ILocationTypeService, LocationTypeService>();
             services.AddTransient<IAssessmentService, AssessmentService>();
             services.AddTransient<IAssessmentReportService, AssessmentReportService>();
+            services.AddTransient<IFormValueService, FormValueService>();
+            services.AddTransient<IFormValueViewModelFactory, FormValueViewModelFactory>();
 
             // ثبت EmployeeViewModel به صورت Transient
             services.AddTransient<EmployeeViewModel>();
@@ -58,7 +67,7 @@ namespace WaterAssessment
             //themeService = new ThemeService();
             themeService = App.Services.GetRequiredService<IThemeService>();
             themeService.Initialize(m_window);
-            themeService.ConfigBackdrop(BackdropType.DesktopAcrylic);
+            themeService.ConfigBackdrop(BackdropType.Mica);
             themeService.ConfigElementTheme(ElementTheme.Default);
             themeService.ConfigBackdropFallBackColorForWindow10(Current.Resources["ApplicationPageBackgroundThemeBrush"] as Brush);
 

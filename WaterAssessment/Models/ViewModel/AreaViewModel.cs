@@ -98,17 +98,17 @@ namespace WaterAssessment.Models.ViewModel
 
         private async Task DeleteAreaAsync(Area area)
         {
-            var success = await _areaService.DeleteAreaAsync(area.AreaID);
-            if (success)
+            try
             {
+                var success = await _areaService.DeleteAreaAsync(area.AreaID);
                 WeakReferenceMessenger.Default.Send(new AreaDeletedMessage(area));
                 if (SelectedArea?.AreaID == area.AreaID) ClearForm();
                 await LoadAreasAsync();
                 await ShowMessageAsync("حوزه با موفقیت حذف شد.", InfoBarSeverity.Success);
             }
-            else
+            catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException)
             {
-                await ShowMessageAsync(_areaService.GetLastErrorMessage(), InfoBarSeverity.Warning);
+                await ShowMessageAsync("این رکورد وجود ندارد", InfoBarSeverity.Warning);
             }
         }
 

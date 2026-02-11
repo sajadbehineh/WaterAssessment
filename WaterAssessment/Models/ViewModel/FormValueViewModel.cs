@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using WaterAssessment.Services;
 
 namespace WaterAssessment.Models.ViewModel
 {
     public partial class FormValueViewModel : ObservableObject
     {
+        private readonly IFormValueService _formValueService;
+
         public FormValue Model { get; }
 
         [ObservableProperty]
@@ -34,8 +32,9 @@ namespace WaterAssessment.Models.ViewModel
             CalculateVelocities();
         }
 
-        public FormValueViewModel(FormValue model, Propeller propeller)
+        public FormValueViewModel(FormValue model, Propeller propeller, IFormValueService formValueService)
         {
+            _formValueService = formValueService;
             Model = model;
             Propeller = propeller;
 
@@ -284,108 +283,14 @@ namespace WaterAssessment.Models.ViewModel
 
         private void CalculateVelocities()
         {
-            // چک کردن اینکه آیا پروانه ست شده است یا خیر (برای جلوگیری از کرش)
-            if (Propeller == null) return;
+            var result = _formValueService.CalculateVelocities(Propeller, MeasureTime, TotalDepth, Rev02, Rev06, Rev08);
 
-            // 1. اگر زمان صفر است، همه سرعت‌ها صفر یا نامعتبر می‌شوند
-            if (MeasureTime <= 0)
-            {
-                Velocity02 = double.NaN;
-                Velocity06 = double.NaN;
-                Velocity08 = double.NaN;
-                VerticalMeanVelocity = 0;
-                return;
-            }
+            Velocity02 = result.Velocity02;
+            Velocity06 = result.Velocity06;
+            Velocity08 = result.Velocity08;
 
-            // 2. محاسبه سرعت نقطه 0.2
-            if (Rev02.HasValue)
-            {
-                double n = (Rev02.Value > 0) ? Rev02.Value / MeasureTime : 0;
-                Velocity02 = Propeller.CalculateVelocity(n);
-            }
-            else
-            {
-                Velocity02 = double.NaN;
-            }
-
-            // 3. محاسبه سرعت نقطه 0.6
-            if (Rev06.HasValue)
-            {
-                double n = (Rev06.Value > 0) ? Rev06.Value / MeasureTime : 0;
-                Velocity06 = Propeller.CalculateVelocity(n);
-            }
-            else
-            {
-                Velocity06 = double.NaN;
-            }
-
-            // 4. محاسبه سرعت نقطه 0.8
-            if (Rev08.HasValue)
-            {
-                double n = (Rev08.Value > 0) ? Rev08.Value / MeasureTime : 0;
-                Velocity08 = Propeller.CalculateVelocity(n);
-            }
-            else
-            {
-                Velocity08 = double.NaN;
-            }
-
-            // 5. میانگین‌گیری (بخش اصلی تغییرات)
-            bool has02 = !double.IsNaN(Velocity02);
-            bool has06 = !double.IsNaN(Velocity06);
-            bool has08 = !double.IsNaN(Velocity08);
-
-            double vMean = 0;
-
-            double v02 = has02 ? Velocity02 : 0;
-            double v06 = has06 ? Velocity06 : 0;
-            double v08 = has08 ? Velocity08 : 0;
-
-
-            if (has02 && has06 && has08)
-            {
-                if (TotalDepth < 3)
-                    vMean = (v02 + v06 + v08) / 3.0; // میانگین حسابی
-                else
-                    vMean = (v02 + 2 * v06 + v08) / 4.0; // میانگین وزنی
-            }
-            // --- ب) فقط 2 نقطه موجود است (ترکیبات مختلف) ---
-            else if (has02 && has08) // حالت استاندارد 2 نقطه‌ای
-            {
-                vMean = (v02 + v08) / 2.0;
-            }
-            else if (has02 && has06) // درخواستی شما (0.2 و 0.6 هست، 0.8 نیست)
-            {
-                vMean = (v02 + v06) / 2.0;
-            }
-            else if (has06 && has08) // (0.6 و 0.8 هست، 0.2 نیست)
-            {
-                vMean = (v06 + v08) / 2.0;
-            }
-            // --- ج) فقط 1 نقطه موجود است ---
-            else if (has06)
-            {
-                vMean = v06;
-            }
-            else if (has02)
-            {
-                vMean = v02;
-            }
-            else if (has08)
-            {
-                vMean = v08;
-            }
-            else
-            {
-                // هیچ سرعتی محاسبه نشده
-                vMean = 0;
-            }
-
-            // 6. ذخیره نهایی
-            VerticalMeanVelocity = vMean;
-
-            // ذخیره در مدل (اگر نیاز است که مدل دیتابیسی هم همین الان آپدیت شود)
-            Model.VerticalMeanVelocity = vMean;
+            VerticalMeanVelocity = result.VerticalMeanVelocity;
+            Model.VerticalMeanVelocity = result.VerticalMeanVelocity;
         }
 
         private void CalculateResults()

@@ -8,6 +8,7 @@ namespace WaterAssessment.Models.ViewModel
     public partial class AssessmentViewModel : ObservableObject
     {
         private readonly IAssessmentService _assessmentService;
+        private readonly IFormValueViewModelFactory _formValueViewModelFactory;
         public Assessment Model { get; }
 
         // ==========================================================
@@ -119,9 +120,10 @@ namespace WaterAssessment.Models.ViewModel
             ? string.Join(" | ", PumpStates.Select(p => $"{p.LocationPump?.PumpName}: {(p.IsRunning ? "روشن" : "خاموش")}"))
             : "بدون پمپ";
 
-        public AssessmentViewModel(Assessment model, IAssessmentService assessmentService)
+        public AssessmentViewModel(Assessment model, IAssessmentService assessmentService, IFormValueViewModelFactory formValueViewModelFactory)
         {
             _assessmentService = assessmentService;
+            _formValueViewModelFactory = formValueViewModelFactory;
             Model = model;
             SelectedPropeller = model.Propeller;
 
@@ -144,7 +146,7 @@ namespace WaterAssessment.Models.ViewModel
                 // حالت ویرایش: لود کردن سطرهای موجود
                 foreach (var fv in model.FormValues)
                 {
-                    var vm = new FormValueViewModel(fv, SelectedPropeller);
+                    var vm = _formValueViewModelFactory.Create(fv, SelectedPropeller);
                     SubscribeToChildEvents(vm); // اشتراک در رویدادها
                     FormValues.Add(vm);
                 }
@@ -470,7 +472,7 @@ namespace WaterAssessment.Models.ViewModel
             };
 
             // 2. ساخت ویومدل فرزند
-            var newVM = new FormValueViewModel(newModel, SelectedPropeller);
+            var newVM = _formValueViewModelFactory.Create(newModel, SelectedPropeller);
 
             // پیشنهاد هوشمندانه فاصله:
             // اگر ردیف قبلی وجود دارد، فاصله جدید را مثلاً 1 متر بعد از آن پیشنهاد بده
@@ -680,7 +682,7 @@ namespace WaterAssessment.Models.ViewModel
                     TotalDepth = 0
                 };
 
-                var newVM = new FormValueViewModel(newModel, SelectedPropeller);
+                var newVM = _formValueViewModelFactory.Create(newModel, SelectedPropeller);
                 SubscribeToChildEvents(newVM); // اشتراک در رویدادها برای محاسبات
                 FormValues.Add(newVM);
             }

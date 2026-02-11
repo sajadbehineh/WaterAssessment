@@ -36,6 +36,7 @@
 	  <None Remove="Assets\Icons\propeller-svgrepo-com.svg" />
 	  <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
 	  <None Remove="Assets\propeller.png" />
+	  <None Remove="Controls\PaginationControl.xaml" />
 	  <None Remove="Views\AssessmentFormPage.xaml" />
 	  <None Remove="Views\CreateAssessmentDialog.xaml" />
 	  <None Remove="Views\EmployeePage.xaml" />
@@ -77,6 +78,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+		<PackageReference Include="Telerik.WinUI.Controls" Version="3.0.0" />
 		<PackageReference Include="WinUICommunity.Components" Version="5.0.2" />
 		<PackageReference Include="WinUICommunity.Core" Version="5.0.4" />
 		<Manifest Include="$(ApplicationManifest)" />
@@ -154,6 +156,11 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Page Update="Views\CreateAssessmentDialog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\PaginationControl.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

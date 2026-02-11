@@ -649,7 +649,7 @@
                                     <RectangleGeometry Rect="0, -50, 2000, 200" />
                                 </Grid.Clip>
                                 <Grid.Resources>
-                                    <helpers:DoubleFormatter x:Key="Df" />
+                                    <helpers:DoubleFormatter x:Key="Df2" />
                                 </Grid.Resources>
 
                                 <Border
@@ -669,7 +669,7 @@
                                     <akTools:NumberBoxEx
                                         Padding="0,23,0,0"
                                         VerticalAlignment="Stretch"
-                                        NumberFormatter="{StaticResource Df}"
+                                        NumberFormatter="{StaticResource Df2}"
                                         PlaceholderText="0.00"
                                         Value="{x:Bind Distance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </Border>
@@ -681,7 +681,7 @@
                                     <akTools:NumberBoxEx
                                         Padding="0,23,0,0"
                                         VerticalAlignment="Stretch"
-                                        NumberFormatter="{StaticResource Df}"
+                                        NumberFormatter="{StaticResource Df2}"
                                         Value="{x:Bind TotalDepth, Mode=TwoWay}" />
                                 </Border>
 

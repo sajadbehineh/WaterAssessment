@@ -1,10 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Navigation;
-using System.Globalization;
-using WaterAssessment.Converters;
 using WaterAssessment.Services;
-using Windows.Globalization.NumberFormatting;
 
 namespace WaterAssessment.Views;
 
@@ -26,6 +22,7 @@ public sealed partial class AssessmentFormPage : Page
 
         Assessment assessmentModel;
         var assessmentService = App.Services.GetRequiredService<IAssessmentService>();
+        var formValueViewModelFactory = App.Services.GetRequiredService<IFormValueViewModelFactory>();
 
         // بررسی می‌کنیم که آیا پارامتری (مدل برای ویرایش) دریافت شده است؟
         if (e.Parameter is Assessment { AssessmentID: > 0 } receivedAssessment)
@@ -45,7 +42,7 @@ public sealed partial class AssessmentFormPage : Page
             assessmentModel = new Assessment();
         }
 
-        ViewModel = new AssessmentViewModel(assessmentModel, assessmentService);
+        ViewModel = new AssessmentViewModel(assessmentModel, assessmentService, formValueViewModelFactory);
 
         // اتصال به DataContext برای کارکرد بایندینگ‌ها
         this.DataContext = ViewModel;

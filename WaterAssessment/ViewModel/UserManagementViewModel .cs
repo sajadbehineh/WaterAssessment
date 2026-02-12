@@ -92,13 +92,15 @@ namespace WaterAssessment.ViewModel
                     await ShowMessageAsync("رمز عبور برای کاربر جدید الزامی است.", InfoBarSeverity.Warning);
                     return;
                 }
+
                 var newUser = await _userManagementService.AddUserAsync(NewUsername, NewFullName, SelectedRole, password);
                 if (newUser == null)
                 {
                     await ShowMessageAsync(_userManagementService.GetLastErrorMessage(), InfoBarSeverity.Error);
                     return;
                 }
-                Users.Add(newUser);
+
+                await LoadUsersAsync();
                 ClearForm(passwordBox);
                 await ShowMessageAsync("کاربر با موفقیت اضافه شد.", InfoBarSeverity.Success);
                 return;
@@ -116,17 +118,8 @@ namespace WaterAssessment.ViewModel
                 await ShowMessageAsync(_userManagementService.GetLastErrorMessage(), InfoBarSeverity.Error);
                 return;
             }
-            var index = Users.IndexOf(SelectedUser);
-            if (index != -1)
-            {
-                Users.RemoveAt(index);
-                Users.Insert(index, updatedUser);
-            }
-            else
-            {
-                await LoadUsersAsync();
-            }
 
+            await LoadUsersAsync();
             ClearForm(passwordBox);
             await ShowMessageAsync("کاربر با موفقیت ویرایش شد.", InfoBarSeverity.Success);
         }
@@ -154,7 +147,7 @@ namespace WaterAssessment.ViewModel
                 return;
             }
 
-            Users.Remove(userToDelete);
+            await LoadUsersAsync();
 
             if (SelectedUser?.UserID == userToDelete.UserID)
             {

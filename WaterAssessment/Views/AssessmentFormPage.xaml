@@ -116,8 +116,7 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 BorderBrush="Black"
-                BorderThickness="0"
-                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                BorderThickness="0">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -128,11 +127,11 @@
                 Grid.Row="2"
                 Grid.Column="1"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0"
-                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                BorderThickness="1.5,0,0,0">
                 <ComboBox
                     HorizontalAlignment="Stretch"
                     DisplayMemberPath="PropellerName"
+                    IsEnabled="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay}"
                     ItemsSource="{x:Bind ViewModel.AllPropellers}"
                     MaxDropDownHeight="300"
                     PlaceholderText="انتخاب کنید..."
@@ -142,8 +141,7 @@
                 Grid.Row="2"
                 Grid.Column="4"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0"
-                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -154,8 +152,7 @@
                 Grid.Row="2"
                 Grid.Column="5"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0"
-                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                BorderThickness="1.5,1.5,0,0">
                 <akTools:NumberBoxEx
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
@@ -258,6 +255,7 @@
                 BorderThickness="1.5,0,0,0">
                 <akTools:NumberBoxEx
                     HorizontalAlignment="Stretch"
+                    IsEnabled="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay}"
                     SmallChange="10"
                     Value="{x:Bind ViewModel.Timer, Mode=TwoWay}" />
             </Border>
@@ -265,8 +263,7 @@
                 Grid.Row="2"
                 Grid.Column="2"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0"
-                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -277,11 +274,11 @@
                 Grid.Row="2"
                 Grid.Column="3"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0"
-                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                BorderThickness="1.5,1.5,0,0">
                 <ComboBox
                     HorizontalAlignment="Stretch"
                     DisplayMemberPath="CurrentMeterName"
+                    IsEnabled="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay}"
                     ItemsSource="{x:Bind ViewModel.AllCurrentMeters}"
                     MaxDropDownHeight="300"
                     PlaceholderText="انتخاب کنید..."
@@ -306,7 +303,7 @@
                 Grid.Column="3"
                 BorderBrush="Black"
                 BorderThickness="1.5,0,0,0">
-                <StackPanel Margin="5">
+                <StackPanel Margin="5" Visibility="{x:Bind ViewModel.IsNotDischargeEquationForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl ItemsSource="{x:Bind ViewModel.GateValues, Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -637,10 +634,10 @@
                 Text="دبی مقطع" />
         </Grid>
         <ScrollViewer
-            Grid.Row="3"
+            Grid.Row="4"
             Width="1055"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
+            VerticalAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel>
                 <ItemsControl ItemsSource="{x:Bind ViewModel.FormValues}">
@@ -897,20 +894,20 @@
         </ScrollViewer>
         <Grid
             Grid.Row="3"
-            Width="1055"
+            Width="1054.5"
             MinHeight="48"
-            HorizontalAlignment="Center"
+            HorizontalAlignment="Stretch"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             BorderBrush="Black"
             BorderThickness="1"
             Visibility="{x:Bind ViewModel.IsDischargeEquationForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="99" />
+                <ColumnDefinition Width="90" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="140" />
                 <ColumnDefinition Width="140" />
-                <ColumnDefinition Width="140" />
+                <ColumnDefinition Width="439" />
             </Grid.ColumnDefinitions>
             <TextBlock
                 Grid.Column="0"
@@ -988,19 +985,19 @@
         <ScrollViewer
             Grid.Row="4"
             Width="1055"
-            HorizontalAlignment="Center"
+            HorizontalAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsDischargeEquationForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ItemsControl ItemsSource="{x:Bind ViewModel.GateFlowRows, Mode=OneWay}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="viewmodels:GateFlowRowViewModel">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="99" />
+                                <ColumnDefinition Width="90" />
                                 <ColumnDefinition Width="120" />
                                 <ColumnDefinition Width="120" />
                                 <ColumnDefinition Width="140" />
                                 <ColumnDefinition Width="140" />
-                                <ColumnDefinition Width="436" />
+                                <ColumnDefinition Width="444.5" />
                             </Grid.ColumnDefinitions>
                             <Border
                                 Grid.Column="0"
@@ -1031,6 +1028,7 @@
                             </Border>
                             <Border
                                 Grid.Column="3"
+                                Background="LightGoldenrodYellow"
                                 BorderBrush="Black"
                                 BorderThickness="1,0,0,1">
                                 <akTools:NumberBoxEx
@@ -1040,6 +1038,7 @@
                             </Border>
                             <Border
                                 Grid.Column="4"
+                                Background="LightGoldenrodYellow"
                                 BorderBrush="Black"
                                 BorderThickness="1,0,0,1">
                                 <akTools:NumberBoxEx HorizontalContentAlignment="Center" Value="{x:Bind UpstreamHead, Mode=TwoWay}" />
@@ -1052,7 +1051,7 @@
                                     VerticalAlignment="Center"
                                     Foreground="Green"
                                     HorizontalTextAlignment="Center"
-                                    Text="{x:Bind CalculatedFlow}" />
+                                    Text="{x:Bind CalculatedFlow, Mode=TwoWay, Converter={StaticResource DoubleToStringConv}, ConverterParameter='F3'}" />
                             </Border>
                         </Grid>
                     </DataTemplate>

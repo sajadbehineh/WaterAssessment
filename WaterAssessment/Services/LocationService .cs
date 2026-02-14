@@ -152,30 +152,52 @@ namespace WaterAssessment.Services
 
                 if (location.PumpCount.HasValue && location.PumpCount > 0)
                 {
+                    var incomingPumps = location.LocationPumps ?? new List<LocationPump>();
+
                     var pumpsToDelete = locationToEdit.LocationPumps
-                        .Where(p_db => !location.LocationPumps.Any(p_vm => p_vm.Id == p_db.Id))
+                        .Where(pDB => incomingPumps.All(pVm => pVm.Id != pDB.Id))
                         .ToList();
                     if (pumpsToDelete.Any())
                     {
                         db.LocationPumps.RemoveRange(pumpsToDelete);
+
+                        // ردیف‌های mark شده برای حذف را از کالکشن لوکال هم خارج می‌کنیم
+                        // تا در مرحله merge دوباره به اشتباه match نشوند.
+                        foreach (var pumpToDelete in pumpsToDelete)
+                        {
+                            locationToEdit.LocationPumps.Remove(pumpToDelete);
+                        }
                     }
 
                     // ویرایش پمپ‌های موجود و افزودن پمپ‌های جدید
-                    foreach (var pumpFromViewModel in location.LocationPumps)
+                    foreach (var pumpFromViewModel in incomingPumps)
                     {
-                        var pumpInDb = locationToEdit.LocationPumps
-                            .FirstOrDefault(p => p.Id == pumpFromViewModel.Id);
+                        LocationPump? pumpInDb = null;
+
+                        if (pumpFromViewModel.Id > 0)
+                        {
+                            pumpInDb = locationToEdit.LocationPumps
+                                .FirstOrDefault(p => p.Id == pumpFromViewModel.Id);
+                        }
+
+                        // برای پمپ‌های جدید (Id=0) بر اساس نام پمپ fallback می‌کنیم
+                        pumpInDb ??= locationToEdit.LocationPumps
+                            .FirstOrDefault(p => p.PumpName == pumpFromViewModel.PumpName);
 
                         if (pumpInDb != null)
                         {
                             // سناریوی ۱: پمپ موجود است -> فقط ویرایش کن
+                            pumpInDb.PumpName = pumpFromViewModel.PumpName;
                             pumpInDb.NominalFlow = pumpFromViewModel.NominalFlow;
                         }
                         else
                         {
                             // سناریوی ۲: پمپ موجود نیست (Id=0) -> آن را اضافه کن
-                            // نکته: شیء جدید را به کالکشن موجودیت ردیابی‌شده اضافه می‌کنیم
-                            locationToEdit.LocationPumps.Add(pumpFromViewModel); // <-- کد جدید و حیاتی
+                            locationToEdit.LocationPumps.Add(new LocationPump
+                            {
+                                PumpName = pumpFromViewModel.PumpName,
+                                NominalFlow = pumpFromViewModel.NominalFlow
+                            });
                         }
                     }
                 }
@@ -188,15 +210,34 @@ namespace WaterAssessment.Services
                 var incomingGates = location.HydraulicGates ?? new List<HydraulicGate>();
                 var gatesToDelete = locationToEdit.HydraulicGates
                     .Where(g => incomingGates.All(i => i.Id != g.Id))
-                    .ToList();
+                    .ToList();  // g is gate in db and i is incoming (new gate or deleted gate)
+
                 if (gatesToDelete.Any())
                 {
                     db.HydraulicGates.RemoveRange(gatesToDelete);
+
+                    /// ردیف‌های mark شده برای حذف را از کالکشن لوکال هم خارج می‌کنیم
+                    // تا در مرحله merge دوباره به اشتباه match نشوند.
+                    foreach (var gateToDelete in gatesToDelete)
+                    {
+                        locationToEdit.HydraulicGates.Remove(gateToDelete);
+                    }
                 }
 
                 foreach (var gate in incomingGates)
                 {
-                    var gateInDb = locationToEdit.HydraulicGates.FirstOrDefault(g => g.Id == gate.Id);
+                    // برای ردیف‌های جدید Id هنوز صفر است؛
+                    // اگر صرفاً با Id جستجو کنیم، اولین ردیف جدیدِ اضافه‌شده دوباره پیدا می‌شود
+                    // و ردیف‌های 5..n روی هم overwrite می‌شوند.
+                    HydraulicGate? gateInDb = null;
+
+                    if (gate.Id > 0)
+                    {
+                        gateInDb = locationToEdit.HydraulicGates.FirstOrDefault(g => g.Id == gate.Id);
+                    }
+
+                    gateInDb ??= locationToEdit.HydraulicGates.FirstOrDefault(g => g.GateNumber == gate.GateNumber);
+
                     if (gateInDb == null)
                     {
                         locationToEdit.HydraulicGates.Add(new HydraulicGate
@@ -230,9 +271,34 @@ namespace WaterAssessment.Services
             location.LocationPumps ??= new List<LocationPump>();
             location.HydraulicGates ??= new List<HydraulicGate>();
 
+            // نرمال‌سازی پمپ‌ها: اگر تعداد معتبر نداریم، حالت «دارای پمپ» نباید ذخیره شود.
+            if (!location.PumpCount.HasValue || location.PumpCount.Value <= 0)
+            {
+                location.HasPump = false;
+                location.PumpCount = null;
+                location.LocationPumps.Clear();
+            }
+            else
+            {
+                location.HasPump = true;
+            }
+
             if (location.MeasurementFormType != MeasurementFormType.GateDischargeEquation)
             {
-                // فقط مکان‌های Orifice باید تنظیمات دریچه اوریفیس داشته باشند
+                 // برای فرم‌های غیر معادله دبی: اگر تعداد دریچه معتبر نداریم، «دارای دریچه» را false ذخیره کن.
+
+                if (!location.GateCount.HasValue || location.GateCount.Value <= 0)
+                {
+                    location.HasGate = false;
+                    location.GateCount = null;
+                }
+                else
+                {
+                    location.HasGate = true;
+                }
+
+                // فقط مکان‌های معادله دبی باید تنظیمات HydraulicGate داشته باشند.
+
                 location.HydraulicGates.Clear();
                 return true;
             }

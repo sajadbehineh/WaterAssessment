@@ -24,6 +24,7 @@ namespace WaterAssessment.Services
                 using var db = _dbFactory.CreateDbContext();
                 return await db.Locations
                     .Include(l => l.LocationPumps)
+                    .Include(l => l.HydraulicGates)
                     .Include(l => l.Area)
                     .Include(l => l.LocationType)
                     .Include(l => l.CreatedBy)
@@ -77,10 +78,23 @@ namespace WaterAssessment.Services
                     return false;
                 }
                 location.LocationPumps ??= new List<LocationPump>();
+                location.HydraulicGates ??= new List<HydraulicGate>();
+
+                if (!ValidateAndNormalizeLocation(location))
+                {
+                    return false;
+                }
+
                 db.Locations.Add(location);
+
                 foreach (var pump in location.LocationPumps)
                 {
                     db.LocationPumps.Add(pump);
+                }
+
+                foreach (var gate in location.HydraulicGates)
+                {
+                    db.HydraulicGates.Add(gate);
                 }
                 await db.SaveChangesAsync();
                 return true;
@@ -98,7 +112,8 @@ namespace WaterAssessment.Services
             {
                 using var db = _dbFactory.CreateDbContext();
                 var locationToEdit = await db.Locations
-                    .Include(l => l.LocationPumps) // <-- بسیار مهم
+                    .Include(l => l.LocationPumps)
+                    .Include(l => l.HydraulicGates)
                     .FirstOrDefaultAsync(l => l.LocationID == locationId);
                 if (locationToEdit == null)
                 {
@@ -117,15 +132,26 @@ namespace WaterAssessment.Services
                     return false;
                 }
 
+                location.LocationPumps ??= new List<LocationPump>();
+                location.HydraulicGates ??= new List<HydraulicGate>();
+
+                if (!ValidateAndNormalizeLocation(location))
+                {
+                    return false;
+                }
+
                 locationToEdit.LocationName = location.LocationName;
                 locationToEdit.AreaID = location.AreaID;
                 locationToEdit.LocationTypeID = location.LocationTypeID;
+                locationToEdit.HasGate = location.HasGate;
+                locationToEdit.HasPump = location.HasPump;
                 locationToEdit.GateCount = location.GateCount;
                 locationToEdit.PumpCount = location.PumpCount;
+                locationToEdit.MeasurementFormType = location.MeasurementFormType;
+                locationToEdit.SectionCount = location.SectionCount;
 
                 if (location.PumpCount.HasValue && location.PumpCount > 0)
                 {
-                    // حذف پمپ‌هایی که دیگر در لیست جدید نیستند (اگر چنین سناریویی دارید)
                     var pumpsToDelete = locationToEdit.LocationPumps
                         .Where(p_db => !location.LocationPumps.Any(p_vm => p_vm.Id == p_db.Id))
                         .ToList();
@@ -159,6 +185,35 @@ namespace WaterAssessment.Services
                     locationToEdit.LocationPumps.Clear();
                 }
 
+                var incomingGates = location.HydraulicGates ?? new List<HydraulicGate>();
+                var gatesToDelete = locationToEdit.HydraulicGates
+                    .Where(g => incomingGates.All(i => i.Id != g.Id))
+                    .ToList();
+                if (gatesToDelete.Any())
+                {
+                    db.HydraulicGates.RemoveRange(gatesToDelete);
+                }
+
+                foreach (var gate in incomingGates)
+                {
+                    var gateInDb = locationToEdit.HydraulicGates.FirstOrDefault(g => g.Id == gate.Id);
+                    if (gateInDb == null)
+                    {
+                        locationToEdit.HydraulicGates.Add(new HydraulicGate
+                        {
+                            GateNumber = gate.GateNumber,
+                            DischargeCoefficient = gate.DischargeCoefficient,
+                            Width = gate.Width
+                        });
+                    }
+                    else
+                    {
+                        gateInDb.GateNumber = gate.GateNumber;
+                        gateInDb.DischargeCoefficient = gate.DischargeCoefficient;
+                        gateInDb.Width = gate.Width;
+                    }
+                }
+
                 await db.SaveChangesAsync();
                 return true;
             }
@@ -167,6 +222,57 @@ namespace WaterAssessment.Services
                 _lastErrorMessage = $"خطا در ویرایش اطلاعات مکان: {ex.Message}";
                 return false;
             }
+        }
+
+        // این متد مسئول اعتبارسنجی و نرمال‌سازی داده‌های مربوط به دریچه‌ها است
+        private bool ValidateAndNormalizeLocation(Location location)
+        {
+            location.LocationPumps ??= new List<LocationPump>();
+            location.HydraulicGates ??= new List<HydraulicGate>();
+
+            if (location.MeasurementFormType != MeasurementFormType.GateDischargeEquation)
+            {
+                // فقط مکان‌های Orifice باید تنظیمات دریچه اوریفیس داشته باشند
+                location.HydraulicGates.Clear();
+                return true;
+            }
+
+            if (!location.GateCount.HasValue || location.GateCount.Value <= 0)
+            {
+                _lastErrorMessage = "برای فرم محسابات دبی دریچه ها باید تعداد دریچه بیشتر از صفر باشد.";
+                return false;
+            }
+
+            var gateCount = location.GateCount.Value;
+
+            if (location.HydraulicGates.Count != gateCount)
+            {
+                _lastErrorMessage = "تعداد ردیف‌های OrificeGate باید برابر تعداد دریچه‌ها باشد.";
+                return false;
+            }
+
+            var gateNumbers = location.HydraulicGates.Select(g => g.GateNumber).ToList();
+            if (gateNumbers.Distinct().Count() != gateNumbers.Count)
+            {
+                _lastErrorMessage = "شماره دریچه‌های OrificeGate نباید تکراری باشند.";
+                return false;
+            }
+
+            var expected = Enumerable.Range(1, gateCount).ToHashSet();
+            if (!gateNumbers.All(expected.Contains))
+            {
+                _lastErrorMessage = "شماره دریچه‌های OrificeGate باید در بازه 1 تا تعداد دریچه باشند.";
+                return false;
+            }
+
+            if (location.HydraulicGates.Any(g => g.DischargeCoefficient <= 0 || g.Width <= 0))
+            {
+                _lastErrorMessage = "مقادیر Cd و عرض دریچه باید بزرگتر از صفر باشند.";
+                return false;
+            }
+
+            location.HasGate = true;
+            return true;
         }
 
         public async Task<bool> DeleteLocationAsync(int locationId)

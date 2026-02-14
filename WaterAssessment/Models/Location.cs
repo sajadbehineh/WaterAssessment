@@ -13,6 +13,8 @@ public class Location
     public int? PumpCount { get; set; }
     public bool HasPump { get; set; }
     public bool HasGate { get; set; }
+    public MeasurementFormType MeasurementFormType { get; set; } = MeasurementFormType.HydrometrySingleSection;
+    public int? SectionCount { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public int? CreatedByUserID { get; set; }
@@ -25,5 +27,6 @@ public class Location
     public virtual Area Area { get; set; }
 
     public virtual List<LocationPump> LocationPumps { get; set; } = new();
+    public virtual List<HydraulicGate> HydraulicGates { get; set; } = new();
     public virtual List<Assessment> Assessments { get; set; } = new();
 }

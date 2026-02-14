@@ -1,4 +1,5 @@
 ﻿namespace WaterAssessment.Models;
+
 public class Assessment
 {
     public int AssessmentID { get; set; }
@@ -9,20 +10,25 @@ public class Assessment
 
     public double TotalFlow { get; set; }
 
+    public double? ManualTotalFlow { get; set; }
+    public MeasurementFormType MeasurementFormType { get; set; } = MeasurementFormType.HydrometrySingleSection;
+
     public int LocationID { get; set; }
     public virtual Location Location { get; set; }
 
-    public int CurrentMeterID { get; set; }
-    public virtual CurrentMeter CurrentMeter { get; set; }
+    public int? CurrentMeterID { get; set; }
+    public virtual CurrentMeter? CurrentMeter { get; set; }
 
-    public int PropellerID { get; set; }
-    public virtual Propeller Propeller { get; set; }
+    public int? PropellerID { get; set; }
+    public virtual Propeller? Propeller { get; set; }
 
     public virtual List<FormValue> FormValues { get; set; } = new();
 
-    public virtual List<Assessment_Employee> AssessmentEmployees { get; set; }=new();
+    public virtual List<Assessment_Employee> AssessmentEmployees { get; set; } = new();
 
     public virtual List<AssessmentGate> GateOpenings { get; set; } = new();
 
     public virtual List<AssessmentPump> PumpStates { get; set; } = new();
+
+    public virtual List<GateFlowRow> GateFlowRows { get; set; } = new();
 }

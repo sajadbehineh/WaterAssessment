@@ -32,6 +32,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -115,7 +116,8 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 BorderBrush="Black"
-                BorderThickness="0,0,0,0">
+                BorderThickness="0"
+                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -126,7 +128,8 @@
                 Grid.Row="2"
                 Grid.Column="1"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1.5,0,0,0"
+                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <ComboBox
                     HorizontalAlignment="Stretch"
                     DisplayMemberPath="PropellerName"
@@ -139,7 +142,8 @@
                 Grid.Row="2"
                 Grid.Column="4"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1.5,1.5,0,0"
+                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -150,7 +154,8 @@
                 Grid.Row="2"
                 Grid.Column="5"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1.5,1.5,0,0"
+                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <akTools:NumberBoxEx
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
@@ -260,7 +265,8 @@
                 Grid.Row="2"
                 Grid.Column="2"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1.5,1.5,0,0"
+                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock
                     Padding="5"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -271,7 +277,8 @@
                 Grid.Row="2"
                 Grid.Column="3"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1.5,1.5,0,0"
+                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <ComboBox
                     HorizontalAlignment="Stretch"
                     DisplayMemberPath="CurrentMeterName"
@@ -346,15 +353,21 @@
                 Background="DarkOrange"
                 BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                 BorderThickness="1.5,1.5,0,0">
-                <TextBlock
-                    x:Name="TotalFlowBox"
-                    Padding="5"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontFamily="{StaticResource SamimFD}"
-                    FontWeight="SemiBold"
-                    Foreground="Black"
-                    Text="{x:Bind ViewModel.TotalFlowDisplay, Mode=OneWay}" />
+                <Grid>
+                    <TextBlock
+                        x:Name="TotalFlowBox"
+                        Padding="5"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="{x:Bind ViewModel.TotalFlowDisplay, Mode=OneWay}" />
+                    <NumberBox
+                        Width="120"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        SpinButtonPlacementMode="Compact"
+                        Visibility="{x:Bind ViewModel.IsManualForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Value="{x:Bind ViewModel.ManualTotalFlowInput, Mode=TwoWay}" />
+                </Grid>
             </Border>
         </Grid>
         <Grid
@@ -408,7 +421,8 @@
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             BorderBrush="Black"
             BorderThickness="1"
-            CornerRadius="0">
+            CornerRadius="0"
+            Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="52" />
                 <ColumnDefinition Width="80" />
@@ -626,7 +640,8 @@
             Grid.Row="3"
             Width="1055"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Top">
+            VerticalAlignment="Top"
+            Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel>
                 <ItemsControl ItemsSource="{x:Bind ViewModel.FormValues}">
 
@@ -880,9 +895,173 @@
                 </ItemsControl>
             </StackPanel>
         </ScrollViewer>
+        <Grid
+            Grid.Row="3"
+            Width="1055"
+            MinHeight="48"
+            HorizontalAlignment="Center"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            BorderBrush="Black"
+            BorderThickness="1"
+            Visibility="{x:Bind ViewModel.IsDischargeEquationForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="99" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="140" />
+                <ColumnDefinition Width="140" />
+                <ColumnDefinition Width="140" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="14"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="گشودگی" />
+            <Rectangle
+                Grid.Column="0"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
+            <TextBlock
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="14"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="ضریب دریچه (Cd)" />
+            <Rectangle
+                Grid.Column="1"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
+            <TextBlock
+                Grid.Column="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="14"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="عرض دریچه L (m)" />
+            <Rectangle
+                Grid.Column="2"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
+            <TextBlock
+                Grid.Column="3"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="14"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="میزان گشودگی (m)" />
+            <Rectangle
+                Grid.Column="3"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
+            <TextBlock
+                Grid.Column="4"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="14"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="هد آب بالا دست" />
+            <Rectangle
+                Grid.Column="4"
+                Width="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource SystemChromeBlackHighColor}" />
+            <TextBlock
+                Grid.Column="5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="14"
+                Foreground="{ThemeResource SystemAltHighColor}"
+                Text="دبی دریچه" />
+        </Grid>
+        <ScrollViewer
+            Grid.Row="4"
+            Width="1055"
+            HorizontalAlignment="Center"
+            Visibility="{x:Bind ViewModel.IsDischargeEquationForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ItemsControl ItemsSource="{x:Bind ViewModel.GateFlowRows, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:GateFlowRowViewModel">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="99" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="436" />
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                Grid.Column="0"
+                                BorderBrush="Black"
+                                BorderThickness="1,0,0,1">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{x:Bind GateNumber}" />
+                            </Border>
+                            <Border
+                                Grid.Column="1"
+                                BorderBrush="Black"
+                                BorderThickness="1,0,0,1">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{x:Bind DischargeCoefficient}" />
+                            </Border>
+                            <Border
+                                Grid.Column="2"
+                                BorderBrush="Black"
+                                BorderThickness="1,0,0,1">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{x:Bind Width}" />
+                            </Border>
+                            <Border
+                                Grid.Column="3"
+                                BorderBrush="Black"
+                                BorderThickness="1,0,0,1">
+                                <akTools:NumberBoxEx
+                                    HorizontalContentAlignment="Center"
+                                    BorderThickness="0"
+                                    Value="{x:Bind OpeningHeight, Mode=TwoWay}" />
+                            </Border>
+                            <Border
+                                Grid.Column="4"
+                                BorderBrush="Black"
+                                BorderThickness="1,0,0,1">
+                                <akTools:NumberBoxEx HorizontalContentAlignment="Center" Value="{x:Bind UpstreamHead, Mode=TwoWay}" />
+                            </Border>
+                            <Border
+                                Grid.Column="5"
+                                BorderBrush="Black"
+                                BorderThickness="1,0,1,1">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Foreground="Green"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{x:Bind CalculatedFlow}" />
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
         <Grid
-            Grid.Row="4"
+            Grid.Row="5"
             Padding="20,8,20,8"
             Background="{ThemeResource SystemChromeAltMediumHighColor}">
             <Grid.ColumnDefinitions>
@@ -893,9 +1072,11 @@
             </Grid.ColumnDefinitions>
 
             <Button
+                HorizontalAlignment="Left"
                 Command="{x:Bind ViewModel.AddRowCommand}"
                 Content="افزودن سطر جدید"
-                Style="{ThemeResource AccentButtonStyle}" />
+                Style="{ThemeResource AccentButtonStyle}"
+                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <InfoBar
                 x:Name="BoxInfoBar"
                 Grid.Column="2"
@@ -911,6 +1092,7 @@
                 Orientation="Horizontal"
                 Spacing="10">
                 <Button
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Command="{x:Bind ViewModel.SubmitFormCommand}"
                     Content="{x:Bind ViewModel.SaveButtonContent, Mode=OneWay}"

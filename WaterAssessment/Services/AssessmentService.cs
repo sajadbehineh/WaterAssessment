@@ -19,7 +19,10 @@ namespace WaterAssessment.Services
                 using var db = _dbFactory.CreateDbContext();
                 return new AssessmentReferenceData
                 {
-                    Locations = await db.Locations.AsNoTracking().ToListAsync(),
+                    Locations = await db.Locations
+                        .Include(l => l.HydraulicGates)
+                        .AsNoTracking()
+                        .ToListAsync(),
                     Propellers = await db.Propellers.AsNoTracking().ToListAsync(),
                     CurrentMeters = await db.CurrentMeters.AsNoTracking().ToListAsync(),
                     Employees = await db.Employees.AsNoTracking().ToListAsync()
@@ -37,7 +40,10 @@ namespace WaterAssessment.Services
             try
             {
                 using var db = _dbFactory.CreateDbContext();
-                return await db.Locations.AsNoTracking().ToListAsync();
+                return await db.Locations
+                    .Include(l => l.HydraulicGates)
+                    .AsNoTracking()
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -116,6 +122,7 @@ namespace WaterAssessment.Services
                     .Include(a => a.AssessmentEmployees).ThenInclude(ae => ae.Employee)
                     .Include(a => a.GateOpenings)
                     .Include(a => a.PumpStates)
+                    .Include(a => a.GateFlowRows).ThenInclude(r => r.HydraulicGate)
                     .FirstOrDefaultAsync(a => a.AssessmentID == assessmentId);
             }
             catch (Exception ex)
@@ -129,7 +136,8 @@ namespace WaterAssessment.Services
             Assessment model,
             IEnumerable<FormValue> formValues,
             IEnumerable<AssessmentPump> pumpStates,
-            IEnumerable<Assessment_Employee> assessmentEmployees)
+            IEnumerable<Assessment_Employee> assessmentEmployees,
+            IEnumerable<GateFlowRow> gateFlowRows)
         {
             try
             {
@@ -139,18 +147,38 @@ namespace WaterAssessment.Services
                 model.Propeller = null;
                 model.CurrentMeter = null;
 
+                if (model.MeasurementFormType is MeasurementFormType.ManualTotalFlow or MeasurementFormType.GateDischargeEquation)
+                {
+                    model.PropellerID = null;
+                    model.CurrentMeterID = null;
+                }
+
                 foreach (var employee in assessmentEmployees)
                 {
                     employee.Employee = null;
                 }
 
-                model.FormValues = formValues.ToList();
+                model.FormValues = model.MeasurementFormType is MeasurementFormType.HydrometrySingleSection or MeasurementFormType.HydrometryMultiSection
+                    ? formValues.ToList()
+                    : new List<FormValue>();
+
                 model.AssessmentEmployees = assessmentEmployees.ToList();
+
                 model.PumpStates = pumpStates.Select(ps => new AssessmentPump
                 {
                     LocationPumpID = ps.LocationPumpID,
                     IsRunning = ps.IsRunning
                 }).ToList();
+
+                model.GateFlowRows = model.MeasurementFormType == MeasurementFormType.GateDischargeEquation
+                    ? gateFlowRows.Select(r => new GateFlowRow
+                    {
+                        HydraulicGateID = r.HydraulicGateID,
+                        OpeningHeight = r.OpeningHeight,
+                        UpstreamHead = r.UpstreamHead,
+                        CalculatedFlow = r.CalculatedFlow
+                    }).ToList()
+                    : new List<GateFlowRow>();
 
                 db.Assessments.Add(model);
                 await db.SaveChangesAsync();
@@ -168,7 +196,8 @@ namespace WaterAssessment.Services
             IEnumerable<FormValue> formValues,
             IEnumerable<AssessmentPump> pumpStates,
             IEnumerable<Assessment_Employee> assessmentEmployees,
-            IEnumerable<AssessmentGate> gateOpenings)
+            IEnumerable<AssessmentGate> gateOpenings,
+            IEnumerable<GateFlowRow> gateFlowRows)
         {
             try
             {
@@ -179,6 +208,7 @@ namespace WaterAssessment.Services
                     .Include(a => a.AssessmentEmployees)
                     .Include(a => a.GateOpenings)
                     .Include(a => a.PumpStates)
+                    .Include(a => a.GateFlowRows)
                     .FirstOrDefaultAsync(a => a.AssessmentID == model.AssessmentID);
 
                 if (existing == null)
@@ -191,34 +221,48 @@ namespace WaterAssessment.Services
                 existing.Timer = model.Timer;
                 existing.Echelon = model.Echelon;
                 existing.TotalFlow = model.TotalFlow;
-                existing.PropellerID = model.PropellerID;
-                existing.CurrentMeterID = model.CurrentMeterID;
+                existing.PropellerID = model.MeasurementFormType is MeasurementFormType.HydrometrySingleSection or MeasurementFormType.HydrometryMultiSection
+                    ? model.PropellerID
+                    : null;
+                existing.CurrentMeterID = model.MeasurementFormType is MeasurementFormType.HydrometrySingleSection or MeasurementFormType.HydrometryMultiSection
+                    ? model.CurrentMeterID
+                    : null;
+                existing.MeasurementFormType = model.MeasurementFormType;
+                existing.ManualTotalFlow = model.ManualTotalFlow;
 
-                foreach (var formValue in formValues)
+                if (model.MeasurementFormType is MeasurementFormType.HydrometrySingleSection or MeasurementFormType.HydrometryMultiSection)
                 {
-                    if (formValue.FormValueID == 0)
+                    foreach (var formValue in formValues)
                     {
-                        formValue.AssessmentID = existing.AssessmentID;
-                        existing.FormValues.Add(formValue);
-                    }
-                    else
-                    {
-                        var dbRow = existing.FormValues.FirstOrDefault(r => r.FormValueID == formValue.FormValueID);
-                        if (dbRow != null)
+                        if (formValue.FormValueID == 0)
                         {
-                            dbRow.Distance = formValue.Distance;
-                            dbRow.TotalDepth = formValue.TotalDepth;
-                            dbRow.RowIndex = formValue.RowIndex;
-                            dbRow.MeasureTime = formValue.MeasureTime;
-                            dbRow.Rev02 = formValue.Rev02;
-                            dbRow.Rev06 = formValue.Rev06;
-                            dbRow.Rev08 = formValue.Rev08;
-                            dbRow.SectionWidth = formValue.SectionWidth;
-                            dbRow.SectionArea = formValue.SectionArea;
-                            dbRow.SectionFlow = formValue.SectionFlow;
-                            dbRow.VerticalMeanVelocity = formValue.VerticalMeanVelocity;
+                            formValue.AssessmentID = existing.AssessmentID;
+                            existing.FormValues.Add(formValue);
+                        }
+                        else
+                        {
+                            var dbRow = existing.FormValues.FirstOrDefault(r => r.FormValueID == formValue.FormValueID);
+                            if (dbRow != null)
+                            {
+                                dbRow.Distance = formValue.Distance;
+                                dbRow.TotalDepth = formValue.TotalDepth;
+                                dbRow.RowIndex = formValue.RowIndex;
+                                dbRow.SectionNumber = formValue.SectionNumber;
+                                dbRow.MeasureTime = formValue.MeasureTime;
+                                dbRow.Rev02 = formValue.Rev02;
+                                dbRow.Rev06 = formValue.Rev06;
+                                dbRow.Rev08 = formValue.Rev08;
+                                dbRow.SectionWidth = formValue.SectionWidth;
+                                dbRow.SectionArea = formValue.SectionArea;
+                                dbRow.SectionFlow = formValue.SectionFlow;
+                                dbRow.VerticalMeanVelocity = formValue.VerticalMeanVelocity;
+                            }
                         }
                     }
+                }
+                else
+                {
+                    db.FormValues.RemoveRange(existing.FormValues);
                 }
 
                 db.AssessmentPumps.RemoveRange(existing.PumpStates);
@@ -251,6 +295,22 @@ namespace WaterAssessment.Services
                         GateNumber = gate.GateNumber,
                         Value = gate.Value
                     });
+                }
+
+                db.GateFlowRows.RemoveRange(existing.GateFlowRows);
+                if (model.MeasurementFormType == MeasurementFormType.GateDischargeEquation)
+                {
+                    foreach (var row in gateFlowRows)
+                    {
+                        existing.GateFlowRows.Add(new GateFlowRow
+                        {
+                            AssessmentID = existing.AssessmentID,
+                            HydraulicGateID = row.HydraulicGateID,
+                            OpeningHeight = row.OpeningHeight,
+                            UpstreamHead = row.UpstreamHead,
+                            CalculatedFlow = row.CalculatedFlow
+                        });
+                    }
                 }
 
                 await db.SaveChangesAsync();

@@ -13,13 +13,15 @@
             Assessment model,
             IEnumerable<FormValue> formValues,
             IEnumerable<AssessmentPump> pumpStates,
-            IEnumerable<Assessment_Employee> assessmentEmployees);
+            IEnumerable<Assessment_Employee> assessmentEmployees,
+            IEnumerable<GateFlowRow> gateFlowRows);
         Task<bool> UpdateAssessmentAsync(
             Assessment model,
             IEnumerable<FormValue> formValues,
             IEnumerable<AssessmentPump> pumpStates,
             IEnumerable<Assessment_Employee> assessmentEmployees,
-            IEnumerable<AssessmentGate> gateOpenings);
+            IEnumerable<AssessmentGate> gateOpenings,
+            IEnumerable<GateFlowRow> gateFlowRows);
         string GetLastErrorMessage();
     }
 }

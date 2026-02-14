@@ -31,33 +31,38 @@ namespace WaterAssessment.ViewModel
         // لیست ردیف‌های اندازه‌گیری (فرزندان)
         public ObservableCollection<FormValueViewModel> FormValues { get; } = new();
 
+        public ObservableCollection<GateFlowRowViewModel> GateFlowRows { get; } = new();
+
         public ObservableCollection<Assessment_Employee> AssessmentEmployees { get; } = new();
 
         // ==========================================================
         // پراپرتی‌های انتخابی (Selected Items)
         // ==========================================================
 
-        [ObservableProperty]
-        private Location _selectedLocation;
-        partial void OnSelectedLocationChanged(Location value)
+        [ObservableProperty] private Location? _selectedLocation;
+        partial void OnSelectedLocationChanged(Location? value)
         {
             if (value == null) return;
 
             Model.LocationID = value.LocationID;
             Model.Location = value;
 
+            CurrentFormType = value.MeasurementFormType;
+            Model.MeasurementFormType = CurrentFormType;
+
             // مدیریت دریچه‌ها بر اساس تعداد دریچه مکان انتخاب شده
             UpdateGateOpenings(value.GateCount ?? 0);
             // مدیریت پمپ‌ها
             UpdatePumpStates(value);
+
+            InitializeFormByType(value);
         }
 
-        [ObservableProperty]
-        private Propeller _selectedPropeller;
-        partial void OnSelectedPropellerChanged(Propeller value)
+        [ObservableProperty] private Propeller? _selectedPropeller;
+        partial void OnSelectedPropellerChanged(Propeller? value)
         {
             if (value == null) return;
-            Model.PropellerID = value.PropellerID;
+            Model.PropellerID = value?.PropellerID;
             Model.Propeller = value;
 
             // باید پروانه جدید را به تمام سطرهای فرزند هم اطلاع دهیم تا سرعت را با فرمول جدید حساب کنند
@@ -67,24 +72,47 @@ namespace WaterAssessment.ViewModel
             }
         }
 
-        [ObservableProperty]
-        private CurrentMeter _selectedCurrentMeter;
-        partial void OnSelectedCurrentMeterChanged(CurrentMeter value)
+        [ObservableProperty] private CurrentMeter? _selectedCurrentMeter;
+        partial void OnSelectedCurrentMeterChanged(CurrentMeter? value)
         {
             if (value == null) return;
-            Model.CurrentMeterID = value.CurrentMeterID;
+            Model.CurrentMeterID = value?.CurrentMeterID;
             Model.CurrentMeter = value;
         }
 
-        [ObservableProperty] private Employee _selectedEmployeeToAdd;
+        [ObservableProperty] private Employee? _selectedEmployeeToAdd;
 
+        [ObservableProperty]
+        private MeasurementFormType _currentFormType = MeasurementFormType.HydrometrySingleSection;
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(TotalFlowDisplay))]
+        private double _manualTotalFlowInput;
+
+        public bool IsHydrometryForm => CurrentFormType == MeasurementFormType.HydrometrySingleSection || CurrentFormType == MeasurementFormType.HydrometryMultiSection;
+        public bool IsManualForm => CurrentFormType == MeasurementFormType.ManualTotalFlow;
+        public bool IsDischargeEquationForm => CurrentFormType == MeasurementFormType.GateDischargeEquation;
+
+        partial void OnCurrentFormTypeChanged(MeasurementFormType value)
+        {
+            OnPropertyChanged(nameof(IsHydrometryForm));
+            OnPropertyChanged(nameof(IsManualForm));
+            OnPropertyChanged(nameof(IsDischargeEquationForm));
+        }
+
+        partial void OnManualTotalFlowInputChanged(double value)
+        {
+            if (!IsManualForm) return;
+            TotalFlow = value;
+            Model.TotalFlow = value;
+            Model.ManualTotalFlow = value;
+        }
 
         // ==========================================================
         // وضعیت UI (مشغولی، پیام‌ها)
         // ==========================================================
         [ObservableProperty] private bool _isBusy;
-        [ObservableProperty] private string _infoMessage;
+        [ObservableProperty] private string _infoMessage = string.Empty;
         [ObservableProperty] private InfoBarSeverity _infoSeverity = InfoBarSeverity.Informational;
         [ObservableProperty] private bool _isInfoOpen;
 
@@ -131,7 +159,9 @@ namespace WaterAssessment.ViewModel
             Timer = model.Timer == 0 ? 50 : model.Timer; // پیش‌فرض 50
             Date = model.Date == default ? DateTime.Now : model.Date;
             Echelon = model.Echelon;
+            CurrentFormType = model.MeasurementFormType;
             TotalFlow = model.TotalFlow;
+            ManualTotalFlowInput = model.ManualTotalFlow ?? model.TotalFlow;
 
             // لود کردن کارمندان انتخاب شده از دیالوگ
             foreach (var emp in model.AssessmentEmployees) AssessmentEmployees.Add(emp);
@@ -153,7 +183,7 @@ namespace WaterAssessment.ViewModel
                 // یک بار محاسبات کلی را انجام بده (برای اطمینان از صحت مقادیر لود شده)
                 RecalculateGeometryAndFlow();
             }
-            else
+            else if (IsHydrometryForm)
             {
                 // +++ حالت جدید: ایجاد ۶ سطر پیش‌فرض +++
                 InitializeDefaultRows();
@@ -191,10 +221,10 @@ namespace WaterAssessment.ViewModel
             if (Model.LocationID > 0)
                 SelectedLocation = AllLocations.FirstOrDefault(x => x.LocationID == Model.LocationID);
 
-            if (Model.PropellerID > 0)
+            if (Model.PropellerID.HasValue && Model.PropellerID > 0)
                 SelectedPropeller = AllPropellers.FirstOrDefault(x => x.PropellerID == Model.PropellerID);
 
-            if (Model.CurrentMeterID > 0)
+            if (Model.CurrentMeterID.HasValue && Model.CurrentMeterID > 0)
                 SelectedCurrentMeter = AllCurrentMeters.FirstOrDefault(x => x.CurrentMeterID == Model.CurrentMeterID);
 
             // 3. لود کردن دریچه‌ها
@@ -203,6 +233,7 @@ namespace WaterAssessment.ViewModel
             //{
             //    foreach (var g in Model.GateOpenings) GateValues.Add(g);
             //}
+
             else if (SelectedLocation != null)
             {
                 // اگر جدید است، بر اساس مکان پیش‌فرض بساز
@@ -265,9 +296,47 @@ namespace WaterAssessment.ViewModel
             OnPropertyChanged(nameof(HasPumps));
         }
 
+        private void InitializeFormByType(Location location)
+        {
+            if (IsDischargeEquationForm)
+            {
+                GateFlowRows.Clear();
+                var savedRows = Model.GateFlowRows?.ToDictionary(r => r.HydraulicGateID) ?? new Dictionary<int, GateFlowRow>();
+                foreach (var gate in (location.HydraulicGates ?? new List<HydraulicGate>()).OrderBy(g => g.GateNumber))
+                {
+                    savedRows.TryGetValue(gate.Id, out var saved);
+                    var row = new GateFlowRowViewModel(gate, saved?.OpeningHeight ?? 0, saved?.UpstreamHead ?? 0);
+                    row.RowChanged += RecalculateGeometryAndFlow;
+                    GateFlowRows.Add(row);
+                }
+
+                RecalculateGeometryAndFlow();
+                return;
+            }
+
+            GateFlowRows.Clear();
+
+            if (IsManualForm)
+            {
+                ManualTotalFlowInput = Model.ManualTotalFlow ?? Model.TotalFlow;
+                RecalculateGeometryAndFlow();
+                return;
+            }
+
+            if (!FormValues.Any())
+            {
+                InitializeDefaultRows();
+            }
+            else
+            {
+                RecalculateGeometryAndFlow();
+            }
+        }
+
         // پراپرتی‌های کمکی برای کنترل Visibility در XAML
         public bool HasGates => GateValues.Count > 0;
         public bool HasPumps => PumpStates.Count > 0;
+        public bool HasGateFlowRows => GateFlowRows.Count > 0;
 
         // ==========================================================
         // پراپرتی‌های نمایشی و اصلی
@@ -308,21 +377,36 @@ namespace WaterAssessment.ViewModel
                 return;
             }
 
-            if (SelectedPropeller == null)
+            if (IsHydrometryForm)
             {
-                await ShowInfo("لطفاً پروانه را انتخاب کنید.", InfoBarSeverity.Warning);
+                if (SelectedPropeller == null)
+                {
+                    await ShowInfo("لطفاً پروانه را انتخاب کنید.", InfoBarSeverity.Warning);
+                    return;
+                }
+
+                if (SelectedCurrentMeter == null)
+                {
+                    await ShowInfo("لطفاً مولینه را انتخاب کنید.", InfoBarSeverity.Warning);
+                    return;
+                }
+
+                if (!Echelon.HasValue)
+                {
+                    await ShowInfo("لطفاً مقدار اشل را وارد کنید.", InfoBarSeverity.Warning);
+                    return;
+                }
+            }
+
+            if (IsManualForm && ManualTotalFlowInput <= 0)
+            {
+                await ShowInfo("لطفاً دبی کل را به صورت دستی وارد کنید.", InfoBarSeverity.Warning);
                 return;
             }
 
-            if (SelectedCurrentMeter == null)
+            if (IsDischargeEquationForm && !GateFlowRows.Any())
             {
-                await ShowInfo("لطفاً مولینه را انتخاب کنید.", InfoBarSeverity.Warning);
-                return;
-            }
-
-            if (!Echelon.HasValue)
-            {
-                await ShowInfo("لطفاً مقدار اشل را وارد کنید.", InfoBarSeverity.Warning);
+                await ShowInfo("برای فرم محاسبه دبی دریچه حداقل یک دریچه لازم است.", InfoBarSeverity.Warning);
                 return;
             }
 
@@ -348,7 +432,7 @@ namespace WaterAssessment.ViewModel
             if (IsBusy) return;
 
             // 1. اعتبارسنجی ساده
-            if (FormValues.Count == 0)
+            if (IsHydrometryForm && FormValues.Count == 0)
             {
                 await ShowInfo("هیچ سطری برای ثبت وجود ندارد.", InfoBarSeverity.Warning);
                 return;
@@ -364,7 +448,8 @@ namespace WaterAssessment.ViewModel
                     Model,
                     formValues,
                     PumpStates,
-                    Model.AssessmentEmployees);
+                    Model.AssessmentEmployees,
+                    BuildAssessmentGateFlowRows());
 
                 if (success)
                 {
@@ -403,7 +488,8 @@ namespace WaterAssessment.ViewModel
                     formValues,
                     PumpStates,
                     AssessmentEmployees,
-                    Model.GateOpenings ?? new List<AssessmentGate>());
+                    Model.GateOpenings ?? new List<AssessmentGate>(),
+                    BuildAssessmentGateFlowRows());
                 if (success)
                 {
                     ResetToNewForm();
@@ -440,6 +526,8 @@ namespace WaterAssessment.ViewModel
 
         private List<FormValue> BuildFormValueModels()
         {
+            if (!IsHydrometryForm) return new List<FormValue>();
+
             foreach (var vm in FormValues)
             {
                 vm.Model.SectionWidth = vm.SectionWidth;
@@ -451,12 +539,32 @@ namespace WaterAssessment.ViewModel
             return FormValues.Select(vm => vm.Model).ToList();
         }
 
+        private List<GateFlowRow> BuildAssessmentGateFlowRows()
+        {
+            if (!IsDischargeEquationForm) return new List<GateFlowRow>();
+
+            return GateFlowRows.Select(r => new GateFlowRow
+            {
+                AssessmentID = Model.AssessmentID,
+                HydraulicGateID = r.HydraulicGateID,
+                OpeningHeight = r.OpeningHeight,
+                UpstreamHead = r.UpstreamHead,
+                CalculatedFlow = r.CalculatedFlow
+            }).ToList();
+        }
+
         /// <summary>
         /// افزودن سطر جدید به صورت داینامیک در UI
         /// </summary>
         [RelayCommand]
         private async Task AddRowAsync()
         {
+            if (!IsHydrometryForm)
+            {
+                await ShowInfo("افزودن سطر فقط در فرم‌های هیدرومتری فعال است.", InfoBarSeverity.Warning);
+                return;
+            }
+
             if (SelectedPropeller == null)
             {
                 await ShowInfo("لطفاً پروانه مورد نظر را انتخاب کنید.", InfoBarSeverity.Warning);
@@ -557,6 +665,8 @@ namespace WaterAssessment.ViewModel
             Timer = 50;
             Date = DateTime.Now;
             Echelon = null;
+            ManualTotalFlowInput = 0;
+            CurrentFormType = MeasurementFormType.HydrometrySingleSection;
 
             // 3. پاک کردن لیست‌ها
             AssessmentEmployees.Clear();
@@ -568,7 +678,9 @@ namespace WaterAssessment.ViewModel
             PumpStates.Clear();
             Model.PumpStates.Clear();
             AvailablePumps.Clear();
+            GateFlowRows.Clear();
             OnPropertyChanged(nameof(HasPumps));
+            OnPropertyChanged(nameof(HasGateFlowRows));
 
             //  ایجاد سطرهای پیش‌فرض (خالی)
             InitializeDefaultRows(6);
@@ -611,50 +723,58 @@ namespace WaterAssessment.ViewModel
         /// </summary>
         private void RecalculateGeometryAndFlow()
         {
+            if (IsManualForm)
+            {
+                TotalFlow = ManualTotalFlowInput;
+                Model.TotalFlow = ManualTotalFlowInput;
+                Model.ManualTotalFlow = ManualTotalFlowInput;
+                return;
+            }
+
+            if (IsDischargeEquationForm)
+            {
+                var sum = GateFlowRows.Sum(r => r.CalculatedFlow);
+                TotalFlow = sum;
+                Model.TotalFlow = sum;
+                return;
+            }
+
             if (!FormValues.Any()) { TotalFlow = 0; return; }
 
-            // مرتب‌سازی بر اساس فاصله
-            var sortedRows = FormValues.OrderBy(x => x.Distance).ToList();
+            var groups = FormValues.GroupBy(x => Math.Max(1, x.Model.SectionNumber));
             double sumFlow = 0;
 
-            for (int i = 0; i < sortedRows.Count; i++)
+            foreach (var group in groups)
             {
-                var current = sortedRows[i];
+                var sortedRows = group.OrderBy(x => x.Distance).ToList();
 
-                if (i == 0)
+                for (int i = 0; i < sortedRows.Count; i++)
                 {
-                    // سطر اول: چون سطر قبلی ندارد، مقادیر پنل خالی/صفر هستند
-                    current.SectionWidth = 0;
-                    current.SectionArea = 0;
-                    current.SectionFlow = 0;
-                    current.PanelAvgVelocity = 0; // <--- مهم: برای سطر اول مقدار 0 یا نامعتبر می‌گذاریم
-                }
-                else
-                {
-                    var prev = sortedRows[i - 1];
+                    var current = sortedRows[i];
 
-                    // 1. محاسبه عرض پنل
-                    double w = current.Distance - prev.Distance;
+                    if (i == 0)
+                    {
+                        current.SectionWidth = 0;
+                        current.SectionArea = 0;
+                        current.SectionFlow = 0;
+                        current.PanelAvgVelocity = 0;
+                    }
+                    else
+                    {
+                        var prev = sortedRows[i - 1];
+                        double w = current.Distance - prev.Distance;
+                        double d_avg = (current.TotalDepth + prev.TotalDepth) / 2.0;
+                        double v_avg = (current.VerticalMeanVelocity + prev.VerticalMeanVelocity) / 2.0;
+                        double area = w * d_avg;
+                        double flow = area * v_avg;
 
-                    // 2. محاسبه میانگین عمق
-                    double d_avg = (current.TotalDepth + prev.TotalDepth) / 2.0;
-
-                    // 3. محاسبه میانگین سرعت (درخواست شما)
-                    // فرمول: (سرعت قائم سطر قبل + سرعت قائم سطر جاری) تقسیم بر 2
-                    double v_avg = (current.VerticalMeanVelocity + prev.VerticalMeanVelocity) / 2.0;
-
-                    // 4. محاسبه سطح و دبی
-                    double area = w * d_avg;
-                    double flow = area * v_avg;
-
-                    // 5. ذخیره در سطر جاری برای نمایش
-                    current.SectionWidth = w;
-                    current.PanelAvgDepth = d_avg;
-                    current.PanelAvgVelocity = v_avg; // <--- ذخیره سرعت میانگین پنل
-                    current.SectionArea = area;
-                    current.SectionFlow = flow;
-
-                    sumFlow += flow;
+                        current.SectionWidth = w;
+                        current.PanelAvgDepth = d_avg;
+                        current.PanelAvgVelocity = v_avg;
+                        current.SectionArea = area;
+                        current.SectionFlow = flow;
+                        sumFlow += flow;
+                    }
                 }
             }
 

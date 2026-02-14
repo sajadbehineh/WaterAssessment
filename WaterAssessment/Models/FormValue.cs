@@ -13,6 +13,7 @@ namespace WaterAssessment.Models
 
         // ترتیب نمایش در گرید
         public int RowIndex { get; set; }
+        public int SectionNumber { get; set; } = 1;
 
         // ==========================================
         // ورودی‌های فیزیکی و هندسی

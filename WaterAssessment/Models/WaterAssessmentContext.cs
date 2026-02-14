@@ -109,6 +109,28 @@ public class WaterAssessmentContext : DbContext
             .HasForeignKey(p => p.LocationID)  // کلید خارجی در جدول LocationPump
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<HydraulicGate>()
+            .HasOne(g => g.Location)
+            .WithMany(l => l.HydraulicGates)
+            .HasForeignKey(g => g.LocationID)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<GateFlowRow>()
+            .HasOne(r => r.Assessment)
+            .WithMany(a => a.GateFlowRows)
+            .HasForeignKey(r => r.AssessmentID)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<GateFlowRow>()
+            .HasOne(r => r.HydraulicGate)
+            .WithMany()
+            .HasForeignKey(r => r.HydraulicGateID)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<GateFlowRow>()
+            .HasIndex(r => new { r.AssessmentID, r.HydraulicGateID })
+            .IsUnique();
+
         //modelBuilder.Entity<Location>()
         //    .HasOne(l => l.CreatedBy)
         //    .WithMany()
@@ -135,4 +157,6 @@ public class WaterAssessmentContext : DbContext
     public DbSet<LocationPump> LocationPumps { get; set; }
     public DbSet<AssessmentPump> AssessmentPumps { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<HydraulicGate> HydraulicGates { get; set; }
+    public DbSet<GateFlowRow> GateFlowRows { get; set; }
 }

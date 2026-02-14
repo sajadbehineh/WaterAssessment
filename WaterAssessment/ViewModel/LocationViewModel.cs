@@ -21,6 +21,10 @@ namespace WaterAssessment.ViewModel
         // لیستی برای مدیریت پمپ‌های یک مکان در حافظه (قبل از ذخیره)
         public ObservableCollection<LocationPump> TempPumps { get; } = new();
 
+        public ObservableCollection<HydraulicGate> TempHydraulicGates { get; } = new();
+
+        public ObservableCollection<MeasurementFormType> AvailableFormTypes { get; } = new(Enum.GetValues<MeasurementFormType>());
+
         // ==========================================================
         // تعریف پراپرتی‌های ورودی (Inputs)
         // ==========================================================
@@ -70,8 +74,33 @@ namespace WaterAssessment.ViewModel
         [NotifyCanExecuteChangedFor(nameof(SaveLocationCommand))]
         private LocationType? _selectedLocationType;
 
+        // نوع فرم اندازه‌گیری انتخاب شده
 
-        // آیتم انتخاب شده در جدول (برای ویرایش یا حذف)
+        [ObservableProperty]
+        private MeasurementFormType _selectedMeasurementFormType = MeasurementFormType.HydrometrySingleSection;
+
+        // تعداد مقاطع (فقط برای فرم چند مقطعی)
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(SectionCountDouble))]
+        private int? _sectionCount;
+
+        // برای راحتی کار با کنترل‌های عددی که ممکن است مقدار نال داشته باشند، پراپرتی‌های کمکی از نوع double تعریف می‌کنیم
+        public double SectionCountDouble
+        {
+            get => SectionCount ?? 1;
+            set => SectionCount = (int)value;
+        }
+
+        // نمایش یا عدم نمایش فرم مربوط به تعداد مقاطع در فرم چند مقطعی
+        public Visibility SectionCountVisibility => SelectedMeasurementFormType == MeasurementFormType.HydrometryMultiSection
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+
+        // نمایش یا عدم نمایش فرم مربوط به معادله دبی دریچه
+        public Visibility GateDischargeConfigVisibility => SelectedMeasurementFormType == MeasurementFormType.GateDischargeEquation
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+
         [ObservableProperty]
         private Location? _selectedLocation;
 
@@ -100,7 +129,11 @@ namespace WaterAssessment.ViewModel
         partial void OnHasGateChanged(bool value)
         {
             OnPropertyChanged(nameof(GateVisibility));
-            if (!value) GateCount = null;
+            if (!value)
+            {
+                GateCount = null;
+                TempHydraulicGates.Clear();
+            }
         }
 
         // وقتی کاربر تیک HasPump را می‌زند یا برمی‌دارد
@@ -135,6 +168,58 @@ namespace WaterAssessment.ViewModel
             }
         }
 
+        // وقتی نوع فرم اندازه‌گیری تغییر می‌کند، باید نمایش فرم‌های مرتبط را به‌روزرسانی کنیم و مقادیر غیرمرتبط را پاک کنیم
+        partial void OnSelectedMeasurementFormTypeChanged(MeasurementFormType value)
+        {
+            OnPropertyChanged(nameof(SectionCountVisibility));
+            OnPropertyChanged(nameof(GateDischargeConfigVisibility));
+
+            if (value != MeasurementFormType.HydrometryMultiSection)
+            {
+                SectionCount = null;
+            }
+
+            if (value == MeasurementFormType.GateDischargeEquation)
+            {
+                HasGate = true;
+                if (!GateCount.HasValue || GateCount.Value <= 0)
+                {
+                    GateCount = 1;
+                }
+                SyncHydraulicGatesWithGateCount();
+            }
+            else
+            {
+                TempHydraulicGates.Clear();
+            }
+        }
+
+        // وقتی تعداد دریچه‌ها تغییر می‌کند، باید لیست دریچه‌های هیدرولیکی را همگام‌سازی کنیم
+        partial void OnGateCountChanged(int? value)
+        {
+            if (SelectedMeasurementFormType == MeasurementFormType.GateDischargeEquation)
+            {
+                SyncHydraulicGatesWithGateCount();
+            }
+        }
+
+        // این متد لیست دریچه‌های هیدرولیکی را با توجه به تعداد دریچه‌ها همگام‌سازی می‌کند، بدون اینکه داده‌های وارد شده قبلی را از دست بدهد (تا حد امکان)
+        private void SyncHydraulicGatesWithGateCount()
+        {
+            int count = GateCount ?? 0;
+            if (count < TempHydraulicGates.Count)
+            {
+                while (TempHydraulicGates.Count > count) TempHydraulicGates.RemoveAt(TempHydraulicGates.Count - 1);
+            }
+            else
+            {
+                for (int i = TempHydraulicGates.Count + 1; i <= count; i++)
+                {
+                    TempHydraulicGates.Add(new HydraulicGate { GateNumber = i, DischargeCoefficient = 0.62, Width = 1.0 });
+                }
+            }
+        }
+
         partial void OnSelectedLocationChanged(Location? value)
         {
             if (value != null)
@@ -145,6 +230,24 @@ namespace WaterAssessment.ViewModel
 
                 HasGate = value.GateCount.HasValue;
                 GateCountDouble = value.GateCount.HasValue ? (double)value.GateCount.Value : 0.0; // +++ لود کردن تعداد دریچه +++
+
+                SelectedMeasurementFormType = value.MeasurementFormType;
+                SectionCount = value.SectionCount;
+
+                TempHydraulicGates.Clear();
+                if (value.HydraulicGates != null)
+                {
+                    foreach (var gate in value.HydraulicGates.OrderBy(g => g.GateNumber))
+                    {
+                        TempHydraulicGates.Add(new HydraulicGate
+                        {
+                            Id = gate.Id,
+                            GateNumber = gate.GateNumber,
+                            DischargeCoefficient = gate.DischargeCoefficient,
+                            Width = gate.Width
+                        });
+                    }
+                }
 
                 HasPump = value.PumpCount.HasValue;
                 PumpCountDouble = value.PumpCount.HasValue ? (double)value.PumpCount.Value : 0.0;
@@ -167,7 +270,7 @@ namespace WaterAssessment.ViewModel
         // ==========================================================
         // Constructor
         // ==========================================================
-        public LocationViewModel(ILocationService locationService, IDialogService dialogService) : base(pageSize: 10)
+        public LocationViewModel(ILocationService locationService, IDialogService dialogService) : base(pageSize: 5)
         {
             _locationService = locationService;
             _dialogService = dialogService;
@@ -200,9 +303,14 @@ namespace WaterAssessment.ViewModel
                 LocationName = this.LocationName,
                 AreaID = this.SelectedArea!.AreaID,
                 LocationTypeID = this.SelectedLocationType!.LocationTypeID,
+                HasGate = HasGate,
+                HasPump = HasPump,
                 GateCount = HasGate ? this.GateCount : null,
                 PumpCount = HasPump ? this.PumpCount : null,
-                LocationPumps = HasPump ? TempPumps.ToList() : new List<LocationPump>()
+                MeasurementFormType = SelectedMeasurementFormType,
+                SectionCount = SelectedMeasurementFormType == MeasurementFormType.HydrometryMultiSection ? SectionCount : null,
+                LocationPumps = HasPump ? TempPumps.ToList() : new List<LocationPump>(),
+                HydraulicGates = SelectedMeasurementFormType == MeasurementFormType.GateDischargeEquation ? TempHydraulicGates.ToList() : new List<HydraulicGate>()
             };
 
             bool success;
@@ -270,6 +378,9 @@ namespace WaterAssessment.ViewModel
             HasPump = false;
             PumpCount = null;
             TempPumps.Clear();
+            SelectedMeasurementFormType = MeasurementFormType.HydrometrySingleSection;
+            SectionCount = null;
+            TempHydraulicGates.Clear();
             AddEditBtnContent = "ذخیره";
             IsErrorVisible = false;
         }

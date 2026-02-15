@@ -106,9 +106,17 @@ namespace WaterAssessment.ViewModel
         partial void OnManualTotalFlowInputChanged(double value)
         {
             if (!IsManualForm) return;
-            TotalFlow = value;
-            Model.TotalFlow = value;
-            Model.ManualTotalFlow = value;
+
+            var normalizedValue = NormalizePositiveFlowInput(value);
+            if (!value.Equals(normalizedValue))
+            {
+                ManualTotalFlowInput = normalizedValue;
+                return;
+            }
+
+            TotalFlow = normalizedValue;
+            Model.TotalFlow = normalizedValue;
+            Model.ManualTotalFlow = normalizedValue;
         }
 
         // ==========================================================
@@ -393,17 +401,11 @@ namespace WaterAssessment.ViewModel
                     await ShowInfo("لطفاً مولینه را انتخاب کنید.", InfoBarSeverity.Warning);
                     return;
                 }
-
-                if (!Echelon.HasValue)
-                {
-                    await ShowInfo("لطفاً مقدار اشل را وارد کنید.", InfoBarSeverity.Warning);
-                    return;
-                }
             }
 
-            if (IsManualForm && ManualTotalFlowInput <= 0)
+            if (IsManualForm && NormalizePositiveFlowInput(ManualTotalFlowInput) < 0)
             {
-                await ShowInfo("لطفاً دبی کل را به صورت دستی وارد کنید.", InfoBarSeverity.Warning);
+                await ShowInfo("دبی کل نمی‌تواند منفی باشد.", InfoBarSeverity.Warning);
                 return;
             }
 
@@ -728,9 +730,10 @@ namespace WaterAssessment.ViewModel
         {
             if (IsManualForm)
             {
-                TotalFlow = ManualTotalFlowInput;
-                Model.TotalFlow = ManualTotalFlowInput;
-                Model.ManualTotalFlow = ManualTotalFlowInput;
+                var manualFlow = NormalizePositiveFlowInput(ManualTotalFlowInput);
+                TotalFlow = manualFlow;
+                Model.TotalFlow = manualFlow;
+                Model.ManualTotalFlow = manualFlow;
                 return;
             }
 
@@ -783,6 +786,16 @@ namespace WaterAssessment.ViewModel
 
             TotalFlow = sumFlow;
             Model.TotalFlow = sumFlow;
+        }
+
+        private static double NormalizePositiveFlowInput(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+            {
+                return 0;
+            }
+
+            return value;
         }
 
         // این متد را به کلاس AssessmentViewModel اضافه کنید

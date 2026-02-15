@@ -14,7 +14,7 @@ namespace WaterAssessment.Mapping
                 .Property(p => p.Timer).IsRequired();
 
             builder
-                .Property(p => p.Echelon).IsRequired();
+                .Property(p => p.Echelon).IsRequired(false);
 
             builder
                 .Property(b => b.Inserted)

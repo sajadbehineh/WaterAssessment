@@ -58,6 +58,18 @@ namespace WaterAssessment.ViewModel
         public bool IsFirstRow => RowIndex == 1;
         public bool ShowCalculationGrid => !IsFirstRow;
 
+        public void RefreshRowMetadata()
+        {
+            OnPropertyChanged(nameof(RowIndex));
+            OnPropertyChanged(nameof(IsFirstRow));
+            OnPropertyChanged(nameof(ShowCalculationGrid));
+            OnPropertyChanged(nameof(SectionWidthDisplay));
+            OnPropertyChanged(nameof(SectionAreaDisplay));
+            OnPropertyChanged(nameof(SectionFlowDisplay));
+            OnPropertyChanged(nameof(PanelAvgDepthDisplay));
+            OnPropertyChanged(nameof(PanelAvgVelocityDisplay));
+        }
+
         // ==========================================================
         // 1. ورودی‌های هندسی (فاصله و عمق کل)
         // ==========================================================

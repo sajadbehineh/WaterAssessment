@@ -31,6 +31,8 @@ namespace WaterAssessment.ViewModel
         // لیست ردیف‌های اندازه‌گیری (فرزندان)
         public ObservableCollection<FormValueViewModel> FormValues { get; } = new();
 
+        public ObservableCollection<HydrometrySectionViewModel> HydrometrySections { get; } = new();
+
         public ObservableCollection<GateFlowRowViewModel> GateFlowRows { get; } = new();
 
         public ObservableCollection<Assessment_Employee> AssessmentEmployees { get; } = new();
@@ -191,6 +193,9 @@ namespace WaterAssessment.ViewModel
                     SubscribeToChildEvents(vm); // اشتراک در رویدادها
                     FormValues.Add(vm);
                 }
+
+                RebuildHydrometrySections();
+
                 // یک بار محاسبات کلی را انجام بده (برای اطمینان از صحت مقادیر لود شده)
                 RecalculateGeometryAndFlow();
             }
@@ -338,10 +343,15 @@ namespace WaterAssessment.ViewModel
             {
                 InitializeDefaultRows();
             }
-            else
+
+            if (IsEditMode && FormValues.Any())
             {
+                RebuildHydrometrySections();
                 RecalculateGeometryAndFlow();
+                return;
             }
+
+            InitializeDefaultRows();
         }
 
         // پراپرتی‌های کمکی برای کنترل Visibility در XAML
@@ -561,8 +571,13 @@ namespace WaterAssessment.ViewModel
         /// <summary>
         /// افزودن سطر جدید به صورت داینامیک در UI
         /// </summary>
+
         [RelayCommand]
         private async Task AddRowAsync()
+            => await AddRowToSectionAsync(1);
+
+        [RelayCommand]
+        private async Task AddRowToSectionAsync(int sectionNumber)
         {
             if (!IsHydrometryForm)
             {
@@ -580,6 +595,7 @@ namespace WaterAssessment.ViewModel
             var newModel = new FormValue
             {
                 AssessmentID = this.Model.AssessmentID,
+                SectionNumber = Math.Max(1, sectionNumber),
                 // مقداردهی اولیه زمان با تایمر هدر
                 MeasureTime = this.Timer
             };
@@ -590,19 +606,34 @@ namespace WaterAssessment.ViewModel
             // پیشنهاد هوشمندانه فاصله:
             // اگر ردیف قبلی وجود دارد، فاصله جدید را مثلاً 1 متر بعد از آن پیشنهاد بده
 
-            if (FormValues.Any())
+            var sectionRows = FormValues.Where(x => x.Model.SectionNumber == newModel.SectionNumber).ToList();
+
+            if (sectionRows.Any())
             {
-                newVM.Distance = FormValues.Last().Distance + 1; // مقدار پیشنهادی
+                newVM.Distance = sectionRows.Last().Distance + 1; // مقدار پیشنهادی
             }
 
-            // محاسبه ایندکس ردیف
-            newVM.Model.RowIndex = FormValues.Count + 1;
+            // شماره ردیف در همان سکشن
+            newVM.Model.RowIndex = sectionRows.Count + 1;
 
             // 3. اشتراک در تغییرات این فرزند (بسیار مهم)
             SubscribeToChildEvents(newVM);
 
             // 4. افزودن به لیست
-            FormValues.Add(newVM);
+            var lastSectionIndex = FormValues
+                .Select((row, idx) => new { row, idx })
+                .Where(x => x.row.Model.SectionNumber == newModel.SectionNumber)
+                .Select(x => x.idx)
+                .DefaultIfEmpty(-1)
+                .Max();
+
+            if (lastSectionIndex >= 0)
+                FormValues.Insert(lastSectionIndex + 1, newVM);
+            else
+                FormValues.Add(newVM);
+
+            ReindexRows();
+            RebuildHydrometrySections();
 
             // 5. محاسبه مجدد عرض‌ها و دبی کل
             RecalculateGeometryAndFlow();
@@ -622,10 +653,8 @@ namespace WaterAssessment.ViewModel
             FormValues.Remove(row);
 
             // اصلاح شماره ردیف‌ها (اختیاری)
-            for (int i = 0; i < FormValues.Count; i++)
-            {
-                FormValues[i].Model.RowIndex = i + 1;
-            }
+            ReindexRows();
+            RebuildHydrometrySections();
 
             // محاسبه مجدد بعد از حذف
             RecalculateGeometryAndFlow();
@@ -688,7 +717,7 @@ namespace WaterAssessment.ViewModel
             OnPropertyChanged(nameof(HasGateFlowRows));
 
             //  ایجاد سطرهای پیش‌فرض (خالی)
-            InitializeDefaultRows(6);
+            InitializeDefaultRows();
 
             //  اطلاع‌رسانی به UI برای تغییر دکمه‌ها و وضعیت
             OnPropertyChanged(nameof(IsEditMode));
@@ -745,7 +774,15 @@ namespace WaterAssessment.ViewModel
                 return;
             }
 
-            if (!FormValues.Any()) { TotalFlow = 0; return; }
+            if (!FormValues.Any())
+            {
+                TotalFlow = 0;
+                foreach (var section in HydrometrySections)
+                {
+                    section.SectionFlow = 0;
+                }
+                return;
+            }
 
             var groups = FormValues.GroupBy(x => Math.Max(1, x.Model.SectionNumber));
             double sumFlow = 0;
@@ -753,6 +790,7 @@ namespace WaterAssessment.ViewModel
             foreach (var group in groups)
             {
                 var sortedRows = group.OrderBy(x => x.Distance).ToList();
+                double sectionFlow = 0;
 
                 for (int i = 0; i < sortedRows.Count; i++)
                 {
@@ -779,8 +817,15 @@ namespace WaterAssessment.ViewModel
                         current.PanelAvgVelocity = v_avg;
                         current.SectionArea = area;
                         current.SectionFlow = flow;
+                        sectionFlow += flow;
                         sumFlow += flow;
                     }
+                }
+
+                var sectionVm = HydrometrySections.FirstOrDefault(x => x.SectionNumber == group.Key);
+                if (sectionVm != null)
+                {
+                    sectionVm.SectionFlow = sectionFlow;
                 }
             }
 
@@ -798,33 +843,108 @@ namespace WaterAssessment.ViewModel
             return value;
         }
 
-        // این متد را به کلاس AssessmentViewModel اضافه کنید
-        private void InitializeDefaultRows(int count = 6)
+        private void InitializeDefaultRows(int rowsPerSection = 2)
         {
             // پاک کردن سطرهای موجود
             FormValues.Clear();
+            HydrometrySections.Clear();
+
             // پاک کردن از مدل برای اطمینان
             if (Model.FormValues == null) Model.FormValues = new List<FormValue>();
+
             Model.FormValues.Clear();
 
-            for (int i = 0; i < count; i++)
-            {
-                var newModel = new FormValue
-                {
-                    AssessmentID = Model.AssessmentID, // اگر آیدی 0 باشد مشکلی نیست
-                    RowIndex = i + 1,
-                    MeasureTime = this.Timer,
-                    Distance = i, // فاصله پیش‌فرض
-                    TotalDepth = 0
-                };
+            var sectionCount = GetRequiredSectionCount();
 
-                var newVM = _formValueViewModelFactory.Create(newModel, SelectedPropeller);
-                SubscribeToChildEvents(newVM); // اشتراک در رویدادها برای محاسبات
-                FormValues.Add(newVM);
+            for (int section = 1; section <= sectionCount; section++)
+            {
+                for (int row = 1; row <= rowsPerSection; row++)
+                {
+                    var newModel = new FormValue
+                    {
+                        AssessmentID = Model.AssessmentID, // اگر آیدی 0 باشد مشکلی نیست
+                        SectionNumber = section,
+                        RowIndex = row,
+                        MeasureTime = this.Timer,
+                        Distance = row - 1,
+                        TotalDepth = 0
+                    };
+
+                    var newVM = _formValueViewModelFactory.Create(newModel, SelectedPropeller);
+                    SubscribeToChildEvents(newVM); // اشتراک در رویدادها برای محاسبات
+                    FormValues.Add(newVM);
+                }
             }
 
+            RebuildHydrometrySections();
             // محاسبه مجدد برای اینکه جمع کل صفر شود
             RecalculateGeometryAndFlow();
+        }
+
+        private int GetRequiredSectionCount()
+        {
+            if (CurrentFormType != MeasurementFormType.HydrometryMultiSection)
+            {
+                return 1;
+            }
+
+            return Math.Max(1, SelectedLocation?.SectionCount ?? 1);
+        }
+
+        private void RebuildHydrometrySections()
+        {
+            var groupedRows = FormValues
+                .GroupBy(x => Math.Max(1, x.Model.SectionNumber))
+                .OrderBy(x => x.Key)
+                .ToList();
+
+            if (!groupedRows.Any())
+            {
+                HydrometrySections.Clear();
+                return;
+            }
+
+            var keys = groupedRows.Select(x => x.Key).ToHashSet();
+            for (int i = HydrometrySections.Count - 1; i >= 0; i--)
+            {
+                if (!keys.Contains(HydrometrySections[i].SectionNumber))
+                {
+                    HydrometrySections.RemoveAt(i);
+                }
+            }
+
+            foreach (var group in groupedRows)
+            {
+                var sectionVm = HydrometrySections.FirstOrDefault(x => x.SectionNumber == group.Key);
+                if (sectionVm == null)
+                {
+                    sectionVm = new HydrometrySectionViewModel(group.Key);
+                    HydrometrySections.Add(sectionVm);
+                }
+
+                sectionVm.Rows.Clear();
+                foreach (var row in group.OrderBy(x => x.Model.RowIndex))
+                {
+                    sectionVm.Rows.Add(row);
+                }
+            }
+        }
+
+        private void ReindexRows()
+        {
+            var groupedRows = FormValues
+                .GroupBy(x => Math.Max(1, x.Model.SectionNumber))
+                .OrderBy(x => x.Key);
+
+            foreach (var group in groupedRows)
+            {
+                int row = 1;
+                foreach (var item in group)
+                {
+                    item.Model.RowIndex = row++;
+                    item.RefreshRowMetadata();
+                }
+            }
         }
     }
 }

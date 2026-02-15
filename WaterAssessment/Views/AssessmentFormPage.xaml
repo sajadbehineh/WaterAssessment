@@ -684,253 +684,290 @@
             VerticalAlignment="Stretch"
             Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel>
-                <ItemsControl ItemsSource="{x:Bind ViewModel.FormValues}">
+                <ItemsControl ItemsSource="{x:Bind ViewModel.HydrometrySections}">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Spacing="0" />
+                            <StackPanel Spacing="10" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="viewmodels:FormValueViewModel">
-                            <Grid
-                                Height="74"
-                                Padding="0"
-                                HorizontalAlignment="Left">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="52" />
-                                    <ColumnDefinition Width="80" />
-                                    <ColumnDefinition Width="80" />
-                                    <ColumnDefinition Width="88" />
-                                    <ColumnDefinition Width="88" />
-                                    <ColumnDefinition Width="88" />
-                                    <ColumnDefinition Width="89" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.Clip>
-                                    <RectangleGeometry Rect="0, -50, 2000, 200" />
-                                </Grid.Clip>
-                                <Grid.Resources>
-                                    <helpers:DoubleFormatter x:Key="Df2" />
-                                </Grid.Resources>
-
-                                <Border
-                                    Grid.Column="0"
-                                    BorderBrush="Black"
-                                    BorderThickness="1,0,0,2">
+                        <DataTemplate x:DataType="viewmodels:HydrometrySectionViewModel">
+                            <StackPanel Spacing="4">
+                                <Grid Width="1054">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
                                     <TextBlock
-                                        HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Text="{x:Bind RowIndex}" />
-                                </Border>
-
-                                <Border
-                                    Grid.Column="1"
-                                    BorderBrush="Black"
-                                    BorderThickness="1,0,0,2">
-                                    <akTools:NumberBoxEx
-                                        Padding="0,23,0,0"
-                                        VerticalAlignment="Stretch"
-                                        NumberFormatter="{StaticResource Df2}"
-                                        PlaceholderText="0.00"
-                                        Value="{x:Bind Distance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </Border>
-
-                                <Border
-                                    Grid.Column="2"
-                                    BorderBrush="Black"
-                                    BorderThickness="1,0,0,2">
-                                    <akTools:NumberBoxEx
-                                        Padding="0,23,0,0"
-                                        VerticalAlignment="Stretch"
-                                        NumberFormatter="{StaticResource Df2}"
-                                        Value="{x:Bind TotalDepth, Mode=TwoWay}" />
-                                </Border>
-
-                                <StackPanel Grid.Column="3">
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <akTools:NumberBoxEx
-                                            Padding="0,2,0,0"
-                                            NumberFormatter="{StaticResource Df1}"
-                                            SpinButtonPlacementMode="Hidden"
-                                            Value="{x:Bind Rev02, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
-                                    </Border>
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <akTools:NumberBoxEx
-                                            Padding="0,2,0,0"
-                                            NumberFormatter="{StaticResource Df1}"
-                                            SpinButtonPlacementMode="Hidden"
-                                            Value="{x:Bind Rev06, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
-                                    </Border>
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,2">
-                                        <akTools:NumberBoxEx
-                                            Padding="0,2,0,0"
-                                            FontWeight="bold"
-                                            NumberFormatter="{StaticResource Df1}"
-                                            SpinButtonPlacementMode="Hidden"
-                                            Value="{x:Bind Rev08, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
-                                    </Border>
-                                </StackPanel>
-
-                                <StackPanel Grid.Column="4">
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Bind N02Display, Mode=OneWay}" />
-                                    </Border>
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Bind N06Display, Mode=OneWay}" />
-                                    </Border>
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,2">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontWeight="Bold"
-                                            Text="{x:Bind N08Display, Mode=OneWay}" />
-                                    </Border>
-                                </StackPanel>
-
-                                <StackPanel Grid.Column="5">
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Bind Velocity02Display, Mode=OneWay}" />
-                                    </Border>
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,1">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Text="{x:Bind Velocity06Display, Mode=OneWay}" />
-                                    </Border>
-                                    <Border
-                                        Height="24.6"
-                                        BorderBrush="Black"
-                                        BorderThickness="1,0,0,2">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            FontWeight="Bold"
-                                            Text="{x:Bind Velocity08Display, Mode=OneWay}" />
-                                    </Border>
-                                </StackPanel>
-
-                                <Border
-                                    Grid.Column="6"
-                                    BorderBrush="Black"
-                                    BorderThickness="1,0,1,2">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Text="{x:Bind VerticalMeanVelocityDisplay, Mode=OneWay}" />
-                                </Border>
-
-                                <Grid
-                                    Grid.Column="7"
-                                    Width="489"
-                                    VerticalAlignment="Top">
-
-                                    <Canvas Visibility="{x:Bind ShowCalculationGrid, Mode=OneWay}">
-                                        <Grid
-                                            Canvas.Top="-37"
-                                            Height="74"
-                                            BorderBrush="Black"
-                                            BorderThickness="0,0.5,1,0"
-                                            Canvas.ZIndex="99">
-
-                                            <!--<Grid.RenderTransform>
-                                                <TranslateTransform Y="-37" />
-                                            </Grid.RenderTransform>-->
-
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="86.5" />
-                                                <ColumnDefinition Width="100" />
-                                                <ColumnDefinition Width="100" />
-                                                <ColumnDefinition Width="100" />
-                                                <ColumnDefinition Width="101" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <Border
-                                                Grid.Column="0"
-                                                BorderBrush="Black"
-                                                BorderThickness="0,0,0,0.5">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind PanelAvgVelocityDisplay, Mode=OneWay}" />
-                                            </Border>
-                                            <Border
-                                                Grid.Column="1"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,0.5">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind PanelAvgDepthDisplay, Mode=OneWay}" />
-                                            </Border>
-                                            <Border
-                                                Grid.Column="2"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,0.5">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind SectionWidthDisplay, Mode=OneWay}" />
-                                            </Border>
-                                            <Border
-                                                Grid.Column="3"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,0.5">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind SectionAreaDisplay, Mode=OneWay}" />
-                                            </Border>
-                                            <Border
-                                                Grid.Column="4"
-                                                BorderBrush="Black"
-                                                BorderThickness="1,0,0,0.5">
-                                                <TextBlock
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontWeight="Bold"
-                                                    Foreground="Green"
-                                                    Text="{x:Bind SectionFlowDisplay, Mode=OneWay}" />
-                                            </Border>
-                                        </Grid>
-                                    </Canvas>
+                                        FontSize="18"
+                                        FontWeight="Bold"
+                                        Text="{x:Bind SectionTitle, Mode=OneWay}" />
+                                    <Button
+                                        Grid.Column="1"
+                                        Margin="0,0,0,4"
+                                        Command="{Binding DataContext.AddRowToSectionCommand, ElementName=MyPage}"
+                                        CommandParameter="{x:Bind SectionNumber}"
+                                        Content="افزودن سطر برای این مقطع"
+                                        Style="{ThemeResource AccentButtonStyle}" />
                                 </Grid>
+                                <ItemsControl ItemsSource="{x:Bind Rows}">
 
-                            </Grid>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Spacing="0" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="viewmodels:FormValueViewModel">
+                                            <Grid
+                                                Height="74"
+                                                Padding="0"
+                                                HorizontalAlignment="Left">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="52" />
+                                                    <ColumnDefinition Width="80" />
+                                                    <ColumnDefinition Width="80" />
+                                                    <ColumnDefinition Width="88" />
+                                                    <ColumnDefinition Width="88" />
+                                                    <ColumnDefinition Width="88" />
+                                                    <ColumnDefinition Width="89" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.Clip>
+                                                    <RectangleGeometry Rect="0, -50, 2000, 200" />
+                                                </Grid.Clip>
+                                                <Grid.Resources>
+                                                    <helpers:DoubleFormatter x:Key="Df2" />
+                                                </Grid.Resources>
+
+                                                <Border
+                                                    Grid.Column="0"
+                                                    BorderBrush="Black"
+                                                    BorderThickness="1,0,0,2">
+                                                    <TextBlock
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind RowIndex}" />
+                                                </Border>
+
+                                                <Border
+                                                    Grid.Column="1"
+                                                    BorderBrush="Black"
+                                                    BorderThickness="1,0,0,2">
+                                                    <akTools:NumberBoxEx
+                                                        Padding="0,23,0,0"
+                                                        VerticalAlignment="Stretch"
+                                                        NumberFormatter="{StaticResource Df2}"
+                                                        PlaceholderText="0.00"
+                                                        Value="{x:Bind Distance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                </Border>
+
+                                                <Border
+                                                    Grid.Column="2"
+                                                    BorderBrush="Black"
+                                                    BorderThickness="1,0,0,2">
+                                                    <akTools:NumberBoxEx
+                                                        Padding="0,23,0,0"
+                                                        VerticalAlignment="Stretch"
+                                                        NumberFormatter="{StaticResource Df2}"
+                                                        Value="{x:Bind TotalDepth, Mode=TwoWay}" />
+                                                </Border>
+
+                                                <StackPanel Grid.Column="3">
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,1">
+                                                        <akTools:NumberBoxEx
+                                                            Padding="0,2,0,0"
+                                                            NumberFormatter="{StaticResource Df1}"
+                                                            SpinButtonPlacementMode="Hidden"
+                                                            Value="{x:Bind Rev02, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
+                                                    </Border>
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,1">
+                                                        <akTools:NumberBoxEx
+                                                            Padding="0,2,0,0"
+                                                            NumberFormatter="{StaticResource Df1}"
+                                                            SpinButtonPlacementMode="Hidden"
+                                                            Value="{x:Bind Rev06, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
+                                                    </Border>
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,2">
+                                                        <akTools:NumberBoxEx
+                                                            Padding="0,2,0,0"
+                                                            FontWeight="bold"
+                                                            NumberFormatter="{StaticResource Df1}"
+                                                            SpinButtonPlacementMode="Hidden"
+                                                            Value="{x:Bind Rev08, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullDoubleConv}}" />
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="4">
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,1">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Text="{x:Bind N02Display, Mode=OneWay}" />
+                                                    </Border>
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,1">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Text="{x:Bind N06Display, Mode=OneWay}" />
+                                                    </Border>
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,2">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            FontWeight="Bold"
+                                                            Text="{x:Bind N08Display, Mode=OneWay}" />
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="5">
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,1">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Text="{x:Bind Velocity02Display, Mode=OneWay}" />
+                                                    </Border>
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,1">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Text="{x:Bind Velocity06Display, Mode=OneWay}" />
+                                                    </Border>
+                                                    <Border
+                                                        Height="24.6"
+                                                        BorderBrush="Black"
+                                                        BorderThickness="1,0,0,2">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            FontWeight="Bold"
+                                                            Text="{x:Bind Velocity08Display, Mode=OneWay}" />
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <Border
+                                                    Grid.Column="6"
+                                                    BorderBrush="Black"
+                                                    BorderThickness="1,0,1,2">
+                                                    <TextBlock
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind VerticalMeanVelocityDisplay, Mode=OneWay}" />
+                                                </Border>
+
+                                                <Grid
+                                                    Grid.Column="7"
+                                                    Width="489"
+                                                    VerticalAlignment="Top">
+
+                                                    <Canvas Visibility="{x:Bind ShowCalculationGrid, Mode=OneWay}">
+                                                        <Grid
+                                                            Canvas.Top="-37"
+                                                            Height="74"
+                                                            BorderBrush="Black"
+                                                            BorderThickness="0,0.5,1,0"
+                                                            Canvas.ZIndex="99">
+
+                                                            <!--<Grid.RenderTransform>
+                                                                                <TranslateTransform Y="-37" />
+                                                                            </Grid.RenderTransform>-->
+
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="86.5" />
+                                                                <ColumnDefinition Width="100" />
+                                                                <ColumnDefinition Width="100" />
+                                                                <ColumnDefinition Width="100" />
+                                                                <ColumnDefinition Width="101" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Border
+                                                                Grid.Column="0"
+                                                                BorderBrush="Black"
+                                                                BorderThickness="0,0,0,0.5">
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{x:Bind PanelAvgVelocityDisplay, Mode=OneWay}" />
+                                                            </Border>
+                                                            <Border
+                                                                Grid.Column="1"
+                                                                BorderBrush="Black"
+                                                                BorderThickness="1,0,0,0.5">
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{x:Bind PanelAvgDepthDisplay, Mode=OneWay}" />
+                                                            </Border>
+                                                            <Border
+                                                                Grid.Column="2"
+                                                                BorderBrush="Black"
+                                                                BorderThickness="1,0,0,0.5">
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{x:Bind SectionWidthDisplay, Mode=OneWay}" />
+                                                            </Border>
+                                                            <Border
+                                                                Grid.Column="3"
+                                                                BorderBrush="Black"
+                                                                BorderThickness="1,0,0,0.5">
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center"
+                                                                    Text="{x:Bind SectionAreaDisplay, Mode=OneWay}" />
+                                                            </Border>
+                                                            <Border
+                                                                Grid.Column="4"
+                                                                BorderBrush="Black"
+                                                                BorderThickness="1,0,0,0.5">
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="Green"
+                                                                    Text="{x:Bind SectionFlowDisplay, Mode=OneWay}" />
+                                                            </Border>
+                                                        </Grid>
+                                                    </Canvas>
+                                                </Grid>
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock
+                                    FontSize="22"
+                                    FontWeight="Bold"
+                                    Foreground="Green"
+                                    Text="{x:Bind SectionFlowTitle, Mode=OneWay}" />
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -1114,12 +1151,6 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
-            <Button
-                HorizontalAlignment="Left"
-                Command="{x:Bind ViewModel.AddRowCommand}"
-                Content="افزودن سطر جدید"
-                Style="{ThemeResource AccentButtonStyle}"
-                Visibility="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <InfoBar
                 x:Name="BoxInfoBar"
                 Grid.Column="2"

@@ -66,10 +66,12 @@
             <Border
                 Grid.Row="1"
                 Grid.Column="0"
+                VerticalAlignment="Stretch"
                 BorderBrush="Black"
                 BorderThickness="0,1.5,0,1.5">
                 <TextBlock
                     Padding="5"
+                    VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="تاریخ اندازه گیری" />
@@ -81,7 +83,9 @@
                 BorderThickness="1.5,1.5,0,1.5">
                 <CalendarDatePicker
                     HorizontalAlignment="Stretch"
+                    BorderThickness="0"
                     CalendarIdentifier="PersianCalendar"
+                    CornerRadius="0"
                     Date="{x:Bind ViewModel.Date, Mode=TwoWay, Converter={StaticResource DateToOffsetConv}}"
                     DateFormat="{}{year.full}/{month.integer}/{day.integer}"
                     Language="fa-IR" />
@@ -95,6 +99,7 @@
                 BorderThickness="0">
                 <TextBlock
                     Padding="5"
+                    VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="محل اندازه گیری" />
@@ -106,6 +111,9 @@
                 BorderThickness="1.5,0,0,0">
                 <ComboBox
                     HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    BorderThickness="0"
+                    CornerRadius="0"
                     DisplayMemberPath="LocationName"
                     ItemsSource="{x:Bind ViewModel.AllLocations}"
                     MaxDropDownHeight="300"
@@ -119,6 +127,8 @@
                 BorderThickness="0">
                 <TextBlock
                     Padding="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="پروانه" />
@@ -130,6 +140,9 @@
                 BorderThickness="1.5,0,0,0">
                 <ComboBox
                     HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    BorderThickness="0"
+                    CornerRadius="0"
                     DisplayMemberPath="PropellerName"
                     IsEnabled="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay}"
                     ItemsSource="{x:Bind ViewModel.AllPropellers}"
@@ -144,6 +157,8 @@
                 BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     Padding="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="اشل" />
@@ -155,7 +170,9 @@
                 BorderThickness="1.5,1.5,0,0">
                 <akTools:NumberBoxEx
                     HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
+                    BorderThickness="0"
                     NumberFormatter="{StaticResource Df}"
                     PlaceholderText="مثلا 116.20"
                     Value="{x:Bind ViewModel.Echelon, Mode=TwoWay, Converter={StaticResource NullDoubleConv}}" />
@@ -168,6 +185,7 @@
                 BorderThickness="1.5,0,0,0">
                 <TextBlock
                     Padding="5"
+                    VerticalAlignment="Top"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="اندازه گیرها" />
@@ -179,12 +197,13 @@
                 BorderBrush="Black"
                 BorderThickness="1.5,0,0,0">
                 <StackPanel
-                    Margin="5"
+                    Margin="0"
                     VerticalAlignment="Top"
                     Orientation="Vertical">
                     <StackPanel Width="230" Orientation="Horizontal">
                         <ComboBox
                             Width="190"
+                            Margin="0,0,0,5"
                             HorizontalAlignment="Left"
                             DisplayMemberPath="LastName"
                             ItemsSource="{x:Bind ViewModel.AllEmployees}"
@@ -192,8 +211,9 @@
                             SelectedItem="{x:Bind ViewModel.SelectedEmployeeToAdd, Mode=TwoWay}" />
                         <Button
                             Height="33"
-                            Margin="4,0,0,5"
+                            Margin="4,0,0,0"
                             HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
                             Command="{x:Bind ViewModel.AddEmployeeCommand}"
                             Content="+" />
                     </StackPanel>
@@ -244,6 +264,8 @@
                 BorderThickness="1.5,0,0,0">
                 <TextBlock
                     Padding="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="تایمر" />
@@ -266,6 +288,8 @@
                 BorderThickness="1.5,1.5,0,0">
                 <TextBlock
                     Padding="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="مولینه" />
@@ -277,6 +301,9 @@
                 BorderThickness="1.5,1.5,0,0">
                 <ComboBox
                     HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    BorderThickness="0"
+                    CornerRadius="0"
                     DisplayMemberPath="CurrentMeterName"
                     IsEnabled="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay}"
                     ItemsSource="{x:Bind ViewModel.AllCurrentMeters}"
@@ -292,6 +319,7 @@
                 BorderThickness="1.5,0,0,0">
                 <TextBlock
                     Padding="5"
+                    VerticalAlignment="Top"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
                     Text="گشودگی" />
@@ -303,7 +331,7 @@
                 Grid.Column="3"
                 BorderBrush="Black"
                 BorderThickness="1.5,0,0,0">
-                <StackPanel Margin="5" Visibility="{x:Bind ViewModel.IsNotDischargeEquationForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel Margin="5,0" Visibility="{x:Bind ViewModel.IsNotDischargeEquationForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl ItemsSource="{x:Bind ViewModel.GateValues, Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -312,7 +340,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="models:AssessmentGate">
-                                <StackPanel>
+                                <StackPanel HorizontalAlignment="Center">
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         FontSize="10"
@@ -320,6 +348,7 @@
                                     <akTools:NumberBoxEx
                                         Width="60"
                                         Padding="0,7,0,0"
+                                        BorderThickness="1"
                                         Maximum="100"
                                         Minimum="0"
                                         NumberFormatter="{StaticResource Df}"
@@ -367,6 +396,7 @@
                 </Grid>
             </Border>
         </Grid>
+
         <Grid
             Grid.Row="1"
             Width="1054.5"

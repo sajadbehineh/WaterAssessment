@@ -32,7 +32,7 @@
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="280" />
-                        <ColumnDefinition Width="Auto" MinWidth="420" />
+                        <ColumnDefinition Width="Auto" MinWidth="390" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <StackPanel
@@ -41,7 +41,7 @@
                         Margin="20,10"
                         HorizontalAlignment="Stretch"
                         Orientation="Vertical"
-                        Spacing="25">
+                        Spacing="20">
                         <StackPanel.Resources>
                             <helpers:DoubleFormatter x:Key="Df" />
                         </StackPanel.Resources>
@@ -80,12 +80,13 @@
                             ItemsSource="{x:Bind LocationViewModel.AvailableFormTypes, Mode=OneWay}"
                             SelectedItem="{x:Bind LocationViewModel.SelectedMeasurementFormType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-
-
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" Margin="0,0">
-                        <CheckBox Content="دارای ایستگاه پمپاژ" IsChecked="{x:Bind LocationViewModel.HasPump, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <StackPanel Grid.Column="1" Margin="0,5,0,0">
+                        <CheckBox
+                            Margin="0,0,0,10"
+                            Content="دارای ایستگاه پمپاژ"
+                            IsChecked="{x:Bind LocationViewModel.HasPump, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <aKTools:NumberBoxEx
                             Width="100"
                             HorizontalAlignment="Left"
@@ -94,8 +95,38 @@
                             Minimum="0"
                             Visibility="{x:Bind LocationViewModel.HasPump, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Value="{x:Bind LocationViewModel.PumpCountDouble, Mode=TwoWay}" />
-
-                        <ItemsControl Margin="0,10,0,0" ItemsSource="{x:Bind LocationViewModel.TempPumps, Mode=OneWay}">
+                        <Grid
+                            Width="Auto"
+                            Margin="0,15,1,0"
+                            HorizontalAlignment="Left"
+                            Background="{ThemeResource SystemAccentColor}"
+                            BorderBrush="Black"
+                            BorderThickness="1,1,1,0"
+                            Visibility="{x:Bind LocationViewModel.HasPump, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="78" />
+                                <ColumnDefinition Width="103" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="پمپ" />
+                            <Rectangle
+                                Grid.Column="0"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Fill="{ThemeResource SystemBaseHighColor}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="دبی اسمی (لیتر)" />
+                        </Grid>
+                        <ItemsControl ItemsSource="{x:Bind LocationViewModel.TempPumps, Mode=OneWay}">
 
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -105,27 +136,25 @@
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="models:LocationPump">
-                                    <StackPanel
-                                        Width="200"
-                                        Margin="5"
-                                        Orientation="Horizontal"
-                                        Spacing="10">
-
-                                        <TextBlock
-                                            Width="70"
-                                            VerticalAlignment="Center"
-                                            FontSize="12"
-                                            Text="{x:Bind PumpName}" />
-
-                                        <TextBox
-                                            Width="65"
-                                            PlaceholderText="دبی اسمی"
-                                            Text="{x:Bind NominalFlow, Mode=TwoWay, Converter={StaticResource DoubleToStringConv}, ConverterParameter='N0'}" />
-
-                                        <TextBlock
-                                            VerticalAlignment="Center"
-                                            FontSize="12"
-                                            Text="لیتر" />
+                                    <StackPanel Margin="0,0,1,0" Orientation="Horizontal">
+                                        <Border BorderBrush="Black" BorderThickness="1,0.5,0,1">
+                                            <TextBlock
+                                                Width="76.5"
+                                                VerticalAlignment="Center"
+                                                FontSize="12"
+                                                HorizontalTextAlignment="Center"
+                                                Text="{x:Bind PumpName}" />
+                                        </Border>
+                                        <Border BorderBrush="Black" BorderThickness="1,0.5,1,1">
+                                            <TextBox
+                                                Width="103"
+                                                VerticalAlignment="Center"
+                                                BorderThickness="0"
+                                                CornerRadius="0"
+                                                HorizontalTextAlignment="Center"
+                                                PlaceholderText="دبی اسمی"
+                                                Text="{x:Bind NominalFlow, Mode=TwoWay, Converter={StaticResource DoubleToStringConv}, ConverterParameter='N0'}" />
+                                        </Border>
                                     </StackPanel>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -133,7 +162,7 @@
 
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Margin="0">
+                    <StackPanel Grid.Column="2" Margin="0,5,0,0">
                         <aKTools:NumberBoxEx
                             Width="100"
                             Margin="0,0,0,10"
@@ -142,7 +171,10 @@
                             Visibility="{x:Bind LocationViewModel.SectionCountVisibility, Mode=OneWay}"
                             Value="{x:Bind LocationViewModel.SectionCountDouble, Mode=TwoWay}" />
 
-                        <CheckBox Content="دارای دریچه تنظیم" IsChecked="{x:Bind LocationViewModel.HasGate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <CheckBox
+                            Margin="0,0,0,10"
+                            Content="دارای دریچه تنظیم"
+                            IsChecked="{x:Bind LocationViewModel.HasGate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <aKTools:NumberBoxEx
                             HorizontalAlignment="Left"
                             Header="تعداد گشودگی"
@@ -159,7 +191,7 @@
                         </aKTools:NumberBoxEx>
                         <Grid
                             Width="Auto"
-                            Margin="1,5,0,0"
+                            Margin="1,15,0,0"
                             HorizontalAlignment="Left"
                             Background="{ThemeResource SystemAccentColor}"
                             BorderBrush="Black"
@@ -203,7 +235,7 @@
                         </Grid>
 
                         <ItemsControl
-                            Margin="0,0,0,0"
+                            Margin="0"
                             ItemsSource="{x:Bind LocationViewModel.TempHydraulicGates, Mode=OneWay}"
                             Visibility="{x:Bind LocationViewModel.GateDischargeConfigVisibility, Mode=OneWay}">
                             <ItemsControl.ItemsPanel>
@@ -231,6 +263,7 @@
                                             <TextBox
                                                 Width="78.5"
                                                 BorderThickness="0"
+                                                CornerRadius="0"
                                                 HorizontalTextAlignment="Center"
                                                 Text="{x:Bind DischargeCoefficient, Mode=TwoWay, Converter={StaticResource DoubleToStringConv}, ConverterParameter='F1'}" />
                                         </Border>
@@ -238,6 +271,7 @@
                                             <TextBox
                                                 Width="80"
                                                 BorderThickness="0"
+                                                CornerRadius="0"
                                                 HorizontalTextAlignment="Center"
                                                 Text="{x:Bind Width, Mode=TwoWay, Converter={StaticResource DoubleToStringConv}}" />
                                         </Border>
@@ -250,8 +284,6 @@
                 </Grid>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <StackPanel
-                        Grid.Row="1"
-                        Grid.Column="0"
                         Margin="20,10"
                         HorizontalAlignment="Left"
                         Orientation="Horizontal"

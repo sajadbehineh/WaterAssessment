@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WaterAssessment.Services
 {
@@ -285,7 +280,7 @@ namespace WaterAssessment.Services
 
             if (location.MeasurementFormType != MeasurementFormType.GateDischargeEquation)
             {
-                 // برای فرم‌های غیر معادله دبی: اگر تعداد دریچه معتبر نداریم، «دارای دریچه» را false ذخیره کن.
+                // برای فرم‌های غیر معادله دبی: اگر تعداد دریچه معتبر نداریم، «دارای دریچه» را false ذخیره کن.
 
                 if (!location.GateCount.HasValue || location.GateCount.Value <= 0)
                 {

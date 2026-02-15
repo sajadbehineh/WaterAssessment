@@ -16,7 +16,7 @@
     x:Name="MyPage"
     DataContext="{x:Bind ViewModel}"
     FlowDirection="RightToLeft"
-    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+    FontFamily="{StaticResource SamimFD}"
     mc:Ignorable="d">
     <Page.Resources>
         <Style TargetType="akTools:NumberBoxEx">
@@ -161,7 +161,7 @@
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
-                    Text="اشل" />
+                    Text="اشل (m)" />
             </Border>
             <Border
                 Grid.Row="2"
@@ -321,8 +321,9 @@
                     Padding="5"
                     VerticalAlignment="Top"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                    HorizontalTextAlignment="Center"
                     Style="{ThemeResource CaptionTextBlockStyle}"
-                    Text="گشودگی" />
+                    Text="گشودگی&#x0a;(درصد)" />
             </Border>
 
             <Border
@@ -369,14 +370,14 @@
                     Padding="5"
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                    HorizontalTextAlignment="Center"
                     Style="{ThemeResource CaptionTextBlockStyle}"
-                    Text="دبی کل" />
+                    Text="دبی کل&#x0a;(m3/s)" />
             </Border>
             <Border
                 Grid.Row="1"
                 Grid.RowSpan="2"
                 Grid.Column="7"
-                Background="DarkOrange"
                 BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
                 BorderThickness="1.5,1.5,0,0">
                 <Grid>
@@ -385,14 +386,20 @@
                         Padding="5"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Text="{x:Bind ViewModel.TotalFlowDisplay, Mode=OneWay}" />
-                    <NumberBox
-                        Width="120"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        SpinButtonPlacementMode="Compact"
+                        FontSize="20"
+                        Foreground="Green"
+                        Text="{x:Bind ViewModel.TotalFlowDisplay, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.IsNotManualForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <akTools:NumberBoxEx
+                        Padding="0,20,0,0"
+                        FontSize="20"
+                        Foreground="Green"
                         Visibility="{x:Bind ViewModel.IsManualForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Value="{x:Bind ViewModel.ManualTotalFlowInput, Mode=TwoWay}" />
+                        Value="{x:Bind ViewModel.ManualTotalFlowInput, Mode=TwoWay}">
+                        <akTools:NumberBoxEx.NumberFormatter>
+                            <helpers:FlexibleDoubleFormatter Decimals="3" />
+                        </akTools:NumberBoxEx.NumberFormatter>
+                    </akTools:NumberBoxEx>
                 </Grid>
             </Border>
         </Grid>
@@ -439,6 +446,13 @@
                 </ScrollViewer>
             </StackPanel>
         </Grid>
+        <Rectangle
+            Grid.Row="2"
+            Width="1054.5"
+            Height="1"
+            VerticalAlignment="Top"
+            Fill="Black"
+            Visibility="{x:Bind ViewModel.IsManualForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Grid
             Grid.Row="2"
             Width="1054.5"

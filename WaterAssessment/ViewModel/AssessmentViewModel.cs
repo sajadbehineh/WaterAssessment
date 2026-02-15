@@ -93,13 +93,14 @@ namespace WaterAssessment.ViewModel
         public bool IsManualForm => CurrentFormType == MeasurementFormType.ManualTotalFlow;
         public bool IsDischargeEquationForm => CurrentFormType == MeasurementFormType.GateDischargeEquation;
         public bool IsNotDischargeEquationForm => !IsDischargeEquationForm;
-
+        public bool IsNotManualForm => !IsManualForm;
         partial void OnCurrentFormTypeChanged(MeasurementFormType value)
         {
             OnPropertyChanged(nameof(IsHydrometryForm));
             OnPropertyChanged(nameof(IsManualForm));
             OnPropertyChanged(nameof(IsDischargeEquationForm));
             OnPropertyChanged(nameof(IsNotDischargeEquationForm));
+            OnPropertyChanged(nameof(IsNotManualForm));
         }
 
         partial void OnManualTotalFlowInputChanged(double value)

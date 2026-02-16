@@ -10,9 +10,8 @@ namespace WaterAssessment.ViewModel
         [ObservableProperty]
         private double _sectionFlow;
 
-        public string SectionTitle => $"مقطع {SectionNumber}";
         public string SectionFlowDisplay => SectionFlow.ToString("N3");
-        public string SectionFlowTitle => $"دبی مقطع {SectionNumber} (m3/s)";
+        public string SectionFlowLabel => $"دبی مقطع {SectionNumber} (m3/s):";
 
         public HydrometrySectionViewModel(int sectionNumber)
         {
@@ -22,7 +21,6 @@ namespace WaterAssessment.ViewModel
         partial void OnSectionFlowChanged(double value)
         {
             OnPropertyChanged(nameof(SectionFlowDisplay));
-            OnPropertyChanged(nameof(SectionFlowTitle));
         }
     }
 }

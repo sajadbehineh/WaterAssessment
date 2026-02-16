@@ -92,6 +92,8 @@ namespace WaterAssessment.ViewModel
         private double _manualTotalFlowInput;
 
         public bool IsHydrometryForm => CurrentFormType == MeasurementFormType.HydrometrySingleSection || CurrentFormType == MeasurementFormType.HydrometryMultiSection;
+        public bool IsHydrometrySingleSectionForm => CurrentFormType == MeasurementFormType.HydrometrySingleSection;
+        public bool IsHydrometryMultiSectionForm => CurrentFormType == MeasurementFormType.HydrometryMultiSection;
         public bool IsManualForm => CurrentFormType == MeasurementFormType.ManualTotalFlow;
         public bool IsDischargeEquationForm => CurrentFormType == MeasurementFormType.GateDischargeEquation;
         public bool IsNotDischargeEquationForm => !IsDischargeEquationForm;
@@ -99,6 +101,8 @@ namespace WaterAssessment.ViewModel
         partial void OnCurrentFormTypeChanged(MeasurementFormType value)
         {
             OnPropertyChanged(nameof(IsHydrometryForm));
+            OnPropertyChanged(nameof(IsHydrometrySingleSectionForm));
+            OnPropertyChanged(nameof(IsHydrometryMultiSectionForm));
             OnPropertyChanged(nameof(IsManualForm));
             OnPropertyChanged(nameof(IsDischargeEquationForm));
             OnPropertyChanged(nameof(IsNotDischargeEquationForm));
@@ -339,11 +343,6 @@ namespace WaterAssessment.ViewModel
                 return;
             }
 
-            if (!FormValues.Any())
-            {
-                InitializeDefaultRows();
-            }
-
             if (IsEditMode && FormValues.Any())
             {
                 RebuildHydrometrySections();
@@ -573,8 +572,7 @@ namespace WaterAssessment.ViewModel
         /// </summary>
 
         [RelayCommand]
-        private async Task AddRowAsync()
-            => await AddRowToSectionAsync(1);
+        private async Task AddRowAsync() => await AddRowToSectionAsync(1);
 
         [RelayCommand]
         private async Task AddRowToSectionAsync(int sectionNumber)
@@ -905,6 +903,7 @@ namespace WaterAssessment.ViewModel
             }
 
             var keys = groupedRows.Select(x => x.Key).ToHashSet();
+
             for (int i = HydrometrySections.Count - 1; i >= 0; i--)
             {
                 if (!keys.Contains(HydrometrySections[i].SectionNumber))

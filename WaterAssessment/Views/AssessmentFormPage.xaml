@@ -694,24 +694,6 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="viewmodels:HydrometrySectionViewModel">
                             <StackPanel Spacing="4">
-                                <Grid Width="1054">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        VerticalAlignment="Center"
-                                        FontSize="18"
-                                        FontWeight="Bold"
-                                        Text="{x:Bind SectionTitle, Mode=OneWay}" />
-                                    <Button
-                                        Grid.Column="1"
-                                        Margin="0,0,0,4"
-                                        Command="{Binding DataContext.AddRowToSectionCommand, ElementName=MyPage}"
-                                        CommandParameter="{x:Bind SectionNumber}"
-                                        Content="افزودن سطر برای این مقطع"
-                                        Style="{ThemeResource AccentButtonStyle}" />
-                                </Grid>
                                 <ItemsControl ItemsSource="{x:Bind Rows}">
 
                                     <ItemsControl.ItemsPanel>
@@ -962,11 +944,41 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                                <TextBlock
-                                    FontSize="22"
-                                    FontWeight="Bold"
-                                    Foreground="Green"
-                                    Text="{x:Bind SectionFlowTitle, Mode=OneWay}" />
+                                <Grid Visibility="{Binding DataContext.IsHydrometryMultiSectionForm, ElementName=MyPage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="120" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button
+                                        Grid.Column="0"
+                                        Width="28"
+                                        Height="28"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Bottom"
+                                        Command="{Binding DataContext.AddRowToSectionCommand, ElementName=MyPage}"
+                                        CommandParameter="{x:Bind SectionNumber}"
+                                        CornerRadius="14"
+                                        Style="{ThemeResource AccentButtonStyle}"
+                                        ToolTipService.ToolTip="افزودن سطر">
+                                        <SymbolIcon Symbol="Add" />
+                                    </Button>
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Text="{x:Bind SectionFlowLabel, Mode=OneWay}" />
+                                    <TextBlock
+                                        Grid.Column="3"
+                                        VerticalAlignment="Center"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="Green"
+                                        Text="{x:Bind SectionFlowDisplay, Mode=OneWay}" />
+                                </Grid>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -1151,6 +1163,13 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
+            <Button
+                HorizontalAlignment="Left"
+                Command="{x:Bind ViewModel.AddRowCommand}"
+                Content="افزودن سطر جدید"
+                Style="{ThemeResource AccentButtonStyle}"
+                Visibility="{x:Bind ViewModel.IsHydrometrySingleSectionForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
             <InfoBar
                 x:Name="BoxInfoBar"
                 Grid.Column="2"
@@ -1161,6 +1180,7 @@
                 IsOpen="{x:Bind ViewModel.IsInfoOpen, Mode=TwoWay}"
                 Message="{x:Bind ViewModel.InfoMessage, Mode=TwoWay}"
                 Severity="{x:Bind ViewModel.InfoSeverity, Mode=TwoWay}" />
+
             <StackPanel
                 Grid.Column="1"
                 Orientation="Horizontal"
@@ -1177,7 +1197,9 @@
                     Command="{x:Bind ViewModel.ResetToNewFormCommand}"
                     Content="فرم جدید (پاک کردن)"
                     Style="{ThemeResource ButtonRevealStyle}" />
+
             </StackPanel>
+
             <ProgressRing
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"

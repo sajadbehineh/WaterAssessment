@@ -391,9 +391,10 @@
                         Text="{x:Bind ViewModel.TotalFlowDisplay, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsNotManualForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <akTools:NumberBoxEx
-                        Padding="0,20,0,0"
+                        Padding="100,20,0,0"
                         FontSize="20"
                         Foreground="Green"
+                        IsDeleteButtonVisible="True"
                         Visibility="{x:Bind ViewModel.IsManualForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Value="{x:Bind ViewModel.ManualTotalFlowInput, Mode=TwoWay}">
                         <akTools:NumberBoxEx.NumberFormatter>
@@ -728,7 +729,7 @@
                                                 <Border
                                                     Grid.Column="0"
                                                     BorderBrush="Black"
-                                                    BorderThickness="1,0,0,2">
+                                                    BorderThickness="1,0.5,0,1">
                                                     <TextBlock
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
@@ -738,7 +739,7 @@
                                                 <Border
                                                     Grid.Column="1"
                                                     BorderBrush="Black"
-                                                    BorderThickness="1,0,0,2">
+                                                    BorderThickness="1,0.5,0,1">
                                                     <akTools:NumberBoxEx
                                                         Padding="0,23,0,0"
                                                         VerticalAlignment="Stretch"
@@ -750,7 +751,7 @@
                                                 <Border
                                                     Grid.Column="2"
                                                     BorderBrush="Black"
-                                                    BorderThickness="1,0,0,2">
+                                                    BorderThickness="1,0.5,0,1">
                                                     <akTools:NumberBoxEx
                                                         Padding="0,23,0,0"
                                                         VerticalAlignment="Stretch"
@@ -762,7 +763,7 @@
                                                     <Border
                                                         Height="24.6"
                                                         BorderBrush="Black"
-                                                        BorderThickness="1,0,0,1">
+                                                        BorderThickness="1,0.5,0,1">
                                                         <akTools:NumberBoxEx
                                                             Padding="0,2,0,0"
                                                             NumberFormatter="{StaticResource Df1}"
@@ -782,7 +783,7 @@
                                                     <Border
                                                         Height="24.6"
                                                         BorderBrush="Black"
-                                                        BorderThickness="1,0,0,2">
+                                                        BorderThickness="1,0,0,1">
                                                         <akTools:NumberBoxEx
                                                             Padding="0,2,0,0"
                                                             FontWeight="bold"
@@ -796,7 +797,7 @@
                                                     <Border
                                                         Height="24.6"
                                                         BorderBrush="Black"
-                                                        BorderThickness="1,0,0,1">
+                                                        BorderThickness="1,0.5,0,1">
                                                         <TextBlock
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
@@ -814,7 +815,7 @@
                                                     <Border
                                                         Height="24.6"
                                                         BorderBrush="Black"
-                                                        BorderThickness="1,0,0,2">
+                                                        BorderThickness="1,0,0,1">
                                                         <TextBlock
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
@@ -827,7 +828,7 @@
                                                     <Border
                                                         Height="24.6"
                                                         BorderBrush="Black"
-                                                        BorderThickness="1,0,0,1">
+                                                        BorderThickness="1,0.5,0,1">
                                                         <TextBlock
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
@@ -845,7 +846,7 @@
                                                     <Border
                                                         Height="24.6"
                                                         BorderBrush="Black"
-                                                        BorderThickness="1,0,0,2">
+                                                        BorderThickness="1,0,0,1">
                                                         <TextBlock
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
@@ -857,7 +858,7 @@
                                                 <Border
                                                     Grid.Column="6"
                                                     BorderBrush="Black"
-                                                    BorderThickness="1,0,1,2">
+                                                    BorderThickness="1,0.5,1,1">
                                                     <TextBlock
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
@@ -956,6 +957,7 @@
                                         Grid.Column="0"
                                         Width="28"
                                         Height="28"
+                                        Padding="0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Bottom"
                                         Command="{Binding DataContext.AddRowToSectionCommand, ElementName=MyPage}"

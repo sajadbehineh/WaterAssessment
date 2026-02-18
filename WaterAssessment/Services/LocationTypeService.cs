@@ -20,6 +20,7 @@ namespace WaterAssessment.Services
                 return await db.LocationTypes
                     .Include(lt => lt.CreatedBy)
                     .Include(lt => lt.UpdatedBy)
+                    .OrderByDescending(lt => lt.LocationTypeID)
                     .AsNoTracking().ToListAsync();
             }
             catch (Exception e)

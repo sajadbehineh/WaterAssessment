@@ -24,6 +24,7 @@ namespace WaterAssessment.Services
                     .Include(l => l.LocationType)
                     .Include(l => l.CreatedBy)
                     .Include(l => l.UpdatedBy)
+                    .OrderByDescending(l => l.LocationID)
                     .AsNoTracking().ToListAsync();
             }
             catch (Exception e)

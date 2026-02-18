@@ -9,6 +9,8 @@ namespace WaterAssessment.ViewModel;
 public partial class PropellerViewModel : PagedViewModelBase<Propeller>
 {
     private readonly IPropellerService _propellerService;
+    private readonly IDialogService _dialogService;
+
     public ObservableCollection<Propeller> Propellers => PagedItems;
     public int TotalPropellers => TotalItems;
 
@@ -73,9 +75,10 @@ public partial class PropellerViewModel : PagedViewModelBase<Propeller>
     [ObservableProperty] private InfoBarSeverity _infoBarSeverity;
     [ObservableProperty] private string _infoBarMessage = string.Empty;
 
-    public PropellerViewModel(IPropellerService propellerService) : base(pageSize: 10)
+    public PropellerViewModel(IPropellerService propellerService, IDialogService dialogService) : base(pageSize: 10)
     {
         _propellerService = propellerService;
+        _dialogService = dialogService;
         SelectedOption = CalibrationOptions.First();
         _ = LoadPropellersAsync();
     }
@@ -158,12 +161,32 @@ public partial class PropellerViewModel : PagedViewModelBase<Propeller>
     }
 
     [RelayCommand]
-    private async Task DeletePropellerAsync(int id)
+    private async Task RequestDeletePropellerAsync(Propeller propeller)
     {
-        var success = await _propellerService.DeletePropellerAsync(id);
+        if (propeller == null) return;
+
+        // از سرویس دیالوگ برای نمایش پیغام تایید استفاده کنید
+        bool confirmed = await _dialogService.ShowConfirmationDialogAsync(
+            title: "تأیید عملیات حذف",
+            content: $"آیا از حذف پروانه «{propeller.PropellerName}» اطمینان دارید؟\nاین عملیات غیرقابل بازگشت است.",
+            primaryButtonText: "بله، حذف کن",
+            closeButtonText: "انصراف"
+        );
+
+        // فقط در صورت تایید کاربر، حذف را ادامه دهید
+        if (confirmed)
+        {
+            await DeletePropellerAsync(propeller);
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeletePropellerAsync(Propeller propeller)
+    {
+        var success = await _propellerService.DeletePropellerAsync(propeller.PropellerID);
         if (success)
         {
-            if (SelectedPropeller?.PropellerID == id) ClearForm();
+            if (SelectedPropeller?.PropellerID == propeller.PropellerID) ClearForm();
             await LoadPropellersAsync();
             _ = ShowSuccess("پروانه با موفقیت حذف شد.");
         }

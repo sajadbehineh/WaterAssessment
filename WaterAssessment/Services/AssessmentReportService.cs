@@ -2,7 +2,7 @@
 
 namespace WaterAssessment.Services
 {
-    public class AssessmentReportService: IAssessmentReportService
+    public class AssessmentReportService : IAssessmentReportService
     {
         private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
@@ -52,6 +52,7 @@ namespace WaterAssessment.Services
                 var query = db.Assessments
                     .Include(a => a.Propeller)
                     .Include(a => a.AssessmentEmployees)
+                    .ThenInclude(e=>e.Employee)
                     .Include(a => a.Location)
                     .ThenInclude(l => l.LocationType)
                     .Include(a => a.GateOpenings)

@@ -22,7 +22,7 @@ namespace WaterAssessment.Services
                 using var db = _dbFactory.CreateDbContext();
                 return await db.Users
                     .AsNoTracking()
-                    .OrderBy(u => u.UserID)
+                    .OrderByDescending(u => u.UserID)
                     .ToListAsync();
             }
             catch (Exception ex)

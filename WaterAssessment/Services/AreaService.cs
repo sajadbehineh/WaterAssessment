@@ -24,6 +24,7 @@ namespace WaterAssessment.Services
                 return await db.Areas
                     .Include(a => a.CreatedBy)
                     .Include(a => a.UpdatedBy)
+                    .OrderByDescending(a => a.AreaID)
                     .AsNoTracking().ToListAsync();
             }
             catch (Exception e)

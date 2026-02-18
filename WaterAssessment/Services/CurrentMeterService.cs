@@ -20,8 +20,9 @@ namespace WaterAssessment.Services
             {
                 using var db = _dbFactory.CreateDbContext();
                 return await db.CurrentMeters
-                    .Include(e => e.CreatedBy)
-                    .Include(e => e.UpdatedBy)
+                    .Include(c => c.CreatedBy)
+                    .Include(c => c.UpdatedBy)
+                    .OrderByDescending(c => c.CurrentMeterID)
                     .AsNoTracking()
                     .ToListAsync();
             }

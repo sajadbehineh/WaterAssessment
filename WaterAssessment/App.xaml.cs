@@ -28,13 +28,10 @@ namespace WaterAssessment
         {
             var services = new ServiceCollection();
 
-            // --- اینجا تمام سرویس‌ها و ViewModel های خود را ثبت کنید ---
 
-            // ثبت ThemeService به صورت Singleton (یک نمونه برای کل برنامه)
             services.AddSingleton<IThemeService, ThemeService>();
             services.AddSingleton<IDialogService, DialogService>();
 
-            // ثبت EmployeeService به صورت Transient (هر بار درخواست، یک نمونه جدید)
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<ICurrentMeterService, CurrentMeterService>();
             services.AddTransient<IPropellerService, PropellerService>();
@@ -47,7 +44,6 @@ namespace WaterAssessment
             services.AddTransient<IUserManagementService, UserManagementService>();
             services.AddTransient<IFormValueViewModelFactory, FormValueViewModelFactory>();
 
-            // ثبت EmployeeViewModel به صورت Transient
             services.AddTransient<EmployeeViewModel>();
             services.AddTransient<CurrentMeterViewModel>();
             services.AddTransient<PropellerViewModel>();
@@ -59,18 +55,15 @@ namespace WaterAssessment
             services.AddDbContextFactory<WaterAssessmentContext>(options =>
                 options.UseSqlServer(ConnectionString));
 
-            // ۴. ساخت ServiceProvider
             Services = services.BuildServiceProvider();
         }
 
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             m_window = new MainWindow();
-            //themeService = new ThemeService();
             themeService = App.Services.GetRequiredService<IThemeService>();
             themeService.Initialize(m_window);
             themeService.ConfigBackdrop(BackdropType.Acrylic);
-            themeService.ConfigElementTheme(ElementTheme.Default);
 
             var resource = Current.Resources["ApplicationPageBackgroundThemeBrush"];
             if (resource is SolidColorBrush scb)

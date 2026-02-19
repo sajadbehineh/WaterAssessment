@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using System.IO;
+using Windows.UI;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Windowing;
 using WaterAssessment.Messages;
@@ -19,8 +21,12 @@ public sealed partial class MainWindow : Window
         this.InitializeComponent();
         Instance = this;
         this.RootGrid.DataContext = this;
-        this.SetWindowSize(1650, 800);
+        //this.SetWindowSize(1650, 800);
         this.AppWindow.SetPresenter(AppWindowPresenterKind.Default);
+        ConfigureWindowIdentity();
+        ApplyTitleBarColors();
+        RootGrid.ActualThemeChanged += (_, _) => ApplyTitleBarColors();
+        Activated += (_, _) => ApplyTitleBarColors();
 
         // گوش دادن به پیام لاگین برای نویگیشن
         WeakReferenceMessenger.Default.Register<LoginSuccessMessage>(this, (r, m) =>
@@ -35,6 +41,61 @@ public sealed partial class MainWindow : Window
             MyShell.Navigate(typeof(LoginPage));
         });
         ShellPage.Instance.Loaded += Instance_Loaded;
+    }
+
+    private void ConfigureWindowIdentity()
+    {
+        Title = "مطالعات و آبشناسی";
+
+        var iconPathCandidates = new[]
+        {
+            Path.Combine(AppContext.BaseDirectory, "Assets", "dez.png"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "dez.png"),
+            Path.Combine(Environment.CurrentDirectory, "Assets", "dez.png")
+        };
+
+        var iconPath = iconPathCandidates.FirstOrDefault(File.Exists);
+        if (!string.IsNullOrWhiteSpace(iconPath))
+        {
+            AppWindow.SetIcon(iconPath);
+        }
+    }
+
+    private void ApplyTitleBarColors()
+    {
+        if (!AppWindowTitleBar.IsCustomizationSupported())
+        {
+            return;
+        }
+
+        var titleBar = AppWindow.TitleBar;
+
+        var isDark = RootGrid.ActualTheme == ElementTheme.Dark;
+        var backgroundColor = isDark
+            ? Color.FromArgb(255, 32, 32, 32)
+            : Color.FromArgb(255, 243, 243, 243);
+        var foregroundColor = isDark ? Colors.White : Colors.Black;
+        var hoverBackgroundColor = isDark
+            ? Color.FromArgb(255, 58, 58, 58)
+            : Color.FromArgb(255, 232, 232, 232);
+        var pressedBackgroundColor = isDark
+            ? Color.FromArgb(255, 72, 72, 72)
+            : Color.FromArgb(255, 215, 215, 215);
+
+        titleBar.BackgroundColor = backgroundColor;
+        titleBar.ForegroundColor = foregroundColor;
+        titleBar.InactiveBackgroundColor = backgroundColor;
+        titleBar.InactiveForegroundColor = foregroundColor;
+
+        titleBar.ButtonBackgroundColor = backgroundColor;
+        titleBar.ButtonForegroundColor = foregroundColor;
+        titleBar.ButtonHoverBackgroundColor = hoverBackgroundColor;
+        titleBar.ButtonHoverForegroundColor = foregroundColor;
+        titleBar.ButtonPressedBackgroundColor = pressedBackgroundColor;
+        titleBar.ButtonPressedForegroundColor = foregroundColor;
+
+        titleBar.ButtonInactiveBackgroundColor = backgroundColor;
+        titleBar.ButtonInactiveForegroundColor = foregroundColor;
     }
 
     private void SetDialogServiceXamlRoot()

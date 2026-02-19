@@ -12,9 +12,13 @@
     xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:viewModel="using:WaterAssessment.Models.ViewModel"
     xmlns:views="using:WaterAssessment.Views"
+    Title="مطالعات و آبشناسی"
     mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid" FlowDirection="RightToLeft">
+    <Grid
+        x:Name="RootGrid"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        FlowDirection="RightToLeft">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -22,6 +26,7 @@
 
         <MenuBar
             Grid.Row="0"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             FlowDirection="RightToLeft"
             Visibility="{Binding ViewModel.MenuVisibility, Mode=OneWay}">
             <MenuBarItem Title="پرونده ها" AccessKey="F">
@@ -71,6 +76,7 @@
         </MenuBar>
         <Grid Grid.Row="1">
             <NavigationView
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                 IsBackButtonVisible="Collapsed"
                 IsPaneOpen="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
                 IsPaneVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"

@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.EntityFrameworkCore;
 using WaterAssessment.Core;
 using WaterAssessment.Services;
 using User = WaterAssessment.Models.User;

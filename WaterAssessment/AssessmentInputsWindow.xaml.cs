@@ -16,14 +16,7 @@ public sealed partial class AssessmentInputsWindow : Window
 
     private void ConfigWindow()
     {
-        this.RegisterWindowMinMax();
-        WindowHelper.MaxWindowHeight = 500;
-        WindowHelper.MaxWindowWidth = 800;
-        WindowHelper.MinWindowHeight = WindowHelper.MaxWindowHeight;
-        WindowHelper.MinWindowWidth = WindowHelper.MaxWindowWidth;
-        this.SetWindowSize(800, 500);
-        WindowHelper.SetOverlappedPresenter(this, OverlappedPresenter.CreateForDialog());
-        WindowHelper.SetOverlappedPresenterState(this, OverlappedPresenterState.Restored);
+       
         _appWindow = GetAppWindowForCurrentWindow();
     }
 

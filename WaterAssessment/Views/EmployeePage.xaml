@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
     x:Name="MyPage"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{x:Bind ViewModel}"
     FontFamily="{StaticResource ContentControlThemeFontFamily}"
     mc:Ignorable="d">
@@ -107,7 +108,8 @@
                     Margin="20,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    Style="{ThemeResource GridPanel}"
+                    BorderBrush="LightGray"
+                    BorderThickness="1"
                     Translation="0 0 48">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

@@ -1,167 +1,164 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-		<RootNamespace>WaterAssessment</RootNamespace>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Platforms>x86;x64;ARM64</Platforms>
-		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
-		<UseWinUI>true</UseWinUI>
-		<EnableMsixTooling>true</EnableMsixTooling>
-		<WindowsPackageType>None</WindowsPackageType>
-		<LangVersion>Latest</LangVersion>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<ImplicitUsing>true</ImplicitUsing>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-	<!--<ItemGroup>
-	  <Compile Remove="Core\**" />
-	  <EmbeddedResource Remove="Core\**" />
-	  <None Remove="Core\**" />
-	  <Page Remove="Core\**" />
-	</ItemGroup>-->
-	<ItemGroup>
-	  <Content Remove="Assets\Fonts\Vazirmatn-Bold.ttf" />
-	  <Content Remove="Assets\Fonts\Vazirmatn-Medium.ttf" />
-	  <Content Remove="Assets\Fonts\Vazirmatn-Regular.ttf" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="AssessmentInputsWindow.xaml" />
-	  <None Remove="Assets\dez.png" />
-	  <None Remove="Assets\icons8-propeller-100.png" />
-	  <None Remove="Assets\icons8-propeller-64.png" />
-	  <None Remove="Assets\Icons\propeller-1-svgrepo-com.svg" />
-	  <None Remove="Assets\Icons\propeller-svgrepo-com.svg" />
-	  <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
-	  <None Remove="Assets\propeller.png" />
-	  <None Remove="Controls\PaginationControl.xaml" />
-	  <None Remove="Views\AssessmentFormPage.xaml" />
-	  <None Remove="Views\CreateAssessmentDialog.xaml" />
-	  <None Remove="Views\EmployeePage.xaml" />
-	  <None Remove="Views\LocationPage.xaml" />
-	  <None Remove="Views\LoginPage.xaml" />
-	  <None Remove="Views\Propeller_CurrentMeterPage.xaml" />
-	  <None Remove="Views\SettingsPage.xaml" />
-	  <None Remove="Views\ShellPage.xaml" />
-	  <None Remove="Views\UserManagementPage.xaml" />
-	</ItemGroup>
+        <RootNamespace>WaterAssessment</RootNamespace>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <Platforms>x86;x64;ARM64</Platforms>
+        <PublishProfile>win10-$(Platform).pubxml</PublishProfile>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+        <UseWinUI>true</UseWinUI>
+        <EnableMsixTooling>false</EnableMsixTooling>
+        <WindowsPackageType>None</WindowsPackageType>
+        <LangVersion>Latest</LangVersion>
+        <WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
+        <ImplicitUsing>true</ImplicitUsing>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <!--<ItemGroup>
+      <Compile Remove="Core\**" />
+      <EmbeddedResource Remove="Core\**" />
+      <None Remove="Core\**" />
+      <Page Remove="Core\**" />
+    </ItemGroup>-->
+    <ItemGroup>
+      <Content Remove="Assets\Fonts\Vazirmatn-Bold.ttf" />
+      <Content Remove="Assets\Fonts\Vazirmatn-Medium.ttf" />
+      <Content Remove="Assets\Fonts\Vazirmatn-Regular.ttf" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="AssessmentInputsWindow.xaml" />
+      <None Remove="Assets\dez.png" />
+      <None Remove="Assets\icons8-propeller-100.png" />
+      <None Remove="Assets\icons8-propeller-64.png" />
+      <None Remove="Assets\Icons\propeller-1-svgrepo-com.svg" />
+      <None Remove="Assets\Icons\propeller-svgrepo-com.svg" />
+      <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
+      <None Remove="Assets\propeller.png" />
+      <None Remove="Controls\PaginationControl.xaml" />
+      <None Remove="Views\AssessmentFormPage.xaml" />
+      <None Remove="Views\CreateAssessmentDialog.xaml" />
+      <None Remove="Views\EmployeePage.xaml" />
+      <None Remove="Views\LocationPage.xaml" />
+      <None Remove="Views\LoginPage.xaml" />
+      <None Remove="Views\Propeller_CurrentMeterPage.xaml" />
+      <None Remove="Views\SettingsPage.xaml" />
+      <None Remove="Views\ShellPage.xaml" />
+      <None Remove="Views\UserManagementPage.xaml" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<Content Include="Assets\SplashScreen.scale-200.png" />
-		<Content Include="Assets\LockScreenLogo.scale-200.png" />
-		<Content Include="Assets\Square150x150Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-		<Content Include="Assets\StoreLogo.png" />
-		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
-	</ItemGroup>
+    <ItemGroup>
+        <Content Include="Assets\SplashScreen.scale-200.png" />
+        <Content Include="Assets\LockScreenLogo.scale-200.png" />
+        <Content Include="Assets\Square150x150Logo.scale-200.png" />
+        <Content Include="Assets\Square44x44Logo.scale-200.png" />
+        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+        <Content Include="Assets\StoreLogo.png" />
+        <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="AK.Toolkit.WinUI3.NumberBoxEx" Version="1.0.1" />
-		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.230907" />
-		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
-		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.11" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-		<PackageReference Include="Telerik.WinUI.Controls" Version="3.0.0" />
-		<PackageReference Include="WinUICommunity.Components" Version="5.0.2" />
-		<PackageReference Include="WinUICommunity.Core" Version="5.0.4" />
-		<Manifest Include="$(ApplicationManifest)" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="AK.Toolkit.WinUI3.NumberBoxEx" Version="1.0.1" />
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.230907" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
+        <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.24" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.24">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.24" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.24" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.24">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
+        <PackageReference Include="Telerik.WinUI.Controls" Version="3.0.0" />
+        <Manifest Include="$(ApplicationManifest)" />
+    </ItemGroup>
 
-	<!-- 
+    <!-- 
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
     Tools extension to be activated for this project even if the Windows App SDK Nuget
     package has not yet been restored.
   -->
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-		<ProjectCapability Include="Msix" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="AssessmentInputsWindow.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\EmployeePage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\Propeller_CurrentMeterPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\AssessmentFormPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\ShellPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\SettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\LocationPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
+    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <ProjectCapability Include="Msix" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="AssessmentInputsWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\EmployeePage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\Propeller_CurrentMeterPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\AssessmentFormPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\ShellPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\SettingsPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\LocationPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
 
-	<!-- 
+    <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 
     the Windows App SDK Nuget package has not yet been restored.
   -->
-	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-	</PropertyGroup>
-	<ItemGroup>
-	  <PRIResource Remove="Core\**" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\UserManagementPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\LoginPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\AssessmentReportPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Views\CreateAssessmentDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Controls\PaginationControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
+    <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+    </PropertyGroup>
+    <ItemGroup>
+      <PRIResource Remove="Core\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\UserManagementPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\LoginPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\AssessmentReportPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\CreateAssessmentDialog.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Controls\PaginationControl.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
 </Project>

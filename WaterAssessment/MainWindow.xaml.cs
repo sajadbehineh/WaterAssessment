@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI.Controls;
-using Microsoft.UI.Windowing;
-using System.Diagnostics.Metrics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Windowing;
 using WaterAssessment.Messages;
-using WaterAssessment.Models;
 using WaterAssessment.Services;
 using WaterAssessment.Views;
 using static WaterAssessment.ViewModel.MainViewModel;
@@ -57,7 +54,7 @@ public sealed partial class MainWindow : Window
         ShellPage.Instance.Loaded -= Instance_Loaded;
 
         SetDialogServiceXamlRoot();
-        
+
         // هدایت اولیه به صفحه لاگین
         if (!ViewModel.IsLoggedIn)
         {

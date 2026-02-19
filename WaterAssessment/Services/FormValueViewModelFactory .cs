@@ -1,6 +1,6 @@
 ﻿namespace WaterAssessment.Services
 {
-    public class FormValueViewModelFactory: IFormValueViewModelFactory
+    public class FormValueViewModelFactory : IFormValueViewModelFactory
     {
         private readonly IFormValueService _formValueService;
 

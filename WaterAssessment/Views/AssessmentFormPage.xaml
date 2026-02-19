@@ -44,8 +44,7 @@
             HorizontalAlignment="Stretch"
             BorderBrush="Black"
             BorderThickness="1.5 1.5 1. 0 "
-            CornerRadius="4 4 0 0"
-            Style="{ThemeResource GridPanel}">
+            CornerRadius="4 4 0 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="180" />

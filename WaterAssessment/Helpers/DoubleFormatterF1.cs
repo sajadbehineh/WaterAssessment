@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Globalization.NumberFormatting;
+﻿using Windows.Globalization.NumberFormatting;
 
 namespace WaterAssessment.Helpers
 {
-    public class DoubleFormatterF1 : INumberFormatter2,INumberParser
+    public class DoubleFormatterF1 : INumberFormatter2, INumberParser
     {
         public virtual string Format { get; set; } = "{0:F1}"; // by default we use this but you can change it in the XAML declaration
         public virtual string FormatDouble(double value) => string.Format(Format, value);

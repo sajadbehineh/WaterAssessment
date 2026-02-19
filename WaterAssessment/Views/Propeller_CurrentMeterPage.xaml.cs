@@ -1,5 +1,5 @@
-﻿using System.Collections.Specialized;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Specialized;
 
 namespace WaterAssessment.Views;
 

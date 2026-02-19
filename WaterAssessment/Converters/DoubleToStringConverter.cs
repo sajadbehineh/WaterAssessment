@@ -1,7 +1,4 @@
-﻿using Microsoft.UI.Xaml.Data;
-using System;
-
-namespace WaterAssessment.Converters
+﻿namespace WaterAssessment.Converters
 {
     public class DoubleToStringConverter : IValueConverter
     {

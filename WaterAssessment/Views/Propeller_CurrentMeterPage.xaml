@@ -283,7 +283,6 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     DataContext="{x:Bind PropellerViewModel}"
-                    Style="{ThemeResource GridPanel}"
                     Translation="0 0 48">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -655,7 +654,6 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     DataContext="{x:Bind CurrentMeterViewModel}"
-                    Style="{ThemeResource GridPanel}"
                     Translation="0 0 48">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

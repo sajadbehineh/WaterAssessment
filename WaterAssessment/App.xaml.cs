@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Windows.UI;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using WaterAssessment.Services;
-using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace WaterAssessment
 {
@@ -69,9 +69,19 @@ namespace WaterAssessment
             //themeService = new ThemeService();
             themeService = App.Services.GetRequiredService<IThemeService>();
             themeService.Initialize(m_window);
-            themeService.ConfigBackdrop(BackdropType.Mica);
+            themeService.ConfigBackdrop(BackdropType.Acrylic);
             themeService.ConfigElementTheme(ElementTheme.Default);
-            themeService.ConfigBackdropFallBackColorForWindow10(Current.Resources["ApplicationPageBackgroundThemeBrush"] as Brush);
+
+            var resource = Current.Resources["ApplicationPageBackgroundThemeBrush"];
+            if (resource is SolidColorBrush scb)
+            {
+                themeService.ConfigBackdropFallBackBrushForWindow10(scb);
+            }
+            else
+            {
+                // fallback if resource missing or not a SolidColorBrush
+                themeService.ConfigBackdropFallBackBrushForWindow10(new SolidColorBrush(Colors.White));
+            }
 
             m_window.Activate();
         }

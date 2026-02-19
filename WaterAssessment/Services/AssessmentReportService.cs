@@ -52,7 +52,7 @@ namespace WaterAssessment.Services
                 var query = db.Assessments
                     .Include(a => a.Propeller)
                     .Include(a => a.AssessmentEmployees)
-                    .ThenInclude(e=>e.Employee)
+                    .ThenInclude(e => e.Employee)
                     .Include(a => a.Location)
                     .ThenInclude(l => l.LocationType)
                     .Include(a => a.GateOpenings)

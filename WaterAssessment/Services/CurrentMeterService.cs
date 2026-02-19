@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WaterAssessment.Models;
-using Windows.Networking;
 
 namespace WaterAssessment.Services
 {

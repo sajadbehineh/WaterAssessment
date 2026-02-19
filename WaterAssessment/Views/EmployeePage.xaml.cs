@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Specialized;
-using System.Globalization;
-using Telerik.Data.Core;
 
 namespace WaterAssessment.Views;
 

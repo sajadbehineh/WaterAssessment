@@ -74,7 +74,6 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             DataContext="{x:Bind ViewModel}"
-            Style="{ThemeResource GridPanel}"
             Translation="0 0 48">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

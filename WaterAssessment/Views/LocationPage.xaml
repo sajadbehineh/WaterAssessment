@@ -10,6 +10,7 @@
     xmlns:localControls="using:WaterAssessment.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     FlowDirection="RightToLeft"
     FontFamily="{StaticResource ContentControlThemeFontFamily}"
     mc:Ignorable="d">
@@ -325,7 +326,6 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     DataContext="{x:Bind LocationViewModel}"
-                    Style="{ThemeResource GridPanel}"
                     Translation="0 0 48">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -649,7 +649,6 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     DataContext="{x:Bind AreaViewModel}"
-                    Style="{ThemeResource GridPanel}"
                     Translation="0 0 48">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -944,7 +943,6 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     DataContext="{x:Bind LocationTypeViewModel}"
-                    Style="{ThemeResource GridPanel}"
                     Translation="0 0 48">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

@@ -1,37 +1,111 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Page x:Class="WaterAssessment.Views.SettingsPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:controls="using:WinUICommunity"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="using:WaterAssessment.Views"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      FontFamily="{StaticResource ContentControlThemeFontFamily}"
-      mc:Ignorable="d">
+<Page
+    x:Class="WaterAssessment.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:WaterAssessment.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+    mc:Ignorable="d">
 
-    <controls:SettingsPageControl x:DefaultBindMode="TwoWay"
-                                  ModuleDescription="تمامی تنظیمات به صورت خودکار ذخیره میشوند"
-                                  ModuleImageSource="ms-appx:///Assets/dez.png" ModuleTitle="تنظیمات"
-                                  SecondaryLinksHeader="اطلاعات مرتبط">
-        <controls:SettingsPageControl.ModuleContent>
-            <StackPanel Orientation="Vertical">
-                <controls:SettingsGroup Header="ظاهر برنامه">
-                    <controls:SettingsCard Header="انتخاب حالت">
-                        <controls:SettingsCard.HeaderIcon>
-                            <FontIcon Glyph="&#xE771;" />
-                        </controls:SettingsCard.HeaderIcon>
-                        <controls:SettingsCard.Description>
-                            <HyperlinkButton Name="btnSysColorSettings" Click="BtnSysColorSettings_OnClick"
-                                             Content="تنظیمات رنگ سیستم" />
-                        </controls:SettingsCard.Description>
-                        <StackPanel Name="themePanel" Margin="10">
-                            <RadioButton Checked="OnThemeRadioButtonChecked" Content="روشن" Tag="Light" />
-                            <RadioButton Checked="OnThemeRadioButtonChecked" Content="تاریک" Tag="Dark" />
-                            <RadioButton Checked="OnThemeRadioButtonChecked" Content="پیش فرض سیستم" Tag="Default" />
-                        </StackPanel>
-                    </controls:SettingsCard>
-                </controls:SettingsGroup>
+    <ScrollViewer Padding="20">
+        <StackPanel Orientation="Vertical" Spacing="20">
+
+            <!--  Module Header  -->
+            <StackPanel
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="10">
+                <Image
+                    Width="40"
+                    Height="40"
+                    Source="ms-appx:///Assets/dez.png" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="22"
+                    FontWeight="Bold"
+                    Text="تنظیمات" />
             </StackPanel>
-        </controls:SettingsPageControl.ModuleContent>
-    </controls:SettingsPageControl>
+
+            <TextBlock
+                Margin="0,0,0,20"
+                FontSize="14"
+                Foreground="Gray"
+                Text="تمامی تنظیمات به صورت خودکار ذخیره می‌شوند" />
+
+            <!--  Appearance Settings Card  -->
+            <Border
+                Padding="20"
+                Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="1"
+                CornerRadius="12">
+                <StackPanel Spacing="15">
+
+                    <!--  Card Header  -->
+                    <StackPanel
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <FontIcon FontSize="20" Glyph="&#xE771;" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Text="ظاهر برنامه" />
+                    </StackPanel>
+
+                    <!--  Description / System Color Settings  -->
+                    <HyperlinkButton
+                        Name="btnSysColorSettings"
+                        Margin="0,5,0,0"
+                        Click="BtnSysColorSettings_OnClick"
+                        Content="تنظیمات رنگ سیستم"
+                        FontSize="14"
+                        Foreground="Gray" />
+
+                    <!--  Theme RadioButtons  -->
+                    <StackPanel
+                        Name="themePanel"
+                        Margin="0,10,0,0"
+                        Orientation="Vertical"
+                        Spacing="8">
+                        <RadioButton
+                            Checked="OnThemeRadioButtonChecked"
+                            Content="روشن"
+                            Tag="Light" />
+                        <RadioButton
+                            Checked="OnThemeRadioButtonChecked"
+                            Content="تاریک"
+                            Tag="Dark" />
+                        <RadioButton
+                            Checked="OnThemeRadioButtonChecked"
+                            Content="پیش فرض سیستم"
+                            Tag="Default" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!--  Optional: Additional Settings Section  -->
+            <Border
+                Padding="20"
+                Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="1"
+                CornerRadius="12">
+                <StackPanel Spacing="10">
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Text="اطلاعات مرتبط" />
+                    <TextBlock
+                        FontSize="14"
+                        Foreground="Gray"
+                        Text="در این قسمت می‌توانید تنظیمات اضافی یا لینک‌های مرتبط را اضافه کنید." />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
 </Page>

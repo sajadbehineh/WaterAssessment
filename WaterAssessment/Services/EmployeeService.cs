@@ -20,7 +20,7 @@ namespace WaterAssessment.Services
                 return await db.Employees
                     .Include(e => e.CreatedBy)
                     .Include(e => e.UpdatedBy)
-                    .OrderByDescending(e=>e.UpdatedAt)
+                    .OrderByDescending(e => e.UpdatedAt)
                     .AsNoTracking()
                     .ToListAsync();
             }

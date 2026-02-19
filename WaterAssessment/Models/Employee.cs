@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace WaterAssessment.Models
+﻿namespace WaterAssessment.Models
 {
     public class Employee
     {

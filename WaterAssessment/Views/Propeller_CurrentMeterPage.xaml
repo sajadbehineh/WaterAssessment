@@ -276,300 +276,304 @@
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
-                <Grid
+                <Border
                     Grid.Row="2"
-                    Width="960"
+                    Width="980"
                     Margin="10,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    DataContext="{x:Bind PropellerViewModel}"
-                    Translation="0 0 48">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid
-                        Grid.Row="0"
-                        MinHeight="48"
-                        Background="{ThemeResource SystemAccentColor}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="52" />
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="110" />
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="110" />
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="80" />
-                            <ColumnDefinition Width="68" />
-                            <ColumnDefinition Width="68" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Grid.Column="0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ردیف" />
-                        <Rectangle
-                            Grid.Column="0"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="نام پروانه" />
-                        <Rectangle
-                            Grid.Column="1"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="2"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ضریب A1" />
-                        <Rectangle
-                            Grid.Column="2"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="3"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="B1" />
-                        <Rectangle
-                            Grid.Column="3"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="4"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ضریب شکست 1" />
-                        <Rectangle
-                            Grid.Column="4"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="5"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ضریب A2" />
-                        <Rectangle
-                            Grid.Column="5"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="6"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="B2" />
-                        <Rectangle
-                            Grid.Column="6"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="7"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ضریب شکست 2" />
-                        <Rectangle
-                            Grid.Column="7"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="8"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="A3" />
-                        <Rectangle
-                            Grid.Column="8"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="9"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="14"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="B3" />
-                    </Grid>
-                    <ListView
-                        Name="PropellerListView"
-                        Grid.Row="1"
-                        BorderThickness="0"
-                        ItemContainerStyle="{StaticResource HorizontalSwipe}"
-                        ItemsSource="{x:Bind PropellerViewModel.Propellers, Mode=OneWay}"
-                        SelectedItem="{x:Bind PropellerViewModel.SelectedPropeller, Mode=TwoWay}"
-                        SelectionMode="Single">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:Propeller">
-                                <UserControl
-                                    FontFamily="{StaticResource SamimFD}"
-                                    PointerEntered="SwipeContainer_PointerEntered"
-                                    PointerExited="SwipeContainer_PointerExited">
-                                    <Grid>
-                                        <SwipeControl>
-                                            <Grid VerticalAlignment="Stretch">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="52" />
-                                                    <ColumnDefinition Width="80" />
-                                                    <ColumnDefinition Width="80" />
-                                                    <ColumnDefinition Width="80" />
-                                                    <ColumnDefinition Width="110" />
-                                                    <ColumnDefinition Width="80" />
-                                                    <ColumnDefinition Width="80" />
-                                                    <ColumnDefinition Width="110" />
-                                                    <ColumnDefinition Width="80" />
-                                                    <ColumnDefinition Width="80" />
-                                                    <ColumnDefinition Width="68" />
-                                                    <ColumnDefinition Width="68" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock
-                                                    x:Name="PropellerIndexTextBlock"
-                                                    Grid.Column="0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="12"
-                                                    Foreground="{ThemeResource SystemBaseHighColor}"
-                                                    Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind PropellerName}" />
-                                                <TextBlock
-                                                    Grid.Column="2"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind A1}" />
-                                                <TextBlock
-                                                    Grid.Column="3"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind B1}" />
-                                                <TextBlock
-                                                    Grid.Column="4"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind TransitionPoint1}" />
-                                                <TextBlock
-                                                    Grid.Column="5"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind A2}" />
-                                                <TextBlock
-                                                    Grid.Column="6"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind B2}" />
-                                                <TextBlock
-                                                    Grid.Column="7"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind TransitionPoint2}" />
-                                                <TextBlock
-                                                    Grid.Column="8"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind A3}" />
-                                                <TextBlock
-                                                    Grid.Column="9"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind B3}" />
-                                                <AppBarButton
-                                                    x:Name="btnHoverDeletePropeller"
-                                                    Grid.Column="11"
-                                                    Width="60"
-                                                    Height="60"
-                                                    HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=PropellerListView, Path=DataContext.RequestDeletePropellerCommand}"
-                                                    CommandParameter="{x:Bind}"
-                                                    Icon="Delete"
-                                                    IsTabStop="False"
-                                                    Label="حذف"
-                                                    Visibility="Collapsed">
-                                                    <AppBarButton.Resources>
-                                                        <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
-                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
-                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
-                                                    </AppBarButton.Resources>
-                                                </AppBarButton>
-                                            </Grid>
-                                        </SwipeControl>
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="LightGray"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Translation="0 0 32">
 
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroup x:Name="HoveringStates">
-                                                <VisualState x:Name="HoverButtonsHidden" />
-                                                <VisualState x:Name="HoverButtonsShown">
-                                                    <VisualState.Setters>
-                                                        <Setter Target="btnHoverDeletePropeller.Visibility" Value="Visible" />
-                                                    </VisualState.Setters>
-                                                </VisualState>
-                                            </VisualStateGroup>
-                                        </VisualStateManager.VisualStateGroups>
-                                    </Grid>
-                                </UserControl>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                    <localControls:PaginationControl
-                        Grid.Row="2"
-                        HorizontalAlignment="Center"
-                        CurrentPage="{x:Bind PropellerViewModel.CurrentPage, Mode=TwoWay}"
-                        FlowDirection="LeftToRight"
-                        PageChangedCommand="{x:Bind PropellerViewModel.PageChangedCommand}"
-                        PageSize="10"
-                        TotalItemCount="{x:Bind PropellerViewModel.TotalPropellers, Mode=OneWay}" />
-                </Grid>
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid
+                            Grid.Row="0"
+                            MinHeight="48"
+                            Background="{ThemeResource SystemAccentColor}"
+                            CornerRadius="8 8 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="52" />
+                                <ColumnDefinition Width="Auto" MinWidth="80" />
+                                <ColumnDefinition Width="Auto" MinWidth="80" />
+                                <ColumnDefinition Width="Auto" MinWidth="80" />
+                                <ColumnDefinition Width="Auto" MinWidth="120" />
+                                <ColumnDefinition Width="Auto" MinWidth="80" />
+                                <ColumnDefinition Width="Auto" MinWidth="80" />
+                                <ColumnDefinition Width="Auto" MinWidth="120" />
+                                <ColumnDefinition Width="Auto" MinWidth="80" />
+                                <ColumnDefinition Width="Auto" MinWidth="80" />
+                                <ColumnDefinition Width="68" />
+                                <ColumnDefinition Width="68" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ردیف" />
+                            <Rectangle
+                                Grid.Column="0"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="نام پروانه" />
+                            <Rectangle
+                                Grid.Column="1"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ضریب A1" />
+                            <Rectangle
+                                Grid.Column="2"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="3"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="B1" />
+                            <Rectangle
+                                Grid.Column="3"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="4"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ضریب شکست 1" />
+                            <Rectangle
+                                Grid.Column="4"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="5"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ضریب A2" />
+                            <Rectangle
+                                Grid.Column="5"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="B2" />
+                            <Rectangle
+                                Grid.Column="6"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="7"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ضریب شکست 2" />
+                            <Rectangle
+                                Grid.Column="7"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="8"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="A3" />
+                            <Rectangle
+                                Grid.Column="8"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="9"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="B3" />
+                        </Grid>
+                        <ListView
+                            Name="PropellerListView"
+                            Grid.Row="1"
+                            BorderThickness="0"
+                            DataContext="{x:Bind PropellerViewModel}"
+                            ItemContainerStyle="{StaticResource HorizontalSwipe}"
+                            ItemsSource="{x:Bind PropellerViewModel.Propellers, Mode=OneWay}"
+                            SelectedItem="{x:Bind PropellerViewModel.SelectedPropeller, Mode=TwoWay}"
+                            SelectionMode="Single">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Propeller">
+                                    <UserControl
+                                        FontFamily="{StaticResource SamimFD}"
+                                        PointerEntered="SwipeContainer_PointerEntered"
+                                        PointerExited="SwipeContainer_PointerExited">
+                                        <Grid>
+                                            <SwipeControl>
+                                                <Grid VerticalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" MinWidth="52" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="120" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="120" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="80" />
+                                                        <ColumnDefinition Width="68" />
+                                                        <ColumnDefinition Width="68" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock
+                                                        x:Name="PropellerIndexTextBlock"
+                                                        Grid.Column="0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="12"
+                                                        Foreground="{ThemeResource SystemBaseHighColor}"
+                                                        Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind PropellerName}" />
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind A1}" />
+                                                    <TextBlock
+                                                        Grid.Column="3"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind B1}" />
+                                                    <TextBlock
+                                                        Grid.Column="4"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind TransitionPoint1}" />
+                                                    <TextBlock
+                                                        Grid.Column="5"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind A2}" />
+                                                    <TextBlock
+                                                        Grid.Column="6"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind B2}" />
+                                                    <TextBlock
+                                                        Grid.Column="7"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind TransitionPoint2}" />
+                                                    <TextBlock
+                                                        Grid.Column="8"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind A3}" />
+                                                    <TextBlock
+                                                        Grid.Column="9"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind B3}" />
+                                                    <AppBarButton
+                                                        x:Name="btnHoverDeletePropeller"
+                                                        Grid.Column="11"
+                                                        Width="60"
+                                                        Height="60"
+                                                        HorizontalAlignment="Left"
+                                                        Command="{Binding ElementName=PropellerListView, Path=DataContext.RequestDeletePropellerCommand}"
+                                                        CommandParameter="{x:Bind}"
+                                                        Icon="Delete"
+                                                        IsTabStop="False"
+                                                        Label="حذف"
+                                                        Visibility="Collapsed">
+                                                        <AppBarButton.Resources>
+                                                            <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                            <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                            <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                                        </AppBarButton.Resources>
+                                                    </AppBarButton>
+                                                </Grid>
+                                            </SwipeControl>
+
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="HoveringStates">
+                                                    <VisualState x:Name="HoverButtonsHidden" />
+                                                    <VisualState x:Name="HoverButtonsShown">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="btnHoverDeletePropeller.Visibility" Value="Visible" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                        </Grid>
+                                    </UserControl>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <localControls:PaginationControl
+                            Grid.Row="2"
+                            HorizontalAlignment="Center"
+                            CurrentPage="{x:Bind PropellerViewModel.CurrentPage, Mode=TwoWay}"
+                            FlowDirection="LeftToRight"
+                            PageChangedCommand="{x:Bind PropellerViewModel.PageChangedCommand}"
+                            PageSize="10"
+                            TotalItemCount="{x:Bind PropellerViewModel.TotalPropellers, Mode=OneWay}" />
+                    </Grid>
+                </Border>
+
             </Grid>
         </TabViewItem>
 
@@ -647,223 +651,229 @@
                             Style="{ThemeResource AccentButtonStyle}" />
                     </StackPanel>
                 </Grid>
-                <Grid
+                <Border
                     Grid.Column="1"
                     Width="820"
                     Margin="15,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    DataContext="{x:Bind CurrentMeterViewModel}"
-                    Translation="0 0 48">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="LightGray"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Translation="0 0 32">
 
-                    <Grid
-                        Grid.Row="0"
-                        MinHeight="48"
-                        Background="{ThemeResource SystemAccentColor}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" MinWidth="52" />
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="68" />
-                            <ColumnDefinition Width="68" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+
+                    <Grid DataContext="{x:Bind CurrentMeterViewModel}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid
                             Grid.Row="0"
+                            MinHeight="48"
+                            Background="{ThemeResource SystemAccentColor}"
+                            CornerRadius="8 8 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="52" />
+                                <ColumnDefinition Width="Auto" MinWidth="100" />
+                                <ColumnDefinition Width="Auto" MinWidth="150" />
+                                <ColumnDefinition Width="Auto" MinWidth="150" />
+                                <ColumnDefinition Width="Auto" MinWidth="150" />
+                                <ColumnDefinition Width="Auto" MinWidth="150" />
+                                <ColumnDefinition Width="68" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ردیف" />
+                            <Rectangle
+                                Grid.Column="0"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="نام مولینه" />
+                            <Rectangle
+                                Grid.Column="1"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="2"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="آخرین ویرایش توسط" />
+                            <Rectangle
+                                Grid.Column="2"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="3"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="زمان ویرایش" />
+                            <Rectangle
+                                Grid.Column="3"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="4"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ایجاد شده توسط" />
+                            <Rectangle
+                                Grid.Column="4"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Opacity="0.5" />
+                            <TextBlock
+                                Grid.Column="5"
+                                Margin="5,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="زمان ایجاد" />
+                        </Grid>
+
+                        <ListView
+                            Name="CurrentMeterListView"
+                            Grid.Row="1"
+                            ItemContainerStyle="{StaticResource HorizontalSwipe}"
+                            ItemsSource="{x:Bind CurrentMeterViewModel.CurrentMeters, Mode=OneWay}"
+                            SelectedItem="{x:Bind CurrentMeterViewModel.SelectedCurrentMeter, Mode=TwoWay}"
+                            SelectionMode="Single">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:CurrentMeter">
+                                    <UserControl
+                                        FontFamily="{StaticResource SamimFD}"
+                                        PointerEntered="SwipeContainer_PointerEntered"
+                                        PointerExited="SwipeContainer_PointerExited">
+                                        <Grid>
+                                            <SwipeControl>
+                                                <Grid VerticalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" MinWidth="52" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="100" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="150" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="150" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="150" />
+                                                        <ColumnDefinition Width="Auto" MinWidth="150" />
+                                                        <ColumnDefinition Width="68" />
+                                                        <!--<ColumnDefinition Width="68" />-->
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock
+                                                        x:Name="CurrentMeterIndexTextBlock"
+                                                        Grid.Column="0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="12"
+                                                        Foreground="{ThemeResource SystemBaseHighColor}"
+                                                        Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        Margin="5,0,0,0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind CurrentMeterName}" />
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        Margin="5,0,0,0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
+                                                    <TextBlock
+                                                        Grid.Column="3"
+                                                        Margin="5,0,0,0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="11"
+                                                        Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                    <TextBlock
+                                                        Grid.Column="4"
+                                                        Margin="5,0,0,0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
+                                                    <TextBlock
+                                                        Grid.Column="5"
+                                                        Margin="5,0,0,0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="11"
+                                                        Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                    <AppBarButton
+                                                        x:Name="btnHoverDeleteCurrentMeter"
+                                                        Grid.Column="6"
+                                                        Width="60"
+                                                        Height="60"
+                                                        HorizontalAlignment="Left"
+                                                        Command="{Binding ElementName=CurrentMeterListView, Path=DataContext.RequestDeleteCurrentMeterCommand}"
+                                                        CommandParameter="{x:Bind}"
+                                                        Icon="Delete"
+                                                        IsTabStop="False"
+                                                        Label="حذف"
+                                                        Visibility="Collapsed">
+                                                        <AppBarButton.Resources>
+                                                            <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                            <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                            <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                                        </AppBarButton.Resources>
+                                                    </AppBarButton>
+                                                </Grid>
+                                            </SwipeControl>
+
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="HoveringStates">
+                                                    <VisualState x:Name="HoverButtonsHidden" />
+                                                    <VisualState x:Name="HoverButtonsShown">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="btnHoverDeleteCurrentMeter.Visibility" Value="Visible" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                        </Grid>
+                                    </UserControl>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <localControls:PaginationControl
+                            Grid.Row="2"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ردیف" />
-                        <Rectangle
-                            Grid.Column="0"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="نام مولینه" />
-                        <Rectangle
-                            Grid.Column="1"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="2"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="آخرین ویرایش توسط" />
-                        <Rectangle
-                            Grid.Column="2"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="3"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="زمان ویرایش" />
-                        <Rectangle
-                            Grid.Column="3"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="4"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ایجاد شده توسط" />
-                        <Rectangle
-                            Grid.Column="4"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch"
-                            Fill="{ThemeResource SystemBaseLowColor}"
-                            Opacity="0.5" />
-                        <TextBlock
-                            Grid.Column="5"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="زمان ایجاد" />
+                            CurrentPage="{x:Bind CurrentMeterViewModel.CurrentPage, Mode=TwoWay}"
+                            FlowDirection="LeftToRight"
+                            PageChangedCommand="{x:Bind CurrentMeterViewModel.PageChangedCommand}"
+                            PageSize="10"
+                            TotalItemCount="{x:Bind CurrentMeterViewModel.TotalCurrentMeters, Mode=OneWay}" />
                     </Grid>
+                </Border>
 
-                    <ListView
-                        Name="CurrentMeterListView"
-                        Grid.Row="1"
-                        ItemContainerStyle="{StaticResource HorizontalSwipe}"
-                        ItemsSource="{x:Bind CurrentMeterViewModel.CurrentMeters, Mode=OneWay}"
-                        SelectedItem="{x:Bind CurrentMeterViewModel.SelectedCurrentMeter, Mode=TwoWay}"
-                        SelectionMode="Single">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:CurrentMeter">
-                                <UserControl
-                                    FontFamily="{StaticResource SamimFD}"
-                                    PointerEntered="SwipeContainer_PointerEntered"
-                                    PointerExited="SwipeContainer_PointerExited">
-                                    <Grid>
-                                        <SwipeControl>
-                                            <Grid VerticalAlignment="Stretch">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" MinWidth="52" />
-                                                    <ColumnDefinition Width="100" />
-                                                    <ColumnDefinition Width="150" />
-                                                    <ColumnDefinition Width="150" />
-                                                    <ColumnDefinition Width="150" />
-                                                    <ColumnDefinition Width="150" />
-                                                    <ColumnDefinition Width="68" />
-                                                    <!--<ColumnDefinition Width="68" />-->
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock
-                                                    x:Name="CurrentMeterIndexTextBlock"
-                                                    Grid.Column="0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="12"
-                                                    Foreground="{ThemeResource SystemBaseHighColor}"
-                                                    Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind CurrentMeterName}" />
-                                                <TextBlock
-                                                    Grid.Column="2"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
-                                                <TextBlock
-                                                    Grid.Column="3"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="11"
-                                                    Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                <TextBlock
-                                                    Grid.Column="4"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
-                                                <TextBlock
-                                                    Grid.Column="5"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="11"
-                                                    Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                <AppBarButton
-                                                    x:Name="btnHoverDeleteCurrentMeter"
-                                                    Grid.Column="6"
-                                                    Width="60"
-                                                    Height="60"
-                                                    HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=CurrentMeterListView, Path=DataContext.RequestDeleteCurrentMeterCommand}"
-                                                    CommandParameter="{x:Bind}"
-                                                    Icon="Delete"
-                                                    IsTabStop="False"
-                                                    Label="حذف"
-                                                    Visibility="Collapsed">
-                                                    <AppBarButton.Resources>
-                                                        <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
-                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
-                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
-                                                    </AppBarButton.Resources>
-                                                </AppBarButton>
-                                            </Grid>
-                                        </SwipeControl>
-
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroup x:Name="HoveringStates">
-                                                <VisualState x:Name="HoverButtonsHidden" />
-                                                <VisualState x:Name="HoverButtonsShown">
-                                                    <VisualState.Setters>
-                                                        <Setter Target="btnHoverDeleteCurrentMeter.Visibility" Value="Visible" />
-                                                    </VisualState.Setters>
-                                                </VisualState>
-                                            </VisualStateGroup>
-                                        </VisualStateManager.VisualStateGroups>
-                                    </Grid>
-                                </UserControl>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                    <localControls:PaginationControl
-                        Grid.Row="2"
-                        HorizontalAlignment="Center"
-                        CurrentPage="{x:Bind CurrentMeterViewModel.CurrentPage, Mode=TwoWay}"
-                        FlowDirection="LeftToRight"
-                        PageChangedCommand="{x:Bind CurrentMeterViewModel.PageChangedCommand}"
-                        PageSize="10"
-                        TotalItemCount="{x:Bind CurrentMeterViewModel.TotalCurrentMeters, Mode=OneWay}" />
-                </Grid>
             </Grid>
         </TabViewItem>
     </TabView>

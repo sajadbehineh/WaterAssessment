@@ -341,7 +341,7 @@ namespace WaterAssessment.ViewModel
                 title: "تأیید عملیات حذف",
                 content: $"آیا از حذف مکان «{location.LocationName}» اطمینان دارید؟",
                 primaryButtonText: "بله، حذف کن",
-                closeButtonText: "انصراف"
+                closeButtonText: "خیر"
             );
 
             if (confirmed)

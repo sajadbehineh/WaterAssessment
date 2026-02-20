@@ -105,7 +105,7 @@ namespace WaterAssessment.ViewModel
                 title: "تأیید عملیات حذف",
                 content: $"آیا از حذف نوع مکان «{locationType.Title}» اطمینان دارید؟\nاین عملیات غیرقابل بازگشت است.",
                 primaryButtonText: "بله، حذف کن",
-                closeButtonText: "انصراف"
+                closeButtonText: "خیر"
             );
 
             if (confirmed)

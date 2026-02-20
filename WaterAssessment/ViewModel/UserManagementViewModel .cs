@@ -132,7 +132,7 @@ namespace WaterAssessment.ViewModel
                 title: "حذف کاربر",
                 content: $"آیا از حذف کاربر «{userToDelete.Username}» اطمینان دارید؟",
                 primaryButtonText: "بله، حذف کن",
-                closeButtonText: "انصراف");
+                closeButtonText: "خیر");
 
             if (!confirmed) return;
 

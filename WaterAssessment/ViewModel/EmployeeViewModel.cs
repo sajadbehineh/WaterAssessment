@@ -80,7 +80,7 @@ namespace WaterAssessment.ViewModel
                 title: "تأیید عملیات حذف",
                 content: $"آیا از حذف کارمند «{employee.LastName}» اطمینان دارید؟\nاین عملیات غیرقابل بازگشت است.",
                 primaryButtonText: "بله، حذف کن",
-                closeButtonText: "انصراف"
+                closeButtonText: "خیر"
             );
 
             // فقط در صورت تایید کاربر، حذف را ادامه دهید

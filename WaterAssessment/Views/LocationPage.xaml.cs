@@ -88,7 +88,7 @@ public sealed partial class LocationPage : Page
 
             // تلاش برای گرفتن کانتینر (سطر گرافیکی) مربوط به این آیتم
             // اگر آیتم خارج از دید باشد (اسکرول شده باشد)، مقدار null برمی‌گردد که مشکلی نیست
-            var container = locationsListView.ContainerFromItem(item) as DependencyObject;
+            var container = LocationsListView.ContainerFromItem(item) as DependencyObject;
 
             if (container != null)
             {

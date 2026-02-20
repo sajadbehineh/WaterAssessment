@@ -102,237 +102,233 @@
                     </StackPanel>
 
                 </Grid>
-                <Grid
+                <Border
                     Grid.Column="1"
                     Width="990"
                     Margin="20,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="LightGray"
                     BorderThickness="1"
-                    Translation="0 0 48">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                    CornerRadius="8"
+                    Translation="0 0 32">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                    <Grid
-                        Grid.Row="0"
-                        MinHeight="48"
-                        Background="{ThemeResource SystemAccentColor}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" MinWidth="52" />
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="68" />
-                            <ColumnDefinition Width="68" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
+                        <Grid
                             Grid.Row="0"
+                            MinHeight="48"
+                            Background="{ThemeResource SystemAccentColor}"
+                            CornerRadius="8 8 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="52" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="68" />
+                                <ColumnDefinition Width="68" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ردیف" />
+                            <Rectangle
+                                Grid.Column="0"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch" />
+                            <TextBlock
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="نام" />
+                            <Rectangle
+                                Grid.Column="1"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch" />
+                            <TextBlock
+                                Grid.Column="2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="نام خانوادگی" />
+                            <Rectangle
+                                Grid.Column="2"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch" />
+                            <TextBlock
+                                Grid.Column="3"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="آخرین ویرایش توسط" />
+                            <Rectangle
+                                Grid.Column="3"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch" />
+                            <TextBlock
+                                Grid.Column="4"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="زمان ویرایش" />
+                            <Rectangle
+                                Grid.Column="4"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch" />
+                            <TextBlock
+                                Grid.Column="5"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="ایجاد شده توسط" />
+                            <Rectangle
+                                Grid.Column="5"
+                                Width="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch" />
+                            <TextBlock
+                                Grid.Column="6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{ThemeResource SystemAltHighColor}"
+                                Text="زمان ایجاد" />
+                        </Grid>
+
+                        <ListView
+                            Name="EmployeeListView"
+                            Grid.Row="1"
+                            BorderBrush="{ThemeResource SystemBaseLowColor}"
+                            BorderThickness="0,0,0,0"
+                            ItemContainerStyle="{StaticResource HorizontalSwipe}"
+                            ItemsSource="{x:Bind ViewModel.Employees, Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.SelectedEmployee, Mode=TwoWay}"
+                            SelectionMode="Single">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Employee">
+                                    <UserControl
+                                        FontFamily="{StaticResource SamimFD}"
+                                        PointerEntered="employeeSwipeContainer_PointerEntered"
+                                        PointerExited="employeeSwipeContainer_PointerExited">
+                                        <Grid>
+                                            <SwipeControl>
+                                                <Grid VerticalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" MinWidth="52" />
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="100" />
+                                                        <ColumnDefinition Width="150" />
+                                                        <ColumnDefinition Width="150" />
+                                                        <ColumnDefinition Width="150" />
+                                                        <ColumnDefinition Width="150" />
+                                                        <ColumnDefinition Width="68" />
+                                                        <ColumnDefinition Width="68" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock
+                                                        x:Name="IndexTextBlock"
+                                                        Grid.Column="0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="12"
+                                                        Foreground="{ThemeResource SystemBaseHighColor}"
+                                                        Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind FirstName}" />
+                                                    <TextBlock
+                                                        Grid.Column="2"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind LastName}" />
+                                                    <TextBlock
+                                                        Grid.Column="3"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
+                                                    <TextBlock
+                                                        Grid.Column="4"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="11"
+                                                        Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                    <TextBlock
+                                                        Grid.Column="5"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
+                                                    <TextBlock
+                                                        Grid.Column="6"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="11"
+                                                        Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                                    <AppBarButton
+                                                        x:Name="btnHoverDeleteEmployee"
+                                                        Grid.Column="8"
+                                                        Width="60"
+                                                        Height="60"
+                                                        HorizontalAlignment="Left"
+                                                        Command="{Binding ElementName=EmployeeListView, Path=DataContext.RequestDeleteEmployeeCommand}"
+                                                        CommandParameter="{x:Bind}"
+                                                        Icon="Delete"
+                                                        IsTabStop="False"
+                                                        Label="حذف"
+                                                        Visibility="Collapsed">
+                                                        <AppBarButton.Resources>
+                                                            <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
+                                                            <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
+                                                            <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
+                                                        </AppBarButton.Resources>
+                                                    </AppBarButton>
+                                                </Grid>
+                                            </SwipeControl>
+
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="HoveringStates">
+                                                    <VisualState x:Name="HoverButtonsHidden" />
+                                                    <VisualState x:Name="HoverButtonsShown">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="btnHoverDeleteEmployee.Visibility" Value="Visible" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                        </Grid>
+                                    </UserControl>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+
+                        </ListView>
+                        <localControls:PaginationControl
+                            Grid.Row="2"
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ردیف" />
-                        <Rectangle
-                            Grid.Column="0"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch" />
-                        <TextBlock
-                            Grid.Column="1"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="نام" />
-                        <Rectangle
-                            Grid.Column="1"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch" />
-                        <TextBlock
-                            Grid.Column="2"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="نام خانوادگی" />
-                        <Rectangle
-                            Grid.Column="2"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch" />
-                        <TextBlock
-                            Grid.Column="3"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="آخرین ویرایش توسط" />
-                        <Rectangle
-                            Grid.Column="3"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch" />
-                        <TextBlock
-                            Grid.Column="4"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="زمان ویرایش" />
-                        <Rectangle
-                            Grid.Column="4"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch" />
-                        <TextBlock
-                            Grid.Column="5"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="ایجاد شده توسط" />
-                        <Rectangle
-                            Grid.Column="5"
-                            Width="1"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Stretch" />
-                        <TextBlock
-                            Grid.Column="6"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Foreground="{ThemeResource SystemAltHighColor}"
-                            Text="زمان ایجاد" />
+                            CurrentPage="{x:Bind ViewModel.CurrentPage, Mode=TwoWay}"
+                            FlowDirection="LeftToRight"
+                            PageChangedCommand="{x:Bind ViewModel.PageChangedCommand}"
+                            PageSize="10"
+                            TotalItemCount="{x:Bind ViewModel.TotalEmployees, Mode=OneWay}" />
                     </Grid>
-
-                    <ListView
-                        Name="EmployeeListView"
-                        Grid.Row="1"
-                        BorderBrush="{ThemeResource SystemBaseLowColor}"
-                        BorderThickness="0,0,0,0"
-                        ItemContainerStyle="{StaticResource HorizontalSwipe}"
-                        ItemsSource="{x:Bind ViewModel.Employees, Mode=OneWay}"
-                        SelectedItem="{x:Bind ViewModel.SelectedEmployee, Mode=TwoWay}"
-                        SelectionMode="Single">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:Employee">
-                                <UserControl
-                                    FontFamily="{StaticResource SamimFD}"
-                                    PointerEntered="employeeSwipeContainer_PointerEntered"
-                                    PointerExited="employeeSwipeContainer_PointerExited">
-                                    <Grid>
-                                        <SwipeControl>
-                                            <Grid VerticalAlignment="Stretch">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" MinWidth="52" />
-                                                    <ColumnDefinition Width="100" />
-                                                    <ColumnDefinition Width="100" />
-                                                    <ColumnDefinition Width="150" />
-                                                    <ColumnDefinition Width="150" />
-                                                    <ColumnDefinition Width="150" />
-                                                    <ColumnDefinition Width="150" />
-                                                    <ColumnDefinition Width="68" />
-                                                    <ColumnDefinition Width="68" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock
-                                                    x:Name="IndexTextBlock"
-                                                    Grid.Column="0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="12"
-                                                    Foreground="{ThemeResource SystemBaseHighColor}"
-                                                    Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind FirstName}" />
-                                                <TextBlock
-                                                    Grid.Column="2"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind LastName}" />
-                                                <TextBlock
-                                                    Grid.Column="3"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
-                                                <TextBlock
-                                                    Grid.Column="4"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="11"
-                                                    Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                <TextBlock
-                                                    Grid.Column="5"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
-                                                <TextBlock
-                                                    Grid.Column="6"
-                                                    Margin="5,0,0,0"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    FontSize="11"
-                                                    Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                <AppBarButton
-                                                    x:Name="btnHoverDeleteEmployee"
-                                                    Grid.Column="8"
-                                                    Width="60"
-                                                    Height="60"
-                                                    HorizontalAlignment="Left"
-                                                    Command="{Binding ElementName=EmployeeListView, Path=DataContext.RequestDeleteEmployeeCommand}"
-                                                    CommandParameter="{x:Bind}"
-                                                    Icon="Delete"
-                                                    IsTabStop="False"
-                                                    Label="حذف"
-                                                    Visibility="Collapsed">
-                                                    <AppBarButton.Resources>
-                                                        <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
-                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
-                                                        <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
-                                                    </AppBarButton.Resources>
-                                                </AppBarButton>
-                                            </Grid>
-                                        </SwipeControl>
-
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroup x:Name="HoveringStates">
-                                                <VisualState x:Name="HoverButtonsHidden" />
-                                                <VisualState x:Name="HoverButtonsShown">
-                                                    <VisualState.Setters>
-                                                        <Setter Target="btnHoverDeleteEmployee.Visibility" Value="Visible" />
-                                                    </VisualState.Setters>
-                                                </VisualState>
-                                            </VisualStateGroup>
-                                        </VisualStateManager.VisualStateGroups>
-                                    </Grid>
-                                </UserControl>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-
-                    </ListView>
-                    <localControls:PaginationControl
-                        Grid.Row="2"
-                        HorizontalAlignment="Center"
-                        CurrentPage="{x:Bind ViewModel.CurrentPage, Mode=TwoWay}"
-                        FlowDirection="LeftToRight"
-                        PageChangedCommand="{x:Bind ViewModel.PageChangedCommand}"
-                        PageSize="10"
-                        TotalItemCount="{x:Bind ViewModel.TotalEmployees, Mode=OneWay}" />
-                </Grid>
+                </Border>
             </Grid>
         </TabViewItem>
     </TabView>

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using WaterAssessment.Models;
 using WaterAssessment.Services;
 using WaterAssessment.Views;
 
@@ -8,6 +9,7 @@ namespace WaterAssessment.ViewModel
     public partial class AssessmentReportViewModel : ObservableObject
     {
         private readonly IAssessmentReportService _assessmentReportService;
+        private readonly IDialogService _dialogService;
         // لیست اصلی که در گرید نمایش داده می‌شود
         public ObservableCollection<Assessment> Assessments { get; } = new();
 
@@ -27,9 +29,10 @@ namespace WaterAssessment.ViewModel
         // =======================
         // سازنده
         // =======================
-        public AssessmentReportViewModel(IAssessmentReportService assessmentReportService)
+        public AssessmentReportViewModel(IAssessmentReportService assessmentReportService, IDialogService dialogService)
         {
             _assessmentReportService = assessmentReportService;
+            _dialogService = dialogService;
             _ = LoadDataAsync();
         }
 
@@ -94,31 +97,19 @@ namespace WaterAssessment.ViewModel
         {
             if (item == null) return;
 
-            // نمایش دیالوگ تایید
-            ContentDialog deleteDialog = new ContentDialog
+            bool confirmed = await _dialogService.ShowConfirmationDialogAsync(
+                title: "حذف رکورد",
+                content: $"آیا از حذف اندازه گیری مربوط به '{item.Location?.LocationName}' مطمئن هستید؟",
+                primaryButtonText: "بله، حذف کن",
+                closeButtonText: "خیر"
+            );
+
+            if (confirmed)
             {
-                Title = "حذف رکورد",
-                Content = $"آیا از حذف اندازه گیری مربوط به '{item.Location?.LocationName}' مطمئن هستید؟",
-                PrimaryButtonText = "بله، حذف کن",
-                CloseButtonText = "خیر",
-                DefaultButton = ContentDialogButton.Close,
-                XamlRoot = App.Current.themeService.CurrentWindow.Content.XamlRoot,
-                FlowDirection = FlowDirection.RightToLeft
-            };
-
-            var result = await deleteDialog.ShowAsync();
-
-            if (result == ContentDialogResult.Primary)
-            {
-
                 var success = await _assessmentReportService.DeleteAssessmentAsync(item.AssessmentID);
                 if (success)
                 {
                     Assessments.Remove(item);
-                }
-                else
-                {
-                    // پیغام مورد نظر یافت نشد
                 }
             }
         }

@@ -8,6 +8,8 @@
     xmlns:localControls="using:WaterAssessment.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
+    xmlns:primitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
+    xmlns:toolkitGrid="using:CommunityToolkit.WinUI.UI.Controls"
     x:Name="MyPage"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{x:Bind ViewModel}"
@@ -18,96 +20,96 @@
             x:Key="RowIndexConverter"
             CurrentPage="{x:Bind ViewModel.CurrentPage, Mode=OneWay}"
             ItemsSource="{x:Bind ViewModel.Employees, Mode=OneWay}"
-            PageSize="10" />
+            PageSize="5" />
+
+        <Style x:Key="CenterCellTextStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
     </Page.Resources>
 
     <TabView IsAddTabButtonVisible="False" SelectedIndex="0">
         <TabViewItem
-            x:Name="employeeTab"
+            x:Name="EmployeeTab"
             Header="ثبت اطلاعات همکاران"
             IsClosable="False">
-            <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="320" />
-                    <ColumnDefinition Width="2.5*" />
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <StackPanel
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="20,10"
-                        HorizontalAlignment="Stretch"
-                        Orientation="Vertical"
-                        Spacing="25">
-                        <TextBox
-                            Name="firstNameBox"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            Header="نام"
-                            IsSpellCheckEnabled="False"
-                            PlaceholderText="لطفاً نام همکار مورد نظر را وارد کنید"
-                            Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox
-                            Name="lastNameBox"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            Header="نام خانوادگی"
-                            IsSpellCheckEnabled="False"
-                            PlaceholderText="لطفاً نام خانوادگی همکار مورد نظر را وارد کنید"
-                            Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
+            <Grid
+                x:Name="RootLayout"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
 
-                    <StackPanel
-                        x:Name="EmployeeInfoPanel"
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Padding="5,15,5,0"
-                        HorizontalAlignment="Stretch"
-                        Spacing="25">
-                        <InfoBar
-                            x:Name="ShowErrorInfoBar"
-                            VerticalAlignment="Top"
-                            IsClosable="False"
-                            IsOpen="{x:Bind ViewModel.IsErrorVisible, Mode=TwoWay}"
-                            Message="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
-                            Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=OneWay}" />
-                    </StackPanel>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                    <StackPanel
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="20,10"
-                        HorizontalAlignment="Left"
-                        Orientation="Horizontal"
-                        Spacing="10">
-                        <Button
-                            Name="BtnAddEmployee"
-                            HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.AddEmployeeCommand}"
-                            Content="{x:Bind ViewModel.AddEditBtnContent, Mode=OneWay}"
-                            IsEnabled="True"
-                            Style="{ThemeResource AccentButtonStyle}" />
-                        <Button
-                            Name="BtnClearEmployeeBox"
-                            HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.ClearFormCommand}"
-                            Content="پاک کردن"
-                            IsEnabled="True"
-                            Style="{ThemeResource AccentButtonStyle}" />
-                    </StackPanel>
-
-                </Grid>
-                <Border
-                    Grid.Column="1"
-                    Width="990"
+                <StackPanel
+                    Grid.Row="0"
+                    MinWidth="290"
+                    MaxWidth="400"
                     Margin="20,10"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
+                    Orientation="Vertical"
+                    Spacing="25">
+                    <TextBox
+                        Name="firstNameBox"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Header="نام"
+                        IsSpellCheckEnabled="False"
+                        PlaceholderText="لطفاً نام همکار مورد نظر را وارد کنید"
+                        Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox
+                        Name="lastNameBox"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Header="نام خانوادگی"
+                        IsSpellCheckEnabled="False"
+                        PlaceholderText="لطفاً نام خانوادگی همکار مورد نظر را وارد کنید"
+                        Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="1"
+                    MinHeight="70"
+                    Margin="20,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <Button
+                        Name="BtnAddEmployee"
+                        Width="80"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind ViewModel.AddEmployeeCommand}"
+                        Content="{x:Bind ViewModel.AddEditBtnContent, Mode=OneWay}"
+                        IsEnabled="True"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                    <Button
+                        Name="BtnClearEmployeeBox"
+                        Width="80"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind ViewModel.ClearFormCommand}"
+                        Content="پاک کردن"
+                        IsEnabled="True"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                    <InfoBar
+                        x:Name="ShowErrorInfoBar"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsClosable="False"
+                        IsOpen="{x:Bind ViewModel.IsErrorVisible, Mode=TwoWay}"
+                        Message="{x:Bind ViewModel.InfoBarMessage, Mode=OneWay}"
+                        Severity="{x:Bind ViewModel.InfoBarSeverity, Mode=OneWay}" />
+                </StackPanel>
+
+                <Border
+                    Grid.Row="2"
+                    MaxWidth="1100"
+                    Margin="20,10,20,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Stretch"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="LightGray"
                     BorderThickness="1"
@@ -118,214 +120,170 @@
                     </Border.Shadow>
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Grid
-                            Grid.Row="0"
-                            MinHeight="48"
-                            Background="{ThemeResource SystemAccentColor}"
-                            CornerRadius="8 8 0 0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="52" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="68" />
-                                <ColumnDefinition Width="68" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="ردیف" />
-                            <Rectangle
-                                Grid.Column="0"
-                                Width="1"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch" />
-                            <TextBlock
-                                Grid.Column="1"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="نام" />
-                            <Rectangle
-                                Grid.Column="1"
-                                Width="1"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch" />
-                            <TextBlock
-                                Grid.Column="2"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="نام خانوادگی" />
-                            <Rectangle
-                                Grid.Column="2"
-                                Width="1"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch" />
-                            <TextBlock
-                                Grid.Column="3"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="آخرین ویرایش توسط" />
-                            <Rectangle
-                                Grid.Column="3"
-                                Width="1"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch" />
-                            <TextBlock
-                                Grid.Column="4"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="زمان ویرایش" />
-                            <Rectangle
-                                Grid.Column="4"
-                                Width="1"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch" />
-                            <TextBlock
-                                Grid.Column="5"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="ایجاد شده توسط" />
-                            <Rectangle
-                                Grid.Column="5"
-                                Width="1"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch" />
-                            <TextBlock
-                                Grid.Column="6"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{ThemeResource SystemAltHighColor}"
-                                Text="زمان ایجاد" />
-                        </Grid>
-
-                        <ListView
-                            Name="EmployeeListView"
-                            Grid.Row="1"
-                            BorderBrush="{ThemeResource SystemBaseLowColor}"
-                            BorderThickness="0,0,0,0"
-                            ItemContainerStyle="{StaticResource HorizontalSwipe}"
-                            ItemsSource="{x:Bind ViewModel.Employees, Mode=OneWay}"
+                        <toolkitGrid:DataGrid
+                            x:Name="EmployeesGrid"
+                            AutoGenerateColumns="False"
+                            DataContext="{x:Bind ViewModel}"
+                            GridLinesVisibility="None"
+                            HeadersVisibility="Column"
+                            IsHitTestVisible="True"
+                            IsReadOnly="True"
+                            IsTabStop="False"
+                            ItemsSource="{x:Bind ViewModel.Employees}"
                             SelectedItem="{x:Bind ViewModel.SelectedEmployee, Mode=TwoWay}"
                             SelectionMode="Single">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:Employee">
-                                    <UserControl
-                                        FontFamily="{StaticResource SamimFD}"
-                                        PointerEntered="employeeSwipeContainer_PointerEntered"
-                                        PointerExited="employeeSwipeContainer_PointerExited">
-                                        <Grid>
-                                            <SwipeControl>
-                                                <Grid VerticalAlignment="Stretch">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" MinWidth="52" />
-                                                        <ColumnDefinition Width="100" />
-                                                        <ColumnDefinition Width="100" />
-                                                        <ColumnDefinition Width="150" />
-                                                        <ColumnDefinition Width="150" />
-                                                        <ColumnDefinition Width="150" />
-                                                        <ColumnDefinition Width="150" />
-                                                        <ColumnDefinition Width="68" />
-                                                        <ColumnDefinition Width="68" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock
-                                                        x:Name="IndexTextBlock"
-                                                        Grid.Column="0"
+                            <toolkitGrid:DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="primitives:DataGridColumnHeader">
+                                    <Setter Property="Height" Value="42" />
+                                    <Setter Property="FontFamily" Value="{StaticResource SamimBold}" />
+                                    <Setter Property="FontWeight" Value="bold" />
+                                    <Setter Property="FontSize" Value="14" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="primitives:DataGridColumnHeader">
+                                                <Grid Background="{ThemeResource SystemAccentColor}">
+                                                    <ContentPresenter
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
-                                                        FontSize="12"
-                                                        Foreground="{ThemeResource SystemBaseHighColor}"
-                                                        Text="{Binding Converter={StaticResource RowIndexConverter}, Mode=OneWay}" />
-                                                    <TextBlock
-                                                        Grid.Column="1"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        Text="{x:Bind FirstName}" />
-                                                    <TextBlock
-                                                        Grid.Column="2"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        Text="{x:Bind LastName}" />
-                                                    <TextBlock
-                                                        Grid.Column="3"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        Text="{x:Bind UpdatedBy.FullName, FallbackValue='-'}" />
-                                                    <TextBlock
-                                                        Grid.Column="4"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        FontSize="11"
-                                                        Text="{x:Bind UpdatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                    <TextBlock
-                                                        Grid.Column="5"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        Text="{x:Bind CreatedBy.FullName, FallbackValue='-'}" />
-                                                    <TextBlock
-                                                        Grid.Column="6"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        FontSize="11"
-                                                        Text="{x:Bind CreatedAt, Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
-                                                    <AppBarButton
-                                                        x:Name="btnHoverDeleteEmployee"
-                                                        Grid.Column="8"
-                                                        Width="60"
-                                                        Height="60"
-                                                        HorizontalAlignment="Left"
-                                                        Command="{Binding ElementName=EmployeeListView, Path=DataContext.RequestDeleteEmployeeCommand}"
-                                                        CommandParameter="{x:Bind}"
-                                                        Icon="Delete"
-                                                        IsTabStop="False"
-                                                        Label="حذف"
-                                                        Visibility="Collapsed">
-                                                        <AppBarButton.Resources>
-                                                            <SolidColorBrush x:Key="AppBarButtonForeground" Color="Red" />
-                                                            <SolidColorBrush x:Key="AppBarButtonForegroundPointerOver" Color="DarkRed" />
-                                                            <SolidColorBrush x:Key="AppBarButtonForegroundPressed" Color="DarkRed" />
-                                                        </AppBarButton.Resources>
-                                                    </AppBarButton>
+                                                        Content="{TemplateBinding Content}"
+                                                        Foreground="White" />
                                                 </Grid>
-                                            </SwipeControl>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </toolkitGrid:DataGrid.ColumnHeaderStyle>
 
-                                            <VisualStateManager.VisualStateGroups>
-                                                <VisualStateGroup x:Name="HoveringStates">
-                                                    <VisualState x:Name="HoverButtonsHidden" />
-                                                    <VisualState x:Name="HoverButtonsShown">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="btnHoverDeleteEmployee.Visibility" Value="Visible" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                </VisualStateGroup>
-                                            </VisualStateManager.VisualStateGroups>
-                                        </Grid>
-                                    </UserControl>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
+                            <toolkitGrid:DataGrid.CellStyle>
+                                <Style TargetType="toolkitGrid:DataGridCell">
+                                    <Setter Property="FontSize" Value="14" />
+                                    <Setter Property="FontFamily" Value="{StaticResource SamimFD}" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                </Style>
+                            </toolkitGrid:DataGrid.CellStyle>
 
-                        </ListView>
+                            <toolkitGrid:DataGrid.RowStyle>
+                                <Style TargetType="toolkitGrid:DataGridRow">
+                                    <Setter Property="MinHeight" Value="44" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                </Style>
+                            </toolkitGrid:DataGrid.RowStyle>
+
+                            <toolkitGrid:DataGrid.Columns>
+
+                                <toolkitGrid:DataGridTemplateColumn
+                                    Width="SizeToCells"
+                                    MinWidth="52"
+                                    Header="ردیف">
+                                    <toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="14"
+                                                Text="{Binding Converter={StaticResource RowIndexConverter}}" />
+                                        </DataTemplate>
+                                    </toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                                </toolkitGrid:DataGridTemplateColumn>
+
+                                <toolkitGrid:DataGridTextColumn
+                                    Width="SizeToCells"
+                                    MinWidth="150"
+                                    Binding="{Binding FirstName}"
+                                    ElementStyle="{StaticResource CenterCellTextStyle}"
+                                    Header="نام" />
+
+                                <toolkitGrid:DataGridTextColumn
+                                    Width="SizeToCells"
+                                    MinWidth="150"
+                                    Binding="{Binding LastName}"
+                                    ElementStyle="{StaticResource CenterCellTextStyle}"
+                                    Header="نام خانوادگی" />
+
+                                <toolkitGrid:DataGridTextColumn
+                                    Width="SizeToCells"
+                                    MinWidth="150"
+                                    Binding="{Binding UpdatedBy.FullName}"
+                                    ElementStyle="{StaticResource CenterCellTextStyle}"
+                                    Header="آخرین ویرایش توسط" />
+
+                                <toolkitGrid:DataGridTemplateColumn
+                                    Width="150"
+                                    MinWidth="150"
+                                    Header="زمان ویرایش">
+                                    <toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="13"
+                                                Text="{Binding UpdatedAt, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                        </DataTemplate>
+                                    </toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                                </toolkitGrid:DataGridTemplateColumn>
+
+                                <toolkitGrid:DataGridTextColumn
+                                    Width="SizeToCells"
+                                    MinWidth="150"
+                                    Binding="{Binding CreatedBy.FullName}"
+                                    ElementStyle="{StaticResource CenterCellTextStyle}"
+                                    Header="ایجاد شده توسط" />
+
+                                <toolkitGrid:DataGridTemplateColumn
+                                    Width="150"
+                                    MinWidth="150"
+                                    Header="زمان ایجاد">
+                                    <toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontSize="13"
+                                                Text="{Binding CreatedAt, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
+                                        </DataTemplate>
+                                    </toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                                </toolkitGrid:DataGridTemplateColumn>
+
+                                <toolkitGrid:DataGridTemplateColumn Width="90" Header="عملیات">
+                                    <toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate x:DataType="models:Employee">
+                                            <Button
+                                                Width="32"
+                                                Height="28"
+                                                Padding="0"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Click="OnEmployeeDeleteClick"
+                                                DataContext="{Binding}">
+
+                                                <FontIcon
+                                                    FontSize="16"
+                                                    Foreground="Red"
+                                                    Glyph="&#xE74D;" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                                </toolkitGrid:DataGridTemplateColumn>
+
+                            </toolkitGrid:DataGrid.Columns>
+
+                        </toolkitGrid:DataGrid>
+
                         <localControls:PaginationControl
-                            Grid.Row="2"
+                            Grid.Row="1"
                             HorizontalAlignment="Center"
                             CurrentPage="{x:Bind ViewModel.CurrentPage, Mode=TwoWay}"
                             FlowDirection="LeftToRight"
                             PageChangedCommand="{x:Bind ViewModel.PageChangedCommand}"
-                            PageSize="10"
+                            PageSize="5"
                             TotalItemCount="{x:Bind ViewModel.TotalEmployees, Mode=OneWay}" />
                     </Grid>
                 </Border>

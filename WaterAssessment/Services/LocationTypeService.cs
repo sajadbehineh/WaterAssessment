@@ -99,7 +99,7 @@ namespace WaterAssessment.Services
                 bool hasDependents = await db.Locations.AnyAsync(l => l.LocationTypeID == locationTypeID);
                 if (hasDependents)
                 {
-                    _lastErrorMessage = "این نوع مکان دارای مکان‌های ثبت شده است. برای حذف، ابتدا باید مکان‌های مربوطه را حذف کنید.";
+                    _lastErrorMessage = "این نوع مکان دارای مکان‌های ثبت شده است و قابل حذف نیست.";
                     return false;
                 }
 

@@ -353,7 +353,7 @@ namespace WaterAssessment.Services
                 bool hasDependents = await db.Assessments.AnyAsync(a => a.LocationID == locationId);
                 if (hasDependents)
                 {
-                    _lastErrorMessage = "این مکان دارای اندازه گیری‌های ثبت شده است. برای حذف، ابتدا باید اندازه گیری‌های مربوطه را حذف کنید.";
+                    _lastErrorMessage = "این مکان دارای اندازه گیری‌های ثبت شده است و قابل حذف نیست.";
                     return false;
                 }
 

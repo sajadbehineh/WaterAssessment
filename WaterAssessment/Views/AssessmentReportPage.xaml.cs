@@ -23,10 +23,8 @@ public sealed partial class AssessmentReportPage : Page
 
     private void OnEditClick(object sender, RoutedEventArgs e)
     {
-        // 1. دکمه‌ای که کلیک شده را می‌گیریم
         if (sender is Button btn && btn.DataContext is Assessment item)
         {
-            // 2. متد ویومدل را صدا می‌زنیم
             ViewModel.EditAssessmentCommand.Execute(item);
         }
     }

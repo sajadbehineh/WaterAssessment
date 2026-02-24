@@ -3,14 +3,8 @@
     x:Class="WaterAssessment.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:WaterAssessment.Helpers"
-    xmlns:local="using:WaterAssessment"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:WaterAssessment.Models"
-    xmlns:ui="using:CommunityToolkit.WinUI"
-    xmlns:viewModel="using:WaterAssessment.Models.ViewModel"
     xmlns:views="using:WaterAssessment.Views"
     Title="مطالعات و آبشناسی"
     mc:Ignorable="d">
@@ -80,14 +74,15 @@
                 IsBackButtonVisible="Collapsed"
                 IsPaneOpen="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
                 IsPaneVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
-                IsSettingsVisible="False">
-                <NavigationView.PaneFooter>
+                IsSettingsVisible="False"
+                OpenPaneLength="280">
+                <NavigationView.FooterMenuItems>
                     <NavigationViewItem
                         Content="تنظیمات"
                         Icon="Setting"
                         Tag="Settings"
                         Tapped="NavigationViewItem_OnTapped" />
-                </NavigationView.PaneFooter>
+                </NavigationView.FooterMenuItems>
                 <NavigationView.MenuItems>
                     <NavigationViewItem
                         Content="فرم اندازه گیری"

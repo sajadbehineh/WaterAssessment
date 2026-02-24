@@ -42,7 +42,7 @@
             Margin="0,10,0,0"
             HorizontalAlignment="Stretch"
             BorderBrush="Black"
-            BorderThickness="1.5 1.5 1. 0 "
+            BorderThickness="1 1 1. 0 "
             CornerRadius="4 4 0 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -66,7 +66,7 @@
                 Grid.Column="0"
                 VerticalAlignment="Stretch"
                 BorderBrush="Black"
-                BorderThickness="0,1.5,0,1.5">
+                BorderThickness="0,1,0,1">
                 <TextBlock
                     Padding="5"
                     VerticalAlignment="Center"
@@ -78,7 +78,7 @@
                 Grid.Row="1"
                 Grid.Column="1"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,1.5">
+                BorderThickness="1,1,0,1">
                 <CalendarDatePicker
                     HorizontalAlignment="Stretch"
                     BorderThickness="0"
@@ -106,7 +106,7 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1,0,0,0">
                 <ComboBox
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -135,7 +135,7 @@
                 Grid.Row="2"
                 Grid.Column="1"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1,0,0,0">
                 <ComboBox
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -152,7 +152,7 @@
                 Grid.Row="2"
                 Grid.Column="4"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1,0,0,0">
                 <TextBlock
                     Padding="5"
                     HorizontalAlignment="Center"
@@ -165,7 +165,7 @@
                 Grid.Row="2"
                 Grid.Column="5"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1,0,0,0">
                 <akTools:NumberBoxEx
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -180,7 +180,7 @@
                 Grid.RowSpan="2"
                 Grid.Column="4"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1,0,0,1">
                 <TextBlock
                     Padding="5"
                     VerticalAlignment="Top"
@@ -193,7 +193,7 @@
                 Grid.RowSpan="2"
                 Grid.Column="5"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1,0,0,1">
                 <StackPanel
                     Margin="0"
                     VerticalAlignment="Top"
@@ -259,7 +259,7 @@
                 Grid.Row="0"
                 Grid.Column="6"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1,0,0,0">
                 <TextBlock
                     Padding="5"
                     HorizontalAlignment="Center"
@@ -272,7 +272,7 @@
                 Grid.Row="0"
                 Grid.Column="7"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1,0,0,0">
                 <akTools:NumberBoxEx
                     HorizontalAlignment="Stretch"
                     IsEnabled="{x:Bind ViewModel.IsHydrometryForm, Mode=OneWay}"
@@ -282,8 +282,9 @@
             <Border
                 Grid.Row="2"
                 Grid.Column="2"
+                VerticalAlignment="Stretch"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1,0,0,0">
                 <TextBlock
                     Padding="5"
                     HorizontalAlignment="Center"
@@ -296,7 +297,7 @@
                 Grid.Row="2"
                 Grid.Column="3"
                 BorderBrush="Black"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1,0,0,0">
                 <ComboBox
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -314,7 +315,7 @@
                 Grid.RowSpan="2"
                 Grid.Column="2"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1,0,0,1">
                 <TextBlock
                     Padding="5"
                     VerticalAlignment="Top"
@@ -329,7 +330,7 @@
                 Grid.RowSpan="2"
                 Grid.Column="3"
                 BorderBrush="Black"
-                BorderThickness="1.5,0,0,0">
+                BorderThickness="1,0,0,1">
                 <StackPanel Margin="5,0" Visibility="{x:Bind ViewModel.IsNotDischargeEquationForm, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ItemsControl ItemsSource="{x:Bind ViewModel.GateValues, Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
@@ -363,7 +364,7 @@
                 Grid.RowSpan="2"
                 Grid.Column="6"
                 BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1,1,0,0">
                 <TextBlock
                     Padding="5"
                     VerticalAlignment="Center"
@@ -377,7 +378,7 @@
                 Grid.RowSpan="2"
                 Grid.Column="7"
                 BorderBrush="{ThemeResource SystemChromeBlackHighColor}"
-                BorderThickness="1.5,1.5,0,0">
+                BorderThickness="1,1,0,0">
                 <Grid>
                     <TextBlock
                         x:Name="TotalFlowBox"
@@ -953,14 +954,12 @@
 
                                     <Button
                                         Grid.Column="0"
-                                        Width="28"
-                                        Height="28"
-                                        Padding="0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom"
+                                        Width="26"
+                                        Height="26"
+                                        Padding="0,0,1,0"
                                         Command="{Binding DataContext.AddRowToSectionCommand, ElementName=MyPage}"
                                         CommandParameter="{x:Bind SectionNumber}"
-                                        CornerRadius="14"
+                                        CornerRadius="4"
                                         Style="{ThemeResource AccentButtonStyle}"
                                         ToolTipService.ToolTip="افزودن سطر">
                                         <SymbolIcon Symbol="Add" />
@@ -1127,6 +1126,7 @@
                                 <akTools:NumberBoxEx
                                     HorizontalContentAlignment="Center"
                                     BorderThickness="0"
+                                    RequestedTheme="Light"
                                     Value="{x:Bind OpeningHeight, Mode=TwoWay}" />
                             </Border>
                             <Border
@@ -1134,7 +1134,10 @@
                                 Background="LightGoldenrodYellow"
                                 BorderBrush="Black"
                                 BorderThickness="1,0,0,1">
-                                <akTools:NumberBoxEx HorizontalContentAlignment="Center" Value="{x:Bind UpstreamHead, Mode=TwoWay}" />
+                                <akTools:NumberBoxEx
+                                    HorizontalContentAlignment="Center"
+                                    RequestedTheme="Light"
+                                    Value="{x:Bind UpstreamHead, Mode=TwoWay}" />
                             </Border>
                             <Border
                                 Grid.Column="5"

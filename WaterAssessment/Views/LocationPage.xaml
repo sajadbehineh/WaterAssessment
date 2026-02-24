@@ -351,7 +351,7 @@
                 <Border
                     Grid.Row="2"
                     MaxWidth="1100"
-                    Margin="15,5,15,10"
+                    Margin="15,5"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Stretch"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -552,7 +552,7 @@
                     x:Key="RowIndexConverter"
                     CurrentPage="{x:Bind AreaViewModel.CurrentPage, Mode=OneWay}"
                     ItemsSource="{x:Bind AreaViewModel.Areas, Mode=OneWay}"
-                    PageSize="10" />
+                    PageSize="5" />
             </TabViewItem.Resources>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
@@ -614,7 +614,7 @@
                 <Border
                     Grid.Row="2"
                     MaxWidth="1100"
-                    Margin="15,10"
+                    Margin="15,5"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Stretch"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -800,7 +800,7 @@
                     x:Key="RowIndexConverter"
                     CurrentPage="{x:Bind LocationTypeViewModel.CurrentPage, Mode=OneWay}"
                     ItemsSource="{x:Bind LocationTypeViewModel.LocationTypes, Mode=OneWay}"
-                    PageSize="10" />
+                    PageSize="5" />
             </TabViewItem.Resources>
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
@@ -860,7 +860,7 @@
                 <Border
                     Grid.Row="2"
                     MaxWidth="1100"
-                    Margin="15,10"
+                    Margin="15,5"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Stretch"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -1032,7 +1032,7 @@
                             CurrentPage="{x:Bind LocationTypeViewModel.CurrentPage, Mode=TwoWay}"
                             FlowDirection="LeftToRight"
                             PageChangedCommand="{x:Bind LocationTypeViewModel.PageChangedCommand}"
-                            PageSize="10"
+                            PageSize="5"
                             TotalItemCount="{x:Bind LocationTypeViewModel.TotalLocationTypes, Mode=OneWay}" />
                     </Grid>
                 </Border>

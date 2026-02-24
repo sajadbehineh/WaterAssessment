@@ -43,7 +43,7 @@ namespace WaterAssessment.ViewModel
         }
 
 
-        public LocationTypeViewModel(ILocationTypeService locationTypeService, IDialogService dialogService)
+        public LocationTypeViewModel(ILocationTypeService locationTypeService, IDialogService dialogService) : base(pageSize: 5)
         {
             _locationTypeService = locationTypeService;
             _dialogService = dialogService;

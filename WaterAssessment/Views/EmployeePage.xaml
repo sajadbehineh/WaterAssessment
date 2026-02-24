@@ -52,7 +52,7 @@
                     Margin="20,10"
                     HorizontalAlignment="Left"
                     Orientation="Vertical"
-                    Spacing="25">
+                    Spacing="20">
                     <TextBox
                         Name="firstNameBox"
                         HorizontalAlignment="Stretch"
@@ -76,6 +76,7 @@
                     MinHeight="70"
                     Margin="20,0"
                     HorizontalAlignment="Left"
+                    VerticalAlignment="Stretch"
                     Orientation="Horizontal"
                     Spacing="10">
                     <Button
@@ -107,7 +108,7 @@
                 <Border
                     Grid.Row="2"
                     MaxWidth="1100"
-                    Margin="20,10,20,0"
+                    Margin="20,0,20,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Stretch"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"

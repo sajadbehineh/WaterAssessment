@@ -3,17 +3,24 @@
     x:Class="WaterAssessment.Views.AssessmentReportPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:converters="using:WaterAssessment.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
+    xmlns:primitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
+    xmlns:toolkitGrid="using:CommunityToolkit.WinUI.UI.Controls"
     FontFamily="{StaticResource SamimBold}"
     mc:Ignorable="d">
 
     <Page.Resources>
         <converters:DateTimeToShamsiConverter x:Key="ShamsiConv" />
         <converters:DateTimeToDateTimeOffsetConverter x:Key="DateToOffsetConv" />
+
+        <Style x:Key="CenterCellTextStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
     </Page.Resources>
 
     <Grid Padding="20">
@@ -103,7 +110,7 @@
             </StackPanel>
         </StackPanel>
 
-        <controls:DataGrid
+        <toolkitGrid:DataGrid
             x:Name="ReportDataGrid"
             Grid.Row="1"
             AutoGenerateColumns="False"
@@ -118,51 +125,73 @@
             ItemsSource="{x:Bind ViewModel.Assessments}"
             Tag="{x:Bind ViewModel}">
 
-            <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn
+            <toolkitGrid:DataGrid.ColumnHeaderStyle>
+                <Style TargetType="primitives:DataGridColumnHeader">
+                    <Setter Property="Height" Value="42" />
+                    <Setter Property="FontFamily" Value="{StaticResource SamimBold}" />
+                    <Setter Property="FontWeight" Value="bold" />
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="primitives:DataGridColumnHeader">
+                                <Grid Background="{ThemeResource SystemAccentColor}">
+                                    <ContentPresenter
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Content="{TemplateBinding Content}"
+                                        Foreground="White" />
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </toolkitGrid:DataGrid.ColumnHeaderStyle>
+
+            <toolkitGrid:DataGrid.CellStyle>
+                <Style TargetType="toolkitGrid:DataGridCell">
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="FontFamily" Value="{StaticResource SamimFD}" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+            </toolkitGrid:DataGrid.CellStyle>
+
+            <toolkitGrid:DataGrid.RowStyle>
+                <Style TargetType="toolkitGrid:DataGridRow">
+                    <Setter Property="MinHeight" Value="44" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                </Style>
+            </toolkitGrid:DataGrid.RowStyle>
+
+            <toolkitGrid:DataGrid.Columns>
+
+                <toolkitGrid:DataGridTextColumn
                     Width="200"
                     Binding="{Binding Location.LocationName}"
+                    ElementStyle="{StaticResource CenterCellTextStyle}"
                     Header="نام مکان" />
 
-                <controls:DataGridTextColumn
+                <toolkitGrid:DataGridTextColumn
                     Width="120"
                     Binding="{Binding Date, Converter={StaticResource ShamsiConv}}"
+                    ElementStyle="{StaticResource CenterCellTextStyle}"
                     Header="تاریخ" />
 
-                <controls:DataGridTextColumn
+                <toolkitGrid:DataGridTextColumn
                     Width="120"
                     Binding="{Binding TotalFlow, Converter={StaticResource DoubleToStringConv}, ConverterParameter='N3'}"
+                    ElementStyle="{StaticResource CenterCellTextStyle}"
                     Header="دبی کل (CMS)" />
 
-                <controls:DataGridTextColumn
-                    Width="120"
-                    Binding="{Binding VerticalMeanVelocity, Converter={StaticResource DoubleToStringConv}, ConverterParameter='N3'}"
-                    Header="سرعت متوسط" />
-
-                <controls:DataGridTemplateColumn Width="100" Header="عملیات">
-                    <controls:DataGridTemplateColumn.CellTemplate>
+                <toolkitGrid:DataGridTemplateColumn Width="100" Header="عملیات">
+                    <toolkitGrid:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate x:DataType="models:Assessment">
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal"
                                 Spacing="10">
-                                <!--<Button
-                                    Padding="4"
-                                    Command="{Binding ElementName=ReportDataGrid, Path=DataContext.EditAssessmentCommand}"
-                                    CommandParameter="{Binding}"
-                                    ToolTipService.ToolTip="ویرایش">
-                                    <FontIcon FontSize="14" Glyph="&#xE70F;" />
-                                </Button>
 
-                                <Button
-                                    Padding="4"
-                                    Background="Red"
-                                    Command="{Binding ElementName=ReportDataGrid, Path=DataContext.DeleteAssessmentCommand}"
-                                    CommandParameter="{Binding}"
-                                    Foreground="White"
-                                    ToolTipService.ToolTip="حذف">
-                                    <FontIcon FontSize="14" Glyph="&#xE74D;" />
-                                </Button>-->
                                 <Button
                                     Padding="4"
                                     Click="OnEditClick"
@@ -183,10 +212,10 @@
 
                             </StackPanel>
                         </DataTemplate>
-                    </controls:DataGridTemplateColumn.CellTemplate>
-                </controls:DataGridTemplateColumn>
+                    </toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                </toolkitGrid:DataGridTemplateColumn>
 
-            </controls:DataGrid.Columns>
-        </controls:DataGrid>
+            </toolkitGrid:DataGrid.Columns>
+        </toolkitGrid:DataGrid>
     </Grid>
 </Page>

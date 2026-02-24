@@ -27,7 +27,7 @@ namespace WaterAssessment.ViewModel
         [ObservableProperty] private string _infoBarMessage = string.Empty;
         [ObservableProperty] private string _addEditBtnContent = "ذخیره";
 
-        public AreaViewModel(IAreaService areaService, IDialogService dialogService) : base(pageSize: 10)
+        public AreaViewModel(IAreaService areaService, IDialogService dialogService) : base(pageSize: 5)
         {
             _areaService = areaService;
             _dialogService = dialogService;

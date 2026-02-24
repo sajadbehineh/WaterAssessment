@@ -27,7 +27,7 @@ namespace WaterAssessment.ViewModel
 
         [ObservableProperty] private string _addEditBtnContent = "ذخیره";
 
-        public CurrentMeterViewModel(ICurrentMeterService currentMeterService, IDialogService dialogService) : base(pageSize: 10)
+        public CurrentMeterViewModel(ICurrentMeterService currentMeterService, IDialogService dialogService) : base(pageSize: 5)
         {
             _currentMeterService = currentMeterService;
             _dialogService = dialogService;

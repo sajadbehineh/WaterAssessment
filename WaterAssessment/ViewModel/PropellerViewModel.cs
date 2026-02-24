@@ -73,7 +73,7 @@ public partial class PropellerViewModel : PagedViewModelBase<Propeller>
     [ObservableProperty] private InfoBarSeverity _infoBarSeverity;
     [ObservableProperty] private string _infoBarMessage = string.Empty;
 
-    public PropellerViewModel(IPropellerService propellerService, IDialogService dialogService) : base(pageSize: 10)
+    public PropellerViewModel(IPropellerService propellerService, IDialogService dialogService) : base(pageSize: 5)
     {
         _propellerService = propellerService;
         _dialogService = dialogService;

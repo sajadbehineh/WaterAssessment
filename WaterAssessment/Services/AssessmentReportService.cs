@@ -40,9 +40,24 @@ namespace WaterAssessment.Services
             }
         }
 
+        public async Task<IReadOnlyList<Employee>> GetEmployeesAsync()
+        {
+            try
+            {
+                using var db = _dbFactory.CreateDbContext();
+                return await db.Employees.AsNoTracking().OrderBy(e => e.LastName).ThenBy(e => e.FirstName).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _lastErrorMessage = $"خطا در بارگذاری لیست همکاران: {ex.Message}";
+                return Array.Empty<Employee>();
+            }
+        }
+
         public async Task<IReadOnlyList<Assessment>> GetAssessmentsAsync(
             int? locationId,
             int? locationTypeId,
+            int? employeeId,
             DateTime? startDate,
             DateTime? endDate)
         {
@@ -73,6 +88,11 @@ namespace WaterAssessment.Services
                 if (startDate.HasValue)
                 {
                     query = query.Where(a => a.Date >= startDate.Value.Date);
+                }
+
+                if (employeeId.HasValue)
+                {
+                    query = query.Where(a => a.AssessmentEmployees.Any(ae => ae.EmployeeID == employeeId.Value));
                 }
 
                 if (endDate.HasValue)

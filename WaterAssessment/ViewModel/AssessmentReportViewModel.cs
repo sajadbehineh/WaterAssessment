@@ -1,35 +1,38 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using WaterAssessment.Models;
 using WaterAssessment.Services;
 using WaterAssessment.Views;
 
 namespace WaterAssessment.ViewModel
 {
-    public partial class AssessmentReportViewModel : ObservableObject
+    public partial class AssessmentReportViewModel : PagedViewModelBase<Assessment>
     {
         private readonly IAssessmentReportService _assessmentReportService;
         private readonly IDialogService _dialogService;
-        // لیست اصلی که در گرید نمایش داده می‌شود
-        public ObservableCollection<Assessment> Assessments { get; } = new();
+
+        public ObservableCollection<Assessment> Assessments => PagedItems;
+        public int TotalAssessments => TotalItems;
 
         // لیست مکان‌ها برای فیلتر
         public ObservableCollection<Location> Locations { get; } = new();
 
         public ObservableCollection<LocationType> LocationTypes { get; } = new();
 
+        public ObservableCollection<Employee> Employees { get; } = new();
+
         // =======================
         // فیلترها
         // =======================
-        [ObservableProperty] private Location _filterLocation;
+        [ObservableProperty] private Location? _filterLocation;
         [ObservableProperty] private LocationType? _filterLocationType;
+        [ObservableProperty] private Employee? _filterEmployee;
         [ObservableProperty] private DateTimeOffset? _filterStartDate;
         [ObservableProperty] private DateTimeOffset? _filterEndDate;
 
         // =======================
         // سازنده
         // =======================
-        public AssessmentReportViewModel(IAssessmentReportService assessmentReportService, IDialogService dialogService)
+        public AssessmentReportViewModel(IAssessmentReportService assessmentReportService, IDialogService dialogService) : base(pageSize: 10)
         {
             _assessmentReportService = assessmentReportService;
             _dialogService = dialogService;
@@ -54,6 +57,13 @@ namespace WaterAssessment.ViewModel
                 LocationTypes.Add(locType);
             }
 
+            Employees.Clear();
+            var employees = await _assessmentReportService.GetEmployeesAsync();
+            foreach (var employee in employees)
+            {
+                Employees.Add(employee);
+            }
+
             // 2. اعمال فیلترها و جستجو
             await ApplyFiltersAsync();
         }
@@ -64,11 +74,18 @@ namespace WaterAssessment.ViewModel
             var result = await _assessmentReportService.GetAssessmentsAsync(
                 FilterLocation?.LocationID,
                 FilterLocationType?.LocationTypeID,
+                null,
                 FilterStartDate?.DateTime.Date,
                 FilterEndDate?.DateTime.Date);
 
-            Assessments.Clear();
-            foreach (var item in result) Assessments.Add(item);
+            if (FilterEmployee is not null)
+            {
+                result = result
+                    .Where(a => a.AssessmentEmployees.Any(ae => ae.EmployeeID == FilterEmployee.EmployeeID))
+                    .ToList();
+            }
+
+            SetItems(result);
         }
 
         [RelayCommand]
@@ -76,6 +93,7 @@ namespace WaterAssessment.ViewModel
         {
             FilterLocation = null;
             FilterLocationType = null;
+            FilterEmployee = null;
             FilterStartDate = null;
             FilterEndDate = null;
             await ApplyFiltersAsync();
@@ -109,7 +127,7 @@ namespace WaterAssessment.ViewModel
                 var success = await _assessmentReportService.DeleteAssessmentAsync(item.AssessmentID);
                 if (success)
                 {
-                    Assessments.Remove(item);
+                    SetItems(GetAllItems().Where(assessment => assessment.AssessmentID != item.AssessmentID));
                 }
             }
         }

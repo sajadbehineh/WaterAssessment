@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:WaterAssessment.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:localControls="using:WaterAssessment.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WaterAssessment.Models"
     xmlns:primitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
@@ -13,8 +14,15 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <converters:RowIndexConverter
+            x:Key="RowIndexConverter"
+            CurrentPage="{x:Bind ViewModel.CurrentPage, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.Assessments, Mode=OneWay}"
+            PageSize="10" />
+
         <converters:DateTimeToShamsiConverter x:Key="ShamsiConv" />
         <converters:DateTimeToDateTimeOffsetConverter x:Key="DateToOffsetConv" />
+        <converters:AssessmentEmployeesToDisplayConverter x:Key="AssessmentEmployeesToDisplayConverter" />
 
         <Style x:Key="CenterCellTextStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -27,6 +35,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <StackPanel
@@ -75,13 +84,27 @@
                     <TextBlock
                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
                         Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="اندازه‌گیر:" />
+                    <ComboBox
+                        Width="220"
+                        DisplayMemberPath="LastName"
+                        ItemsSource="{x:Bind ViewModel.Employees}"
+                        PlaceholderText="همه اندازه‌گیرها"
+                        SelectedItem="{x:Bind ViewModel.FilterEmployee, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock
+                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        Style="{StaticResource CaptionTextBlockStyle}"
                         Text="از تاریخ:" />
                     <CalendarDatePicker
                         Width="150"
                         CalendarIdentifier="PersianCalendar"
                         Date="{x:Bind ViewModel.FilterStartDate, Mode=TwoWay}"
                         DateFormat="{}{year.full}/{month.integer}/{day.integer}"
-                        Language="fa-IR" />
+                        Language="fa-IR"
+                        PlaceholderText="انتخاب تاریخ ..." />
                 </StackPanel>
 
                 <StackPanel>
@@ -94,7 +117,8 @@
                         CalendarIdentifier="PersianCalendar"
                         Date="{x:Bind ViewModel.FilterEndDate, Mode=TwoWay}"
                         DateFormat="{}{year.full}/{month.integer}/{day.integer}"
-                        Language="fa-IR" />
+                        Language="fa-IR"
+                        PlaceholderText="انتخاب تاریخ ..." />
                 </StackPanel>
 
                 <Button
@@ -166,11 +190,32 @@
 
             <toolkitGrid:DataGrid.Columns>
 
+                <toolkitGrid:DataGridTemplateColumn
+                    Width="SizeToCells"
+                    MinWidth="52"
+                    Header="ردیف">
+                    <toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding Converter={StaticResource RowIndexConverter}}" />
+                        </DataTemplate>
+                    </toolkitGrid:DataGridTemplateColumn.CellTemplate>
+                </toolkitGrid:DataGridTemplateColumn>
+
                 <toolkitGrid:DataGridTextColumn
                     Width="200"
                     Binding="{Binding Location.LocationName}"
                     ElementStyle="{StaticResource CenterCellTextStyle}"
                     Header="نام مکان" />
+
+                <toolkitGrid:DataGridTextColumn
+                    Width="220"
+                    Binding="{Binding AssessmentEmployees, Converter={StaticResource AssessmentEmployeesToDisplayConverter}}"
+                    ElementStyle="{StaticResource CenterCellTextStyle}"
+                    Header="اندازه‌گیرها" />
 
                 <toolkitGrid:DataGridTextColumn
                     Width="120"
@@ -182,7 +227,7 @@
                     Width="120"
                     Binding="{Binding TotalFlow, Converter={StaticResource DoubleToStringConv}, ConverterParameter='N3'}"
                     ElementStyle="{StaticResource CenterCellTextStyle}"
-                    Header="دبی کل (CMS)" />
+                    Header="دبی کل (m3/s)" />
 
                 <toolkitGrid:DataGridTemplateColumn Width="100" Header="عملیات">
                     <toolkitGrid:DataGridTemplateColumn.CellTemplate>
@@ -217,5 +262,14 @@
 
             </toolkitGrid:DataGrid.Columns>
         </toolkitGrid:DataGrid>
+
+        <localControls:PaginationControl
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            CurrentPage="{x:Bind ViewModel.CurrentPage, Mode=TwoWay}"
+            FlowDirection="LeftToRight"
+            PageChangedCommand="{x:Bind ViewModel.PageChangedCommand}"
+            PageSize="10"
+            TotalItemCount="{x:Bind ViewModel.TotalAssessments, Mode=OneWay}" />
     </Grid>
 </Page>

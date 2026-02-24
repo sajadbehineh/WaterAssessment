@@ -14,12 +14,12 @@ public sealed partial class AssessmentReportPage : Page
         this.DataContext = ViewModel;
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
-        base.OnNavigatedTo(e);
+    //protected override void OnNavigatedTo(NavigationEventArgs e)
+    //{
+    //    base.OnNavigatedTo(e);
 
-        _ = ViewModel.LoadDataAsync();
-    }
+    //    _ = ViewModel.LoadDataAsync();
+    //}
 
     private void OnEditClick(object sender, RoutedEventArgs e)
     {

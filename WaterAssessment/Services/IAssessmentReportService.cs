@@ -4,9 +4,11 @@
     {
         Task<IReadOnlyList<Location>> GetLocationsAsync();
         Task<IReadOnlyList<LocationType>> GetLocationTypesAsync();
+        Task<IReadOnlyList<Employee>> GetEmployeesAsync();
         Task<IReadOnlyList<Assessment>> GetAssessmentsAsync(
             int? locationId,
             int? locationTypeId,
+            int? employeeId,
             DateTime? startDate,
             DateTime? endDate);
         Task<bool> DeleteAssessmentAsync(int assessmentId);

@@ -224,6 +224,7 @@
                         HorizontalAlignment="Left"
                         Command="{x:Bind PropellerViewModel.SavePropellerCommand}"
                         Content="{x:Bind PropellerViewModel.AddEditBtnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        FontFamily="{StaticResource SamimMedium}"
                         IsEnabled="True"
                         Style="{ThemeResource AccentButtonStyle}" />
                     <Button
@@ -232,6 +233,7 @@
                         HorizontalAlignment="Left"
                         Command="{x:Bind PropellerViewModel.ClearFormCommand}"
                         Content="پاک کردن"
+                        FontFamily="{StaticResource SamimMedium}"
                         IsEnabled="True"
                         Style="{ThemeResource AccentButtonStyle}" />
                     <InfoBar
@@ -255,16 +257,18 @@
                             <StackPanel Orientation="Horizontal" Spacing="5">
                                 <TextBlock
                                     VerticalAlignment="Center"
+                                    FontFamily="{StaticResource SamimMedium}"
                                     FontSize="13"
-                                    FontWeight="Bold"
+                                    FontWeight="Normal"
                                     Text="ویرایش شده توسط:" />
                                 <TextBlock Text="{x:Bind PropellerViewModel.SelectedPropeller.UpdatedBy.FullName, Mode=OneWay, FallbackValue='-'}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="5">
                                 <TextBlock
                                     VerticalAlignment="Center"
+                                    FontFamily="{StaticResource SamimMedium}"
                                     FontSize="13"
-                                    FontWeight="Bold"
+                                    FontWeight="Normal"
                                     Text="زمان ویرایش: " />
                                 <TextBlock Text="{x:Bind PropellerViewModel.SelectedPropeller.UpdatedAt, FallbackValue='-', Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
                             </StackPanel>
@@ -276,16 +280,18 @@
                             <StackPanel Orientation="Horizontal" Spacing="5">
                                 <TextBlock
                                     VerticalAlignment="Center"
+                                    FontFamily="{StaticResource SamimMedium}"
                                     FontSize="13"
-                                    FontWeight="Bold"
+                                    FontWeight="Normal"
                                     Text="ایجاد شده توسط:" />
                                 <TextBlock Text="{x:Bind PropellerViewModel.SelectedPropeller.CreatedBy.FullName, Mode=OneWay, FallbackValue='-'}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Spacing="5">
                                 <TextBlock
                                     VerticalAlignment="Center"
+                                    FontFamily="{StaticResource SamimMedium}"
                                     FontSize="13"
-                                    FontWeight="Bold"
+                                    FontWeight="Normal"
                                     Text="زمان ایجاد:" />
                                 <TextBlock Text="{x:Bind PropellerViewModel.SelectedPropeller.CreatedAt, FallbackValue='-', Mode=OneWay, Converter={StaticResource DateTimeToShamsiDisplayConv}}" />
                             </StackPanel>
@@ -329,8 +335,8 @@
                             <toolkitGrid:DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="primitives:DataGridColumnHeader">
                                     <Setter Property="Height" Value="42" />
-                                    <Setter Property="FontFamily" Value="{StaticResource SamimBold}" />
-                                    <Setter Property="FontWeight" Value="bold" />
+                                    <Setter Property="FontFamily" Value="{StaticResource SamimMedium}" />
+                                    <Setter Property="FontWeight" Value="Normal" />
                                     <Setter Property="FontSize" Value="14" />
                                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                                     <Setter Property="Template">
@@ -588,8 +594,8 @@
                             <toolkitGrid:DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="primitives:DataGridColumnHeader">
                                     <Setter Property="Height" Value="42" />
-                                    <Setter Property="FontFamily" Value="{StaticResource SamimBold}" />
-                                    <Setter Property="FontWeight" Value="bold" />
+                                    <Setter Property="FontFamily" Value="{StaticResource SamimMedium}" />
+                                    <Setter Property="FontWeight" Value="Normal" />
                                     <Setter Property="FontSize" Value="14" />
                                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                                     <Setter Property="Template">

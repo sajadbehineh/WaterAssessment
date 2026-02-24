@@ -49,7 +49,7 @@ public sealed partial class PaginationControl : UserControl
         DependencyProperty.Register(nameof(PageChangedCommand), typeof(ICommand), typeof(PaginationControl), new PropertyMetadata(null));
 
     // پراپرتی‌های داخلی برای فعال/غیرفعال کردن دکمه‌ها
-    public int TotalPages => (PageSize > 0) ? (int)Math.Ceiling(TotalItemCount / (double)PageSize) : 0;
+    public int TotalPages => (PageSize > 0) ? Math.Max(1, (int)Math.Ceiling(TotalItemCount / (double)PageSize)) : 1;
     public bool CanGoPrevious => CurrentPage > 1;
     public bool CanGoNext => CurrentPage < TotalPages;
 
@@ -57,6 +57,25 @@ public sealed partial class PaginationControl : UserControl
     private static void OnPagingPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var control = d as PaginationControl;
+
+        if (control is null)
+        {
+            return;
+        }
+
+        var maxPage = control.TotalPages;
+        if (control.CurrentPage < 1)
+        {
+            control.CurrentPage = 1;
+            return;
+        }
+
+        if (control.CurrentPage > maxPage)
+        {
+            control.CurrentPage = maxPage;
+            return;
+        }
+
         control.Bindings.Update(); // آپدیت کردن Binding های x:Bind
     }
 

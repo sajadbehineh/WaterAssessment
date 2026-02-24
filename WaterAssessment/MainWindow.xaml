@@ -76,13 +76,84 @@
                 IsPaneVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
                 IsSettingsVisible="False"
                 OpenPaneLength="280">
+                <NavigationView.PaneHeader>
+                    <StackPanel
+                        Padding="0,0,0,12"
+                        VerticalAlignment="Stretch"
+                        Orientation="Horizontal">
+                        <!--  دایره پیش‌فرض با گلیف آدمک  -->
+                        <Grid
+                            Width="40"
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="#FFCCCCCC"
+                            CornerRadius="20">
+                            <FontIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="White"
+                                Glyph="&#xE77B;" />
+                        </Grid>
+
+                        <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
+                            <TextBlock FontFamily="{StaticResource SamimBold}" Text="{Binding ViewModel.CurrentUserDisplayName, Mode=OneWay}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="Gray"
+                                Text="Online" />
+                        </StackPanel>
+                    </StackPanel>
+                </NavigationView.PaneHeader>
+
+                <!--<NavigationView.Header>
+                    <StackPanel VerticalAlignment="Stretch" Orientation="Horizontal">
+                -->
+                <!--  دایره پیش‌فرض با گلیف آدمک  -->
+                <!--
+                        <Grid
+                            Width="40"
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="#FFCCCCCC"
+                            CornerRadius="20">
+                            <FontIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="White"
+                                Glyph="&#xE77B;" />
+                        </Grid>
+
+                        <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
+                            <TextBlock FontFamily="{StaticResource SamimBold}" Text="{Binding ViewModel.CurrentUserDisplayName, Mode=OneWay}" />
+                            <TextBlock
+                                FontSize="12"
+                                Foreground="Gray"
+                                Text="Online" />
+                        </StackPanel>
+                    </StackPanel>
+                </NavigationView.Header>-->
+
                 <NavigationView.FooterMenuItems>
+                    <NavigationViewItem IsEnabled="False">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xE77B;" />
+                            <TextBlock Text="{Binding ViewModel.CurrentUserDisplayName, Mode=OneWay}" />
+                        </StackPanel>
+                    </NavigationViewItem>
                     <NavigationViewItem
                         Content="تنظیمات"
                         Icon="Setting"
                         Tag="Settings"
                         Tapped="NavigationViewItem_OnTapped" />
+                    <NavigationViewItem
+                        x:Name="LogoutNavItem"
+                        Content="خروج از حساب"
+                        Icon="Contact"
+                        Tapped="LogoutNavItem_OnTapped" />
                 </NavigationView.FooterMenuItems>
+
                 <NavigationView.MenuItems>
                     <NavigationViewItem
                         Content="فرم اندازه گیری"
@@ -144,10 +215,6 @@
                         Tag="UserManagement"
                         Tapped="NavigationViewItem_OnTapped"
                         Visibility="{Binding ViewModel.IsAdmin, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
-                    <NavigationViewItem
-                        x:Name="LogoutNavItem"
-                        Content="خروج از حساب"
-                        Tapped="LogoutNavItem_OnTapped" />
                 </NavigationView.MenuItems>
 
                 <views:ShellPage x:Name="MyShell" FlowDirection="RightToLeft" />

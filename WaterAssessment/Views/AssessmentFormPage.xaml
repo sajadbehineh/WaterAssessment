@@ -416,9 +416,9 @@
             <StackPanel>
                 <TextBlock
                     Margin="4,0,0,6"
-                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                    FontFamily="{StaticResource SamimMedium}"
                     FontSize="13"
-                    FontWeight="SemiBold"
+                    FontWeight="Normal"
                     Text="پمپ‌های روشن در زمان اندازه گیری" />
                 <ScrollViewer
                     MaxHeight="110"
@@ -967,14 +967,14 @@
                                     <TextBlock
                                         Grid.Column="2"
                                         VerticalAlignment="Center"
+                                        FontFamily="{StaticResource SamimFD}"
                                         FontSize="16"
-                                        FontWeight="Bold"
                                         Text="{x:Bind SectionFlowLabel, Mode=OneWay}" />
                                     <TextBlock
                                         Grid.Column="3"
                                         VerticalAlignment="Center"
+                                        FontFamily="{StaticResource SamimFD}"
                                         FontSize="16"
-                                        FontWeight="Bold"
                                         Foreground="Green"
                                         Text="{x:Bind SectionFlowDisplay, Mode=OneWay}" />
                                 </Grid>
@@ -1214,8 +1214,9 @@
                 Spacing="10">
                 <TextBlock
                     VerticalAlignment="Center"
+                    FontFamily="{StaticResource SamimMedium}"
                     FontSize="16"
-                    FontWeight="Bold"
+                    FontWeight="Normal"
                     Text="دبی کل:" />
                 <TextBlock
                     VerticalAlignment="Center"

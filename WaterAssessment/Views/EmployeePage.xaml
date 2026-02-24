@@ -85,6 +85,7 @@
                         HorizontalAlignment="Left"
                         Command="{x:Bind ViewModel.AddEmployeeCommand}"
                         Content="{x:Bind ViewModel.AddEditBtnContent, Mode=OneWay}"
+                        FontFamily="{StaticResource SamimMedium}"
                         IsEnabled="True"
                         Style="{ThemeResource AccentButtonStyle}" />
                     <Button
@@ -93,6 +94,7 @@
                         HorizontalAlignment="Left"
                         Command="{x:Bind ViewModel.ClearFormCommand}"
                         Content="پاک کردن"
+                        FontFamily="{StaticResource SamimMedium}"
                         IsEnabled="True"
                         Style="{ThemeResource AccentButtonStyle}" />
                     <InfoBar
@@ -140,8 +142,8 @@
                             <toolkitGrid:DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="primitives:DataGridColumnHeader">
                                     <Setter Property="Height" Value="42" />
-                                    <Setter Property="FontFamily" Value="{StaticResource SamimBold}" />
-                                    <Setter Property="FontWeight" Value="bold" />
+                                    <Setter Property="FontFamily" Value="{StaticResource SamimMedium}" />
+                                    <Setter Property="FontWeight" Value="Normal" />
                                     <Setter Property="FontSize" Value="14" />
                                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                                     <Setter Property="Template">

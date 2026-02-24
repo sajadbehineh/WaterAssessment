@@ -18,24 +18,21 @@
             <x:Double x:Key="ContentDialogMaxWidth">800</x:Double>
             <x:Double x:Key="ContentDialogMaxHeight">756</x:Double>
             <FontFamily x:Key="ContentControlThemeFontFamily">
-                <![CDATA[Assets/Fonts/Samim.ttf#Samim]]>
+                <![CDATA[ms-appx:///Assets/Fonts/Samim.ttf#Samim]]>
             </FontFamily>
             <FontFamily x:Key="SamimBold">
-                <![CDATA[Assets/Fonts/Samim-Bold.ttf#Samim]]>
+                <![CDATA[ms-appx:///Assets/Fonts/Samim-Bold.ttf#Samim]]>
             </FontFamily>
             <FontFamily x:Key="SamimMedium">
-                <![CDATA[Assets/Fonts/Samim-Medium.ttf#Samim Medium]]>
+                <![CDATA[ms-appx:///Assets/Fonts/Samim-Medium.ttf#Samim]]>
             </FontFamily>
             <FontFamily x:Key="SamimRegular">
-                <![CDATA[Assets/Fonts/Samim.ttf#Samim]]>
+                <![CDATA[ms-appx:///Assets/Fonts/Samim.ttf#Samim]]>
             </FontFamily>
             <FontFamily x:Key="SamimFD">
-                <![CDATA[Assets/Fonts/Samim-FD.ttf#Samim FD]]>
+                <![CDATA[ms-appx:///Assets/Fonts/Samim-FD.ttf#Samim FD]]>
             </FontFamily>
 
-            <!--<FontFamily x:Key="VazirmatnBold">Assets/Fonts/Vazirmatn-Bold.ttf#Vazirmatn</FontFamily>
-            <FontFamily x:Key="VazirmatnMedium">Assets/Fonts/Vazirmatn-Medium.ttf#Vazirmatn Medium</FontFamily>
-            <FontFamily x:Key="VazirmatnRegular">Assets/Fonts/Vazirmatn-Regular.ttf#Vazirmatn</FontFamily>-->
             <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
             <converters:InverseCountToVisibilityConverter x:Key="InverseCountToVisibilityConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

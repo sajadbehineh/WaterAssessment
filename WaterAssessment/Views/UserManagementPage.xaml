@@ -34,8 +34,9 @@
             Margin="0,0,0,30"
             Spacing="10">
             <TextBlock
-                FontSize="25"
-                FontWeight="Bold"
+                FontFamily="{StaticResource SamimBold}"
+                FontWeight="Normal"
+                Style="{StaticResource TitleTextBlockStyle}"
                 Text="افزودن کاربر جدید" />
             <TextBox Header="نام کاربری" Text="{x:Bind ViewModel.NewUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <PasswordBox
@@ -53,12 +54,14 @@
                     Command="{x:Bind ViewModel.AddUserCommand}"
                     CommandParameter="{x:Bind NewUserPasswordBox}"
                     Content="{x:Bind ViewModel.AddEditButtonContent, Mode=OneWay}"
+                    FontFamily="{StaticResource SamimMedium}"
                     Style="{ThemeResource AccentButtonStyle}" />
                 <Button
                     HorizontalAlignment="Stretch"
                     Command="{x:Bind ViewModel.ClearFormCommand}"
                     CommandParameter="{x:Bind NewUserPasswordBox}"
                     Content="پاک کردن"
+                    FontFamily="{StaticResource SamimMedium}"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
             <InfoBar
@@ -92,6 +95,12 @@
                     MinHeight="48"
                     Background="{ThemeResource SystemAccentColor}"
                     CornerRadius="8 8 0 0">
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="{StaticResource SamimMedium}" />
+                            <Setter Property="FontWeight" Value="Normal" />
+                        </Style>
+                    </Grid.Resources>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" MinWidth="52" />
                         <ColumnDefinition Width="Auto" MinWidth="120" />

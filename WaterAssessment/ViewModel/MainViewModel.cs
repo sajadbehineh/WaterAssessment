@@ -14,6 +14,9 @@ namespace WaterAssessment.ViewModel
         [ObservableProperty]
         private bool _isAdmin = false;
 
+        [ObservableProperty]
+        private string _currentUserDisplayName = string.Empty;
+
         // این پراپرتی برای مخفی/نمایان کردن منوبار استفاده می‌شود
         [ObservableProperty]
         private Visibility _menuVisibility = Visibility.Collapsed;
@@ -38,6 +41,7 @@ namespace WaterAssessment.ViewModel
             // 2. به‌روزرسانی وضعیت UI
             IsLoggedIn = false;
             IsAdmin = false;
+            CurrentUserDisplayName = string.Empty;
             MenuVisibility = Visibility.Collapsed;
 
             // 3. ارسال پیام برای ناوبری به صفحه لاگین
@@ -55,6 +59,10 @@ namespace WaterAssessment.ViewModel
             // تغییر وضعیت به لاگین شده
             IsLoggedIn = true;
             MenuVisibility = Visibility.Visible;
+
+            CurrentUserDisplayName = string.IsNullOrWhiteSpace(user.FullName)
+                ? user.Username
+                : user.FullName;
 
             // چک کردن نقش کاربر
             IsAdmin = user.Role == "Admin";

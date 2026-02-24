@@ -18,7 +18,7 @@
 
             <TextBlock
                 HorizontalAlignment="Center"
-                FontFamily="{StaticResource SamimMedium}"
+                FontFamily="{StaticResource SamimBold}"
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="ورود به سیستم" />
 
@@ -31,6 +31,7 @@
                 Command="{x:Bind ViewModel.LoginCommand}"
                 CommandParameter="{x:Bind TxtPassword}"
                 Content="ورود"
+                FontFamily="{StaticResource SamimBold}"
                 Style="{ThemeResource AccentButtonStyle}" />
 
             <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />

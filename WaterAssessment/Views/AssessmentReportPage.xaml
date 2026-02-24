@@ -10,7 +10,6 @@
     xmlns:models="using:WaterAssessment.Models"
     xmlns:primitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
     xmlns:toolkitGrid="using:CommunityToolkit.WinUI.UI.Controls"
-    FontFamily="{StaticResource SamimBold}"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -43,7 +42,7 @@
             Margin="0,0,0,20"
             Spacing="10">
             <TextBlock
-                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                FontFamily="{StaticResource SamimBold}"
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="گزارشات اندازه گیری ‌ها" />
 
@@ -56,7 +55,8 @@
 
                 <StackPanel>
                     <TextBlock
-                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        FontFamily="{StaticResource SamimBold}"
+                        FontWeight="Normal"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="مکان:" />
                     <ComboBox
@@ -69,7 +69,8 @@
 
                 <StackPanel>
                     <TextBlock
-                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        FontFamily="{StaticResource SamimBold}"
+                        FontWeight="Normal"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="نوع مکان:" />
                     <ComboBox
@@ -82,7 +83,8 @@
 
                 <StackPanel>
                     <TextBlock
-                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        FontFamily="{StaticResource SamimBold}"
+                        FontWeight="Normal"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="اندازه‌گیر:" />
                     <ComboBox
@@ -95,7 +97,8 @@
 
                 <StackPanel>
                     <TextBlock
-                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        FontFamily="{StaticResource SamimBold}"
+                        FontWeight="Normal"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="از تاریخ:" />
                     <CalendarDatePicker
@@ -103,13 +106,17 @@
                         CalendarIdentifier="PersianCalendar"
                         Date="{x:Bind ViewModel.FilterStartDate, Mode=TwoWay}"
                         DateFormat="{}{year.full}/{month.integer}/{day.integer}"
+                        FontFamily="{StaticResource SamimRegular}"
+                        FontWeight="Normal"
+                        Foreground="Gray"
                         Language="fa-IR"
                         PlaceholderText="انتخاب تاریخ ..." />
                 </StackPanel>
 
                 <StackPanel>
                     <TextBlock
-                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                        FontFamily="{StaticResource SamimBold}"
+                        FontWeight="Normal"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="تا تاریخ:" />
                     <CalendarDatePicker
@@ -117,6 +124,9 @@
                         CalendarIdentifier="PersianCalendar"
                         Date="{x:Bind ViewModel.FilterEndDate, Mode=TwoWay}"
                         DateFormat="{}{year.full}/{month.integer}/{day.integer}"
+                        FontFamily="{StaticResource SamimRegular}"
+                        FontWeight="Normal"
+                        Foreground="Gray"
                         Language="fa-IR"
                         PlaceholderText="انتخاب تاریخ ..." />
                 </StackPanel>
@@ -125,12 +135,14 @@
                     VerticalAlignment="Bottom"
                     Command="{x:Bind ViewModel.ApplyFiltersCommand}"
                     Content="اعمال فیلتر"
+                    FontFamily="{StaticResource SamimMedium}"
                     Style="{ThemeResource AccentButtonStyle}" />
 
                 <Button
                     VerticalAlignment="Bottom"
                     Command="{x:Bind ViewModel.ClearFiltersCommand}"
-                    Content="حذف فیلترها" />
+                    Content="حذف فیلترها"
+                    FontFamily="{StaticResource SamimMedium}" />
             </StackPanel>
         </StackPanel>
 
@@ -152,8 +164,8 @@
             <toolkitGrid:DataGrid.ColumnHeaderStyle>
                 <Style TargetType="primitives:DataGridColumnHeader">
                     <Setter Property="Height" Value="42" />
-                    <Setter Property="FontFamily" Value="{StaticResource SamimBold}" />
-                    <Setter Property="FontWeight" Value="bold" />
+                    <Setter Property="FontFamily" Value="{StaticResource SamimMedium}" />
+                    <Setter Property="FontWeight" Value="Normal" />
                     <Setter Property="FontSize" Value="14" />
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                     <Setter Property="Template">

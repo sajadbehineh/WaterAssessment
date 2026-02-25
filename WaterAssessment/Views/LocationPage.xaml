@@ -541,7 +541,7 @@
                             FlowDirection="LeftToRight"
                             PageChangedCommand="{x:Bind LocationViewModel.PageChangedCommand}"
                             PageSize="5"
-                            TotalItemCount="{x:Bind LocationViewModel.TotalLocations}" />
+                            TotalItemCount="{x:Bind LocationViewModel.TotalLocations, Mode=OneWay}" />
                     </Grid>
                 </Border>
 

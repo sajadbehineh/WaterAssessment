@@ -6,6 +6,18 @@ namespace WaterAssessment.Views;
 
 public sealed partial class AssessmentFormPage : Page
 {
+    public static readonly DependencyProperty IsPageLoadingProperty = DependencyProperty.Register(
+        nameof(IsPageLoading),
+        typeof(bool),
+        typeof(AssessmentFormPage),
+        new PropertyMetadata(true));
+
+    public bool IsPageLoading
+    {
+        get => (bool)GetValue(IsPageLoadingProperty);
+        set => SetValue(IsPageLoadingProperty, value);
+    }
+
     public AssessmentViewModel ViewModel { get; set; }
     public AssessmentFormPage()
     {
@@ -20,32 +32,34 @@ public sealed partial class AssessmentFormPage : Page
     {
         base.OnNavigatedTo(e);
 
+        IsPageLoading = true;
+
         Assessment assessmentModel;
         var assessmentService = App.Services.GetRequiredService<IAssessmentService>();
         var formValueViewModelFactory = App.Services.GetRequiredService<IFormValueViewModelFactory>();
 
-        // بررسی می‌کنیم که آیا پارامتری (مدل برای ویرایش) دریافت شده است؟
-        if (e.Parameter is Assessment { AssessmentID: > 0 } receivedAssessment)
+        try
         {
-            // --- حالت ویرایش ---
-            // اگر از صفحه‌ای دیگر (مثل لیست) مدل پاس داده شده باشد
-            using var db = new WaterAssessmentContext();
-            var fullAssessment = await assessmentService.GetAssessmentForEditAsync(receivedAssessment.AssessmentID);
+            if (e.Parameter is Assessment { AssessmentID: > 0 } receivedAssessment)
+            {
+                using var db = new WaterAssessmentContext();
+                var fullAssessment = await assessmentService.GetAssessmentForEditAsync(receivedAssessment.AssessmentID);
 
-            // اگر به هر دلیلی پیدا نشد (مثلا حذف شده)، همان قبلی را استفاده کن
-            assessmentModel = fullAssessment ?? receivedAssessment;
+                assessmentModel = fullAssessment ?? receivedAssessment;
+            }
+            else
+            {
+                assessmentModel = new Assessment();
+            }
+
+            ViewModel = new AssessmentViewModel(assessmentModel, assessmentService, formValueViewModelFactory);
+
+            this.DataContext = ViewModel;
+            Bindings.Update();
         }
-        else
+        finally
         {
-            // --- حالت ثبت جدید ---
-            // اگر پارامتر نال بود (مثلاً مستقیم نویگیت شده)، یک مدل خام می‌سازیم
-            assessmentModel = new Assessment();
+            IsPageLoading = false;
         }
-
-        ViewModel = new AssessmentViewModel(assessmentModel, assessmentService, formValueViewModelFactory);
-
-        // اتصال به DataContext برای کارکرد بایندینگ‌ها
-        this.DataContext = ViewModel;
-        Bindings.Update();
     }
 }

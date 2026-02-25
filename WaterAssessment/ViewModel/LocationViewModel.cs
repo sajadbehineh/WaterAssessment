@@ -163,7 +163,7 @@ namespace WaterAssessment.ViewModel
             {
                 for (int i = TempPumps.Count + 1; i <= count; i++)
                 {
-                    TempPumps.Add(new LocationPump { PumpName = $"پمپ شماره {i}", NominalFlow = 0 });
+                    TempPumps.Add(new LocationPump { PumpName = $"پمپ {i}", NominalFlow = 0 });
                 }
             }
         }

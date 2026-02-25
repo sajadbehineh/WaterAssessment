@@ -18,7 +18,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <MenuBar
+        <!--<MenuBar
             Grid.Row="0"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             FlowDirection="RightToLeft"
@@ -67,7 +67,8 @@
                 </MenuFlyoutItem>
             </MenuBarItem>
 
-        </MenuBar>
+        </MenuBar>-->
+
         <Grid Grid.Row="1">
             <NavigationView
                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -76,15 +77,16 @@
                 IsPaneVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
                 IsSettingsVisible="False"
                 OpenPaneLength="280">
-                <NavigationView.PaneHeader>
+
+                <NavigationView.PaneFooter>
                     <StackPanel
-                        Padding="0,0,0,12"
+                        Padding="12,0,0,4"
                         VerticalAlignment="Stretch"
                         Orientation="Horizontal">
                         <!--  دایره پیش‌فرض با گلیف آدمک  -->
                         <Grid
-                            Width="40"
-                            Height="40"
+                            Width="24"
+                            Height="24"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Background="#FFCCCCCC"
@@ -92,19 +94,33 @@
                             <FontIcon
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
+                                FontSize="14"
                                 Foreground="White"
                                 Glyph="&#xE77B;" />
                         </Grid>
 
-                        <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
-                            <TextBlock FontFamily="{StaticResource SamimBold}" Text="{Binding ViewModel.CurrentUserDisplayName, Mode=OneWay}" />
+                        <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock FontFamily="{StaticResource SamimMedium}" Text="{Binding ViewModel.CurrentUserDisplayName, Mode=OneWay}" />
                             <TextBlock
                                 FontSize="12"
-                                Foreground="Gray"
+                                Foreground="Green"
                                 Text="Online" />
                         </StackPanel>
                     </StackPanel>
-                </NavigationView.PaneHeader>
+                </NavigationView.PaneFooter>
+
+                <NavigationView.FooterMenuItems>
+                    <NavigationViewItem
+                        x:Name="LogoutNavItem"
+                        Content="خروج از حساب"
+                        Icon="Contact"
+                        Tapped="LogoutNavItem_OnTapped" />
+                    <NavigationViewItem
+                        Content="تنظیمات"
+                        Icon="Setting"
+                        Tag="Settings"
+                        Tapped="NavigationViewItem_OnTapped" />
+                </NavigationView.FooterMenuItems>
 
                 <!--<NavigationView.Header>
                     <StackPanel VerticalAlignment="Stretch" Orientation="Horizontal">
@@ -134,25 +150,6 @@
                         </StackPanel>
                     </StackPanel>
                 </NavigationView.Header>-->
-
-                <NavigationView.FooterMenuItems>
-                    <NavigationViewItem IsEnabled="False">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE77B;" />
-                            <TextBlock Text="{Binding ViewModel.CurrentUserDisplayName, Mode=OneWay}" />
-                        </StackPanel>
-                    </NavigationViewItem>
-                    <NavigationViewItem
-                        Content="تنظیمات"
-                        Icon="Setting"
-                        Tag="Settings"
-                        Tapped="NavigationViewItem_OnTapped" />
-                    <NavigationViewItem
-                        x:Name="LogoutNavItem"
-                        Content="خروج از حساب"
-                        Icon="Contact"
-                        Tapped="LogoutNavItem_OnTapped" />
-                </NavigationView.FooterMenuItems>
 
                 <NavigationView.MenuItems>
                     <NavigationViewItem

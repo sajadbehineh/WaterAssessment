@@ -7,6 +7,8 @@ namespace WaterAssessment.ViewModel
 {
     public partial class AssessmentViewModel : ObservableObject
     {
+        private static readonly TimeSpan AddRowThrottleWindow = TimeSpan.FromMilliseconds(250);
+
         private readonly IAssessmentService _assessmentService;
         private readonly IFormValueViewModelFactory _formValueViewModelFactory;
         public Assessment Model { get; }
@@ -67,7 +69,6 @@ namespace WaterAssessment.ViewModel
             Model.PropellerID = value?.PropellerID;
             Model.Propeller = value;
 
-            // باید پروانه جدید را به تمام سطرهای فرزند هم اطلاع دهیم تا سرعت را با فرمول جدید حساب کنند
             foreach (var row in FormValues)
             {
                 row.Propeller = value;
@@ -107,6 +108,8 @@ namespace WaterAssessment.ViewModel
             OnPropertyChanged(nameof(IsDischargeEquationForm));
             OnPropertyChanged(nameof(IsNotDischargeEquationForm));
             OnPropertyChanged(nameof(IsNotManualForm));
+            AddRowCommand.NotifyCanExecuteChanged();
+            AddRowToSectionCommand.NotifyCanExecuteChanged();
         }
 
         partial void OnManualTotalFlowInputChanged(double value)
@@ -129,15 +132,22 @@ namespace WaterAssessment.ViewModel
         // وضعیت UI (مشغولی، پیام‌ها)
         // ==========================================================
         [ObservableProperty] private bool _isBusy;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddRowCommand))]
+        [NotifyCanExecuteChangedFor(nameof(AddRowToSectionCommand))]
+        private bool _isAddingRow;
+
+        private DateTime _lastRowAddUtc = DateTime.MinValue;
+
+        public event Action? RowAdded;
+
         [ObservableProperty] private string _infoMessage = string.Empty;
         [ObservableProperty] private InfoBarSeverity _infoSeverity = InfoBarSeverity.Informational;
         [ObservableProperty] private bool _isInfoOpen;
 
-        // 1. تشخیص حالت ویرایش: اگر ID بزرگتر از 0 باشد یعنی رکورد قبلاً در دیتابیس بوده
         public bool IsEditMode => Model.AssessmentID > 0;
 
-        // 2. تعیین متن دکمه بر اساس حالت
-        // این پراپرتی به خاصیت Content دکمه در XAML وصل می‌شود
         public string SaveButtonContent => IsEditMode ? "ذخیره تغییرات (ویرایش)" : "ذخیره اندازه گیری";
 
         [ObservableProperty]
@@ -220,10 +230,6 @@ namespace WaterAssessment.ViewModel
             var propellers = referenceData.Propellers;
             var meters = referenceData.CurrentMeters;
             var employees = referenceData.Employees;
-            //var locations = await _assessmentService.GetAllLocationsAsync();
-            //var propellers = await _assessmentService.GetAllPropellersAsync();
-            //var meters = await _assessmentService.GetAllCurrentMetersAsync();
-            //var employees = await _assessmentService.GetAllEmployeesAsync();
 
             AllLocations.Clear();
             foreach (var item in locations) AllLocations.Add(item);
@@ -237,7 +243,6 @@ namespace WaterAssessment.ViewModel
             AllEmployees.Clear();
             foreach (var item in employees) AllEmployees.Add(item);
 
-            // 2. ست کردن مقادیر انتخاب شده (اگر ویرایش است یا مدل پر شده است)
             if (Model.LocationID > 0)
                 SelectedLocation = AllLocations.FirstOrDefault(x => x.LocationID == Model.LocationID);
 
@@ -247,12 +252,6 @@ namespace WaterAssessment.ViewModel
             if (Model.CurrentMeterID.HasValue && Model.CurrentMeterID > 0)
                 SelectedCurrentMeter = AllCurrentMeters.FirstOrDefault(x => x.CurrentMeterID == Model.CurrentMeterID);
 
-            // 3. لود کردن دریچه‌ها
-            // اگر ویرایش است، دریچه‌های ذخیره شده را می‌آوریم
-            //if (Model.GateOpenings != null && Model.GateOpenings.Any())
-            //{
-            //    foreach (var g in Model.GateOpenings) GateValues.Add(g);
-            //}
 
             else if (SelectedLocation != null)
             {
@@ -571,10 +570,12 @@ namespace WaterAssessment.ViewModel
         /// افزودن سطر جدید به صورت داینامیک در UI
         /// </summary>
 
-        [RelayCommand]
+        private bool CanAddRow() => IsHydrometryForm && !IsAddingRow;
+
+        [RelayCommand(CanExecute = nameof(CanAddRow))]
         private async Task AddRowAsync() => await AddRowToSectionAsync(1);
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanAddRow))]
         private async Task AddRowToSectionAsync(int sectionNumber)
         {
             if (!IsHydrometryForm)
@@ -589,52 +590,70 @@ namespace WaterAssessment.ViewModel
                 return;
             }
 
-            // 1. ساخت مدل جدید
-            var newModel = new FormValue
+            var now = DateTime.UtcNow;
+            if (now - _lastRowAddUtc < AddRowThrottleWindow)
             {
-                AssessmentID = this.Model.AssessmentID,
-                SectionNumber = Math.Max(1, sectionNumber),
-                // مقداردهی اولیه زمان با تایمر هدر
-                MeasureTime = this.Timer
-            };
-
-            // 2. ساخت ویومدل فرزند
-            var newVM = _formValueViewModelFactory.Create(newModel, SelectedPropeller);
-
-            // پیشنهاد هوشمندانه فاصله:
-            // اگر ردیف قبلی وجود دارد، فاصله جدید را مثلاً 1 متر بعد از آن پیشنهاد بده
-
-            var sectionRows = FormValues.Where(x => x.Model.SectionNumber == newModel.SectionNumber).ToList();
-
-            if (sectionRows.Any())
-            {
-                newVM.Distance = sectionRows.Last().Distance + 1; // مقدار پیشنهادی
+                return;
             }
 
-            // شماره ردیف در همان سکشن
-            newVM.Model.RowIndex = sectionRows.Count + 1;
+            IsAddingRow = true;
+            _lastRowAddUtc = now;
 
-            // 3. اشتراک در تغییرات این فرزند (بسیار مهم)
-            SubscribeToChildEvents(newVM);
+            try
+            {
+                // 1. ساخت مدل جدید
+                var newModel = new FormValue
+                {
+                    AssessmentID = this.Model.AssessmentID,
+                    SectionNumber = Math.Max(1, sectionNumber),
+                    // مقداردهی اولیه زمان با تایمر هدر
+                    MeasureTime = this.Timer
+                };
 
-            // 4. افزودن به لیست
-            var lastSectionIndex = FormValues
-                .Select((row, idx) => new { row, idx })
-                .Where(x => x.row.Model.SectionNumber == newModel.SectionNumber)
-                .Select(x => x.idx)
-                .DefaultIfEmpty(-1)
-                .Max();
+                // 2. ساخت ویومدل فرزند
+                var newVM = _formValueViewModelFactory.Create(newModel, SelectedPropeller);
 
-            if (lastSectionIndex >= 0)
-                FormValues.Insert(lastSectionIndex + 1, newVM);
-            else
-                FormValues.Add(newVM);
+                var sectionRows = FormValues.Where(x => x.Model.SectionNumber == newModel.SectionNumber).ToList();
 
-            ReindexRows();
-            RebuildHydrometrySections();
+                if (sectionRows.Any())
+                {
+                    newVM.Distance = sectionRows.Last().Distance + 1; // مقدار پیشنهادی
+                }
 
-            // 5. محاسبه مجدد عرض‌ها و دبی کل
-            RecalculateGeometryAndFlow();
+                // شماره ردیف در همان سکشن
+                newVM.Model.RowIndex = sectionRows.Count + 1;
+
+                // 3. اشتراک در تغییرات این فرزند (بسیار مهم)
+                SubscribeToChildEvents(newVM);
+
+                // 4. افزودن به لیست
+                var lastSectionIndex = FormValues
+                    .Select((row, idx) => new { row, idx })
+                    .Where(x => x.row.Model.SectionNumber == newModel.SectionNumber)
+                    .Select(x => x.idx)
+                    .DefaultIfEmpty(-1)
+                    .Max();
+
+
+                if (lastSectionIndex >= 0)
+                    FormValues.Insert(lastSectionIndex + 1, newVM);
+                else
+                    FormValues.Add(newVM);
+
+                ReindexRows();
+                RebuildHydrometrySections();
+
+                // 5. محاسبه مجدد عرض‌ها و دبی کل
+                RecalculateGeometryAndFlow();
+
+                RowAdded?.Invoke();
+
+                await Task.Yield();
+            }
+            finally
+            {
+                IsAddingRow = false;
+            }
         }
 
         /// <summary>

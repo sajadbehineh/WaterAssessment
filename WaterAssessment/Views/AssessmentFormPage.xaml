@@ -41,7 +41,7 @@
                     <ProgressRing IsActive="True" />
                     <TextBlock
                         HorizontalAlignment="Center"
-                        FontFamily="{StaticResource SamimRegular}"
+                        FontFamily="{StaticResource SamimMedium}"
                         FontWeight="Normal"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         Text="در حال بارگذاری اطلاعات فرم..." />
@@ -734,6 +734,7 @@
                             Text="دبی مقطع" />
                     </Grid>
                     <ScrollViewer
+                        x:Name="HydrometryRowsScrollViewer"
                         Grid.Row="4"
                         Width="1055"
                         HorizontalAlignment="Stretch"

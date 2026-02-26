@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Dispatching;
 using WaterAssessment.Services;
+using DispatcherQueuePriority = Windows.System.DispatcherQueuePriority;
 
 namespace WaterAssessment.Views;
 
@@ -56,10 +58,32 @@ public sealed partial class AssessmentFormPage : Page
 
             this.DataContext = ViewModel;
             Bindings.Update();
+
+            ViewModel.RowAdded -= OnViewModelRowAdded;
+            ViewModel.RowAdded += OnViewModelRowAdded;
         }
         finally
         {
             IsPageLoading = false;
         }
+    }
+
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        if (ViewModel != null)
+        {
+            ViewModel.RowAdded -= OnViewModelRowAdded;
+        }
+
+        base.OnNavigatedFrom(e);
+    }
+
+    private void OnViewModelRowAdded()
+    {
+        _ = DispatcherQueue.TryEnqueue((Microsoft.UI.Dispatching.DispatcherQueuePriority)DispatcherQueuePriority.Low, async () =>
+        {
+            await Task.Delay(25);
+            HydrometryRowsScrollViewer?.ChangeView(null, HydrometryRowsScrollViewer.ScrollableHeight, null, true);
+        });
     }
 }

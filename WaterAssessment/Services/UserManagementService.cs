@@ -1,10 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 using User = WaterAssessment.Models.User;
 
 namespace WaterAssessment.Services
 {
     public class UserManagementService : IUserManagementService
     {
+        private static readonly Regex PersianCharactersRegex = new("[\u0600-\u06FF]", RegexOptions.Compiled);
+        private static readonly Regex PasswordContainsLetterRegex = new(@"\p{L}", RegexOptions.Compiled);
+        private static readonly Regex PasswordContainsSymbolRegex = new(@"[^\p{L}\p{Nd}]", RegexOptions.Compiled);
+
         private readonly IDbContextFactory<WaterAssessmentContext> _dbFactory;
         private string _lastErrorMessage = string.Empty;
 
@@ -36,6 +41,16 @@ namespace WaterAssessment.Services
         {
             try
             {
+                if (!TryValidateUsername(username))
+                {
+                    return null;
+                }
+
+                if (!TryValidatePassword(password))
+                {
+                    return null;
+                }
+
                 using var db = _dbFactory.CreateDbContext();
 
                 var normalizedUsername = username.Trim().ToLower();
@@ -77,6 +92,16 @@ namespace WaterAssessment.Services
         {
             try
             {
+                if (!TryValidateUsername(username))
+                {
+                    return null;
+                }
+
+                if (!string.IsNullOrWhiteSpace(password) && !TryValidatePassword(password))
+                {
+                    return null;
+                }
+
                 using var db = _dbFactory.CreateDbContext();
 
                 var userToUpdate = await db.Users.FirstOrDefaultAsync(u => u.UserID == userId);
@@ -152,6 +177,34 @@ namespace WaterAssessment.Services
                 _lastErrorMessage = $"خطا در حذف کاربر: {ex.Message}";
                 return false;
             }
+        }
+
+        private bool TryValidateUsername(string username)
+        {
+            if (PersianCharactersRegex.IsMatch(username))
+            {
+                _lastErrorMessage = "در نام کاربری استفاده از حروف فارسی مجاز نیست.";
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TryValidatePassword(string password)
+        {
+            if (password.Length < 8)
+            {
+                _lastErrorMessage = "رمز عبور باید حداقل 8 کاراکتر باشد.";
+                return false;
+            }
+
+            if (!PasswordContainsLetterRegex.IsMatch(password) || !PasswordContainsSymbolRegex.IsMatch(password))
+            {
+                _lastErrorMessage = "رمز عبور باید شامل حداقل یک حرف و یک نماد باشد.";
+                return false;
+            }
+
+            return true;
         }
     }
 }

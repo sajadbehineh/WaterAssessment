@@ -16,7 +16,33 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
+        <Grid
+            x:Name="AppTitleBar"
+            Height="32"
+            VerticalAlignment="Top"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <StackPanel
+                Margin="0,0,12,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
 
+                <TextBlock
+                    x:Name="AppTitleText"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SamimMedium}"
+                    FontSize="12"
+                    Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
+                    Text="سامانه جامع محاسبات هیدرومتری" />
+
+                <FontIcon
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe Fluent Icons"
+                    FontSize="16"
+                    Foreground="{StaticResource HydroSecondary}"
+                    Glyph="&#xEB42;" />
+            </StackPanel>
+        </Grid>
         <!--<MenuBar
             Grid.Row="0"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"

@@ -134,14 +134,14 @@
                 <Button
                     VerticalAlignment="Bottom"
                     Command="{x:Bind ViewModel.ApplyFiltersCommand}"
-                    Content="اعمال فیلتر"
+                    Content="اعمال فیلتر" Width="95"
                     FontFamily="{StaticResource SamimMedium}"
                     Style="{ThemeResource AccentButtonStyle}" />
 
                 <Button
                     VerticalAlignment="Bottom"
                     Command="{x:Bind ViewModel.ClearFiltersCommand}"
-                    Content="حذف فیلترها"
+                    Content="حذف فیلترها" Width="95"
                     FontFamily="{StaticResource SamimMedium}" />
             </StackPanel>
         </StackPanel>

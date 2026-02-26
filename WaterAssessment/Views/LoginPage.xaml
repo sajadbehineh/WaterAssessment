@@ -10,6 +10,19 @@
 
     <Grid>
 
+        <Grid.Resources>
+            <Thickness x:Key="TextControlBorderThemeThickness">1,1,1,1</Thickness>
+            <Thickness x:Key="TextControlBorderThemeThicknessFocused">1,1,1,1</Thickness>
+
+            <StaticResource x:Key="TextControlBorderBrush" ResourceKey="HydroSecondary" />
+
+            <StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="HydroSecondary" />
+
+            <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="HydroSecondary" />
+
+            <SolidColorBrush x:Key="TextControlElevationBorderBrushFocused" Color="Transparent" />
+        </Grid.Resources>
+
         <!--  Background  -->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -53,9 +66,9 @@
 
                 <!--  Username  -->
                 <StackPanel Spacing="5">
-                    <TextBlock Text="نام کاربری" />
+                    <TextBlock FontFamily="{StaticResource SamimMedium}" Text="نام کاربری" />
 
-                    <Grid>
+                    <Grid Height="45">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="*" />
@@ -65,16 +78,21 @@
                             Grid.Column="0"
                             VerticalAlignment="Stretch"
                             Background="#22000000"
+                            BorderBrush="{StaticResource HydroSecondary}"
+                            BorderThickness="2,2,0,2"
                             CornerRadius="8,0,0,8">
                             <FontIcon
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
+                                FontSize="16"
                                 Glyph="&#xE77B;" />
                         </Border>
 
                         <TextBox
                             Grid.Column="1"
                             Height="45"
+                            Padding="10,11,10,0"
+                            VerticalContentAlignment="Center"
                             CornerRadius="0,8,8,0"
                             KeyDown="OnEnterPressed"
                             PlaceholderText="نام کاربری"
@@ -95,6 +113,8 @@
                         <Border
                             Grid.Column="0"
                             Background="#22000000"
+                            BorderBrush="{StaticResource HydroSecondary}"
+                            BorderThickness="2,2,0,2"
                             CornerRadius="8,0,0,8">
                             <FontIcon
                                 HorizontalAlignment="Center"
@@ -106,6 +126,7 @@
                             x:Name="TxtPassword"
                             Grid.Column="1"
                             Height="45"
+                            Padding="10,11,10,0"
                             CornerRadius="0,8,8,0"
                             KeyDown="OnEnterPressed"
                             PlaceholderText="رمز عبور" />
@@ -115,19 +136,26 @@
                 <!--  Login Button  -->
                 <Button
                     Height="45"
+                    Margin="0"
                     HorizontalAlignment="Stretch"
+                    BorderBrush="{StaticResource ButtonBorderThemeBrush}"
+                    BorderThickness="1"
                     Command="{x:Bind ViewModel.LoginCommand}"
                     CommandParameter="{x:Bind TxtPassword}"
                     Content="ورود به سامانه"
-                    CornerRadius="10"
+                    CornerRadius="8"
                     FontFamily="{StaticResource SamimMedium}"
                     Style="{ThemeResource AccentButtonStyle}" />
 
                 <!--  Loading  -->
-                <ProgressRing HorizontalAlignment="Center" IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+                <ProgressRing
+                    Margin="0"
+                    HorizontalAlignment="Center"
+                    IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
 
                 <!--  Error  -->
                 <InfoBar
+                    Margin="0,-57,0,0"
                     IsClosable="True"
                     IsOpen="{x:Bind ViewModel.IsErrorVisible, Mode=OneWay}"
                     Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"

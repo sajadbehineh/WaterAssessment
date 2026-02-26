@@ -190,6 +190,8 @@ namespace WaterAssessment.ViewModel
             }
             else
             {
+                HasGate = false;
+                GateCount = null;
                 TempHydraulicGates.Clear();
             }
         }

@@ -17,6 +17,7 @@
     FontFamily="{StaticResource ContentControlThemeFontFamily}"
     mc:Ignorable="d">
     <Page.Resources>
+        <converters:MeasurementFormTypeToPersianConverter x:Key="MeasurementFormTypeToPersianConverter" />
         <Style x:Key="CenterCellTextStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -45,7 +46,7 @@
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="280" />
+                        <ColumnDefinition Width="315" />
                         <ColumnDefinition
                             Width="*"
                             MinWidth="390"
@@ -96,7 +97,13 @@
                             FontFamily="{StaticResource SamimFD}"
                             Header="فرم اندازه‌گیری"
                             ItemsSource="{x:Bind LocationViewModel.AvailableFormTypes, Mode=OneWay}"
-                            SelectedItem="{x:Bind LocationViewModel.SelectedMeasurementFormType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            SelectedItem="{x:Bind LocationViewModel.SelectedMeasurementFormType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource MeasurementFormTypeToPersianConverter}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
 
                     </StackPanel>
 

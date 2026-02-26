@@ -23,7 +23,9 @@ public sealed partial class MainWindow : Window
         this.RootGrid.DataContext = this;
         //this.SetWindowSize(1650, 800);
         this.AppWindow.SetPresenter(AppWindowPresenterKind.Default);
-        ConfigureWindowIdentity();
+        ExtendsContentIntoTitleBar = true;
+        SetTitleBar(AppTitleBar);
+        //ConfigureWindowIdentity();
         ApplyTitleBarColors();
         RootGrid.ActualThemeChanged += (_, _) => ApplyTitleBarColors();
         Activated += (_, _) => ApplyTitleBarColors();
@@ -79,18 +81,18 @@ public sealed partial class MainWindow : Window
     {
         Title = "سامانه جامع محاسبات هیدرومتری";
 
-        var iconPathCandidates = new[]
-        {
-            Path.Combine(AppContext.BaseDirectory, "Assets", "dez.png"),
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "dez.png"),
-            Path.Combine(Environment.CurrentDirectory, "Assets", "dez.png")
-        };
+        //var iconPathCandidates = new[]
+        //{
+        //    Path.Combine(AppContext.BaseDirectory, "Assets", "dez.png"),
+        //    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "dez.png"),
+        //    Path.Combine(Environment.CurrentDirectory, "Assets", "dez.png")
+        //};
 
-        var iconPath = iconPathCandidates.FirstOrDefault(File.Exists);
-        if (!string.IsNullOrWhiteSpace(iconPath))
-        {
-            AppWindow.SetIcon(iconPath);
-        }
+        //var iconPath = iconPathCandidates.FirstOrDefault(File.Exists);
+        //if (!string.IsNullOrWhiteSpace(iconPath))
+        //{
+        //    AppWindow.SetIcon(iconPath);
+        //}
     }
 
     private void ApplyTitleBarColors()
@@ -101,6 +103,8 @@ public sealed partial class MainWindow : Window
         }
 
         var titleBar = AppWindow.TitleBar;
+        titleBar.ButtonBackgroundColor = Windows.UI.Color.FromArgb(0, 0, 0, 0); // Transparent
+        titleBar.ButtonInactiveBackgroundColor = Windows.UI.Color.FromArgb(0, 0, 0, 0);
 
         var isDark = RootGrid.ActualTheme == ElementTheme.Dark;
         var backgroundColor = isDark

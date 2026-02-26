@@ -26,12 +26,6 @@
 		<PublishSingleFile>false</PublishSingleFile>
 	</PropertyGroup>
 
-    <!--<ItemGroup>
-      <Compile Remove="Core\**" />
-      <EmbeddedResource Remove="Core\**" />
-      <None Remove="Core\**" />
-      <Page Remove="Core\**" />
-    </ItemGroup>-->
     <ItemGroup>
       <Content Remove="Assets\Fonts\Vazirmatn-Bold.ttf" />
       <Content Remove="Assets\Fonts\Vazirmatn-Medium.ttf" />
@@ -47,6 +41,7 @@
       <None Remove="Assets\imgbin_computer-icons-propeller-png.png" />
       <None Remove="Assets\propeller.png" />
       <None Remove="Controls\PaginationControl.xaml" />
+      <None Remove="Themes\LoginHydrometryTheme.xaml" />
       <None Remove="Views\AssessmentFormPage.xaml" />
       <None Remove="Views\CreateAssessmentDialog.xaml" />
       <None Remove="Views\EmployeePage.xaml" />
@@ -73,10 +68,10 @@
 
     <ItemGroup>
         <PackageReference Include="AK.Toolkit.WinUI3.NumberBoxEx" Version="1.0.1" />
-        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="CommunityToolkit.WinUI.Behaviors" Version="8.2.251219" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.0.230907" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.TokenizingTextBox" Version="8.2.251219" />
         <PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.251219" />
         <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.24" />
@@ -177,5 +172,10 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Properties\PublishProfiles\" />
+    </ItemGroup>
+    <ItemGroup>
+      <Page Update="Themes\LoginHydrometryTheme.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
 </Project>

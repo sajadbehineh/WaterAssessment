@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--  Primary Colors  -->
+    <Color x:Key="HydroPrimary">#006D77</Color>
+    <Color x:Key="HydroSecondary">#00B4D8</Color>
+    <Color x:Key="HydroDark">#023047</Color>
+
+    <!--  Brushes  -->
+    <SolidColorBrush x:Key="HydroPrimaryBrush" Color="{StaticResource HydroPrimary}" />
+
+    <SolidColorBrush x:Key="HydroSecondaryBrush" Color="{StaticResource HydroSecondary}" />
+
+    <SolidColorBrush x:Key="HydroDarkBrush" Color="{StaticResource HydroDark}" />
+
+    <!--  Enterprise Button Style  -->
+    <Style x:Key="HydroPrimaryButtonStyle" TargetType="Button">
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Background" Value="{StaticResource HydroPrimaryBrush}" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+</ResourceDictionary>

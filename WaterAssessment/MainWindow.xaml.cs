@@ -33,19 +33,51 @@ public sealed partial class MainWindow : Window
         {
             // وقتی پیام لاگین رسید، به صفحه اصلی بروید
             // چون روی ترد UI هستیم مستقیم نویگیت میکنیم
+            UpdateRootContentForAuthState();
             ShellPage.Instance.Navigate(typeof(AssessmentReportPage)); // یا هر صفحه پیش‌فرض دیگر
         });
         // مدیریت خروج از حساب
         WeakReferenceMessenger.Default.Register<LogoutMessage>(this, (r, m) =>
         {
-            MyShell.Navigate(typeof(LoginPage));
+            UpdateRootContentForAuthState();
         });
         ShellPage.Instance.Loaded += Instance_Loaded;
+        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        UpdateRootContentForAuthState();
+    }
+
+    private void UpdateRootContentForAuthState()
+    {
+        var isLoggedIn = ViewModel.IsLoggedIn;
+
+        AppNavigationView.Visibility = isLoggedIn ? Visibility.Visible : Visibility.Collapsed;
+        AuthFrame.Visibility = isLoggedIn ? Visibility.Collapsed : Visibility.Visible;
+
+        if (!isLoggedIn)
+        {
+            if (AuthFrame.Content is not LoginPage)
+            {
+                AuthFrame.Navigate(typeof(LoginPage));
+            }
+
+            if (AuthFrame.Content is LoginPage loginPage)
+            {
+                loginPage.ResetForm();
+            }
+        }
+    }
+
+    private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModel.IsLoggedIn))
+        {
+            UpdateRootContentForAuthState();
+        }
     }
 
     private void ConfigureWindowIdentity()
     {
-        Title = "مطالعات و آبشناسی";
+        Title = "سامانه جامع محاسبات هیدرومتری";
 
         var iconPathCandidates = new[]
         {
@@ -116,10 +148,11 @@ public sealed partial class MainWindow : Window
 
         SetDialogServiceXamlRoot();
 
-        // هدایت اولیه به صفحه لاگین
-        if (!ViewModel.IsLoggedIn)
+        UpdateRootContentForAuthState();
+
+        if (ViewModel.IsLoggedIn)
         {
-            ShellPage.Instance.Navigate(typeof(LoginPage));
+            ShellPage.Instance.Navigate(typeof(AssessmentReportPage));
         }
     }
 

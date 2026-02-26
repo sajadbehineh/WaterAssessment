@@ -1,6 +1,3 @@
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace WaterAssessment.Views
 {
     /// <summary>
@@ -13,6 +10,20 @@ namespace WaterAssessment.Views
         {
             InitializeComponent();
             this.DataContext = ViewModel;
+        }
+
+        private void OnEnterPressed(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                ViewModel.LoginCommand.Execute(TxtPassword);
+            }
+        }
+
+        public void ResetForm()
+        {
+            TxtPassword.Password = string.Empty;
+            ViewModel.Reset();
         }
     }
 }

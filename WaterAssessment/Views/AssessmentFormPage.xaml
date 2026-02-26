@@ -44,7 +44,7 @@
                         FontFamily="{StaticResource SamimMedium}"
                         FontWeight="Normal"
                         Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="در حال بارگذاری اطلاعات فرم..." />
+                        Text="در حال بارگذاری اطلاعات فرم اندازه گیری..." />
                 </StackPanel>
             </controls:Case>
             <controls:Case Value="False">

@@ -86,6 +86,14 @@ namespace WaterAssessment.ViewModel
             IsErrorVisible = true;
         }
 
+        public void Reset()
+        {
+            Username = string.Empty;
+            ErrorMessage = string.Empty;
+            IsErrorVisible = false;
+            IsLoading = false;
+        }
+
         // یک متد کمکی برای ساخت یوزر اولیه (فقط یکبار استفاده کنید)
         public async Task SeedAdminAsync()
         {
@@ -97,7 +105,7 @@ namespace WaterAssessment.ViewModel
                     Username = "admin",
                     FullName = "مدیر سیستم",
                     // رمز عبور: 123456
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("1"),
                     Role = "Admin"
                 });
                 await db.SaveChangesAsync();

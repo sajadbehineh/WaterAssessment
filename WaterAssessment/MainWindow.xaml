@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:WaterAssessment.Views"
-    Title="مطالعات و آبشناسی"
     mc:Ignorable="d">
 
     <Grid
@@ -71,12 +70,14 @@
 
         <Grid Grid.Row="1">
             <NavigationView
+                x:Name="AppNavigationView"
                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                 IsBackButtonVisible="Collapsed"
                 IsPaneOpen="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
                 IsPaneVisible="{Binding ViewModel.IsLoggedIn, Mode=OneWay}"
                 IsSettingsVisible="False"
-                OpenPaneLength="280">
+                OpenPaneLength="280"
+                Visibility="Collapsed">
 
                 <NavigationView.PaneFooter>
                     <StackPanel
@@ -121,35 +122,6 @@
                         Tag="Settings"
                         Tapped="NavigationViewItem_OnTapped" />
                 </NavigationView.FooterMenuItems>
-
-                <!--<NavigationView.Header>
-                    <StackPanel VerticalAlignment="Stretch" Orientation="Horizontal">
-                -->
-                <!--  دایره پیش‌فرض با گلیف آدمک  -->
-                <!--
-                        <Grid
-                            Width="40"
-                            Height="40"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Background="#FFCCCCCC"
-                            CornerRadius="20">
-                            <FontIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="White"
-                                Glyph="&#xE77B;" />
-                        </Grid>
-
-                        <StackPanel Margin="8,0,0,0" VerticalAlignment="Center">
-                            <TextBlock FontFamily="{StaticResource SamimBold}" Text="{Binding ViewModel.CurrentUserDisplayName, Mode=OneWay}" />
-                            <TextBlock
-                                FontSize="12"
-                                Foreground="Gray"
-                                Text="Online" />
-                        </StackPanel>
-                    </StackPanel>
-                </NavigationView.Header>-->
 
                 <NavigationView.MenuItems>
                     <NavigationViewItem
@@ -217,6 +189,8 @@
                 <views:ShellPage x:Name="MyShell" FlowDirection="RightToLeft" />
 
             </NavigationView>
+
+            <Frame x:Name="AuthFrame" />
         </Grid>
     </Grid>
 </Window>
